@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="70ab7573a43e4be79de6b3300c9e4f64" Name="Diagram1" ZoomLevel="77">
+        <EntityTypeShape EntityType="STAGEFX_PROModel.ChiTietDonHang" Width="1.5" PointX="7.5" PointY="15" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.ChiTietGioHang" Width="1.5" PointX="7.5" PointY="24.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.DanhGiaSanPham" Width="1.5" PointX="8.25" PointY="19.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.DanhMuc" Width="1.5" PointX="3" PointY="8.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.DiaChiKhachHang" Width="1.5" PointX="5.25" PointY="20.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.DonHang" Width="1.5" PointX="5.25" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.GioHang" Width="1.5" PointX="5.25" PointY="24.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.HinhAnhSanPham" Width="1.5" PointX="7.5" PointY="8.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.KhuyenMai" Width="1.5" PointX="3" PointY="13.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.LichSuKho" Width="1.5" PointX="10.5" PointY="17.125" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.LichSuTrangThaiDonHang" Width="1.5" PointX="10.5" PointY="21.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.NguoiDung" Width="1.5" PointX="3" PointY="19" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.SanPham" Width="1.5" PointX="5.25" PointY="7.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.SuDungKhuyenMai" Width="1.5" PointX="10.5" PointY="13.5" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.ThanhToan" Width="1.5" PointX="7.5" PointY="30.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.VaiTro" Width="1.5" PointX="0.75" PointY="20.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.YeuCauHuyDon" Width="1.5" PointX="13.5" PointY="17.25" IsExpanded="true" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.YeuCauTuVan" Width="1.5" PointX="5.25" PointY="33.75" IsExpanded="true" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_ChiTietDonHang_DonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_ChiTietDonHang_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_DanhGiaSanPham_ChiTietDonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_ChiTietGioHang_GioHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_ChiTietGioHang_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_DanhGiaSanPham_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_DanhGiaSanPham_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_SanPham_DanhMuc" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_DiaChiKhachHang_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_DonHang_KhuyenMai" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_DonHang_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_LichSuDonHang_DonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_LichSuKho_DonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_SuDungKhuyenMai_DonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_ThanhToan_DonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_YeuCauHuyDon_DonHang" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_GioHang_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_HinhAnhSanPham_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_SuDungKhuyenMai_KhuyenMai" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_LichSuKho_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_LichSuKho_SanPham" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_LichSuDonHang_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_NguoiDung_VaiTro" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_SuDungKhuyenMai_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_YeuCauHuyDon_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_YeuCauHuyDon_NguoiXuLy" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_YeuCauTuVan_NguoiDung" ManuallyRouted="false" />
+        <AssociationConnector Association="STAGEFX_PROModel.FK_YeuCauTuVan_NhanVien" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>
