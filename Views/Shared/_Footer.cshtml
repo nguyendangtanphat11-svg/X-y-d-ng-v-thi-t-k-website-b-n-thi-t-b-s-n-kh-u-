@@ -1,0 +1,139 @@
+﻿
+<footer class="site-shell-footer">
+    <div class="site-shell-footer-inner">
+        <div class="site-shell-footer-grid">
+
+            @* Thông tin thương hiệu *@
+            <section class="site-shell-footer-about"
+                     aria-labelledby="site-shell-footer-brand">
+
+                <a class="site-shell-footer-brand"
+                   href="@Url.Action("Index", "Home")"
+                   aria-label="STAGEFX PRO - Trang chủ">
+
+                    <span class="site-shell-footer-mark"
+                          aria-hidden="true">S</span>
+
+                    <span id="site-shell-footer-brand">
+                        STAGEFX <b>PRO</b>
+                        <small>STAGE EFFECTS • B2B SOLUTIONS</small>
+                    </span>
+                </a>
+
+                <p>
+                    Tham khảo thiết bị và giải pháp hiệu ứng sân khấu.
+                    Thông số, tình trạng hàng, giá, chứng nhận và phương án
+                    triển khai cần được xác nhận theo từng sản phẩm và dự án.
+                </p>
+
+                <div class="site-shell-footer-contact">
+                    <p>
+                        <span class="material-symbols-outlined"
+                              aria-hidden="true">support_agent</span>
+
+                        <span>
+                            <strong>Liên hệ tư vấn</strong>
+                            <a href="tel:0988683977">0988 683 977</a>
+                        </span>
+                    </p>
+
+                    <p>
+                        <span class="material-symbols-outlined"
+                              aria-hidden="true">info</span>
+
+                        <span>
+                            Thông tin trên website là nội dung tham khảo;
+                            vui lòng liên hệ để xác nhận trước khi đặt hàng.
+                        </span>
+                    </p>
+                </div>
+            </section>
+
+            @* Danh mục thiết bị *@
+            <nav class="site-shell-footer-column"
+                 aria-label="Danh mục thiết bị">
+
+                <h2>Danh mục thiết bị</h2>
+
+                <a href="@Url.Action("Index", "Catalog", new { q = "máy khói" })">
+                    Máy khói &amp; Haze
+                </a>
+
+                <a href="@Url.Action("Index", "Catalog", new { q = "phun lửa" })">
+                    Thiết bị hiệu ứng Flame
+                </a>
+
+                <a href="@Url.Action("Index", "Catalog", new { q = "co2" })">
+                    CO₂ Jet
+                </a>
+
+                <a href="@Url.Action("Index", "Catalog", new { q = "cold spark" })">
+                    Cold Spark
+                </a>
+
+                <a href="@Url.Action("Index", "Catalog", new { q = "máy bắn giấy" })">
+                    Máy bắn giấy
+                </a>
+
+                <a href="@Url.Action("Index", "Catalog", new { q = "điều khiển" })">
+                    Điều khiển &amp; phụ kiện
+                </a>
+            </nav>
+
+            @* Điều hướng và hỗ trợ *@
+            <nav class="site-shell-footer-column"
+                 aria-label="Điều hướng và hỗ trợ">
+
+                <h2>Điều hướng</h2>
+
+                <a href="@Url.Action("Index", "Home")">
+                    Trang chủ
+                </a>
+
+                <a href="@Url.Action("Index", "Catalog")">
+                    Toàn bộ thiết bị
+                </a>
+
+                <a href="@Url.Action("Index", "Cart")">
+                    Giỏ thiết bị
+                </a>
+
+                <a href="@Url.Action("Index", "Home")#tu-van">
+                    Gửi yêu cầu tư vấn
+                </a>
+
+                <a href="@Url.Action("Login", "Account")">
+                    Đăng nhập / đăng ký
+                </a>
+
+                <a href="tel:0988683977">
+                    Gọi hotline tư vấn
+                </a>
+            </nav>
+
+        </div>
+
+        @* Bản quyền *@
+        <div class="site-shell-footer-bottom">
+            <p>
+                © <span id="site-shell-year"></span>
+                STAGEFX PRO. Nội dung và thông số cần được xác nhận
+                theo từng sản phẩm, đơn hàng.
+            </p>
+
+            <a href="@Url.Action("Index", "Home")">
+                STAGEFX PRO
+            </a>
+        </div>
+    </div>
+</footer>
+
+<script>
+    (function () {
+        var yearElement = document.getElementById("site-shell-year");
+
+        if (yearElement) {
+            yearElement.textContent = new Date().getFullYear();
+        }
+    })();
+</script>

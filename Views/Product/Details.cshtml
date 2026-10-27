@@ -1,0 +1,298 @@
+﻿
+@{
+    ViewBag.Title = "Chi tiết thiết bị";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page-shell">
+    <nav class="breadcrumbs" aria-label="Điều hướng">
+        <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+        <span aria-hidden="true">/</span>
+        <a href="@Url.Action("Index", "Catalog")">Kho thiết bị SFX</a>
+        <span aria-hidden="true">/</span>
+        <span id="breadcrumb-sku" class="current">FX-FOG-200</span>
+    </nav>
+
+    <section class="product-layout" aria-labelledby="product-name">
+        <div class="gallery-column">
+            <div class="main-image-wrap">
+                <img id="product-image" class="main-image" src="" alt="" />
+
+                <span id="product-category" class="image-badge"></span>
+
+                <span class="stock-badge">
+                    <span class="status-dot"></span>
+                    Sẵn hàng: <span id="product-stock"></span> máy
+                </span>
+            </div>
+
+            <div id="product-gallery"
+                 class="thumbnail-list"
+                 aria-label="Ảnh sản phẩm"></div>
+
+            <section class="compliance-card">
+                <h2>
+                    <span class="material-symbols-outlined">verified_user</span>
+                    Chứng nhận &amp; chuẩn an toàn
+                </h2>
+
+                <ul>
+                    <li>
+                        <span class="material-symbols-outlined">local_fire_department</span>
+                        Kiểm định PCCC
+                    </li>
+                    <li>
+                        <span class="material-symbols-outlined">settings_input_component</span>
+                        DMX-512 &amp; RDM
+                    </li>
+                    <li>
+                        <span class="material-symbols-outlined">workspace_premium</span>
+                        Bảo hành 24 tháng
+                    </li>
+                    <li>
+                        <span class="material-symbols-outlined">flight</span>
+                        Flightcase tùy chọn
+                    </li>
+                </ul>
+            </section>
+        </div>
+
+        <div class="details-column">
+            <div class="product-heading">
+                <div class="product-meta">
+                    <span class="sku-label">
+                        SKU: <span id="product-sku"></span>
+                    </span>
+
+                    <span class="meta-item">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        Kho Hà Nội &amp; TP.HCM
+                    </span>
+
+                    <span class="rating">
+                        <span class="material-symbols-outlined">star</span>
+                        5.0 (28 đánh giá)
+                    </span>
+                </div>
+
+                <h1 id="product-name"></h1>
+
+                <p id="product-description"
+                   class="product-description"></p>
+            </div>
+
+            <section class="purchase-card" aria-label="Tùy chọn mua hàng">
+                <div class="purchase-top">
+                    <span class="field-label">Hình thức thương mại</span>
+
+                    <div class="segmented-control"
+                         role="group"
+                         aria-label="Hình thức thương mại">
+
+                        <button id="buy-mode"
+                                class="segment active"
+                                type="button"
+                                aria-pressed="true">
+                            Mua thiết bị
+                        </button>
+
+                        <button id="rent-mode"
+                                class="segment"
+                                type="button"
+                                aria-pressed="false">
+                            Thuê theo sự kiện
+                        </button>
+                    </div>
+                </div>
+
+                <div class="price-row">
+                    <div>
+                        <p id="price-label" class="field-label">
+                            Đơn giá niêm yết (đã gồm VAT)
+                        </p>
+
+                        <p id="product-price" class="price"></p>
+                    </div>
+
+                    <label id="rental-days-wrap"
+                           class="rental-days"
+                           hidden>
+                        <span>Số ngày:</span>
+
+                        <input id="rental-days"
+                               type="number"
+                               min="1"
+                               max="30"
+                               value="1"
+                               inputmode="numeric" />
+                    </label>
+                </div>
+
+                <section id="volume-pricing" class="volume-pricing">
+                    <h2>Chính sách chiết khấu số lượng B2B</h2>
+
+                    <div class="volume-tiers">
+                        <div><span>1–2 máy</span><strong>Giá gốc</strong></div>
+                        <div><span>3–5 máy</span><strong>Chiết khấu 5%</strong></div>
+                        <div><span>Trên 5 máy</span><strong>Chiết khấu 10%*</strong></div>
+                    </div>
+
+                    <small>
+                        *Mức giá hiển thị chỉ tham khảo; ưu đãi cần xác nhận với nhân viên.
+                    </small>
+                </section>
+
+                <section id="flightcase-section" class="flightcase-section">
+                    <div class="section-label-row">
+                        <h2>Flightcase nhôm chuẩn tour</h2>
+                        <span>Khuyên dùng khi lưu diễn</span>
+                    </div>
+
+                    <div id="flightcase-options"
+                         class="flightcase-options"></div>
+                </section>
+
+                <div id="product-actions" class="product-actions">
+                    <div class="quantity-row">
+                        <label for="quantity">Số lượng</label>
+
+                        <div class="quantity-control">
+                            <button id="decrease-quantity"
+                                    type="button"
+                                    aria-label="Giảm số lượng">
+                                −
+                            </button>
+
+                            <input id="quantity"
+                                   type="number"
+                                   min="1"
+                                   value="1"
+                                   inputmode="numeric" />
+
+                            <button id="increase-quantity"
+                                    type="button"
+                                    aria-label="Tăng số lượng">
+                                +
+                            </button>
+                        </div>
+
+                        <p class="subtotal">
+                            Tạm tính <strong id="subtotal"></strong>
+                        </p>
+                    </div>
+
+                    <div class="action-buttons">
+                        <button id="add-to-cart"
+                                class="button button-secondary"
+                                type="button">
+                            <span class="material-symbols-outlined">add_shopping_cart</span>
+                            Thêm vào giỏ
+                        </button>
+
+                        <button id="buy-now"
+                                class="button button-primary"
+                                type="button">
+                            <span class="material-symbols-outlined">bolt</span>
+                            Đặt mua ngay
+                        </button>
+                    </div>
+
+                    <p class="support-note">
+                        <span>
+                            <span class="material-symbols-outlined">verified</span>
+                            Hỗ trợ CO/CQ &amp; hóa đơn VAT
+                        </span>
+                        <span>
+                            <span class="material-symbols-outlined">support_agent</span>
+                            Hotline: 0988.789.SFX
+                        </span>
+                    </p>
+                </div>
+            </section>
+        </div>
+    </section>
+
+    <section class="technical-card" aria-label="Thông tin kỹ thuật">
+        <div class="tab-list"
+             role="tablist"
+             aria-label="Thông tin sản phẩm">
+
+            <button class="tab-button active"
+                    id="tab-specs"
+                    type="button"
+                    role="tab"
+                    aria-selected="true"
+                    aria-controls="tab-panel"
+                    data-tab="specs">
+                <span class="material-symbols-outlined">tune</span>
+                Thông số chi tiết
+            </button>
+
+            <button class="tab-button"
+                    id="tab-dmx"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="tab-panel"
+                    data-tab="dmx">
+                <span class="material-symbols-outlined">settings_ethernet</span>
+                DMX-512
+            </button>
+
+            <button class="tab-button"
+                    id="tab-safety"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="tab-panel"
+                    data-tab="safety">
+                <span class="material-symbols-outlined">health_and_safety</span>
+                An toàn &amp; PCCC
+            </button>
+
+            <button class="tab-button"
+                    id="tab-downloads"
+                    type="button"
+                    role="tab"
+                    aria-selected="false"
+                    aria-controls="tab-panel"
+                    data-tab="downloads">
+                <span class="material-symbols-outlined">download</span>
+                Tài liệu kỹ thuật
+            </button>
+        </div>
+
+        <div id="tab-panel"
+             class="tab-panel"
+             role="tabpanel"
+             aria-labelledby="tab-specs"></div>
+    </section>
+
+    <section id="related" class="related-section">
+        <div class="related-heading">
+            <div>
+                <h2>Thiết bị SFX thường phối ghép cùng</h2>
+                <p>Tối ưu hiệu ứng đồng bộ theo kịch bản âm thanh, ánh sáng.</p>
+            </div>
+
+            <a href="@Url.Action("Index", "Catalog")">
+                Xem danh mục
+                <span class="material-symbols-outlined">arrow_forward</span>
+            </a>
+        </div>
+
+        <div id="related-products" class="related-grid"></div>
+    </section>
+</main>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/product-detail.css")" />
+
+}
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/product-detail.js")"></script>
+}

@@ -1,0 +1,182 @@
+﻿
+@{
+    ViewBag.Title = "Giỏ thiết bị dự án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<section class="page-heading">
+    <div>
+        <span class="eyebrow">ĐƠN HÀNG B2B</span>
+
+        <h1>
+            <span class="material-symbols-outlined" aria-hidden="true">shopping_cart</span>
+            Giỏ thiết bị dự án
+        </h1>
+
+        <p id="cart-description" aria-live="polite"></p>
+    </div>
+
+    <button id="clear-cart" class="clear-cart-button" type="button" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">delete_sweep</span>
+        Làm trống giỏ
+    </button>
+</section>
+
+<section id="empty-cart" class="empty-cart" hidden>
+    <div class="empty-icon">
+        <span class="material-symbols-outlined" aria-hidden="true">production_quantity_limits</span>
+    </div>
+
+    <div>
+        <h2>Giỏ thiết bị đang trống</h2>
+        <p>Chọn sản phẩm trong danh mục để bắt đầu tạo danh sách thiết bị cho dự án.</p>
+    </div>
+
+    <a class="primary-button" href="@Url.Action("Index", "Catalog")">
+        <span class="material-symbols-outlined" aria-hidden="true">view_cozy</span>
+        Khám phá kho thiết bị
+    </a>
+</section>
+
+<div id="cart-content" class="cart-layout" hidden>
+    <section class="items-column" aria-label="Thiết bị trong giỏ">
+        <div class="cart-list-heading">
+            <h2>Thiết bị đã chọn</h2>
+            <span id="item-count"></span>
+        </div>
+
+        <div id="cart-items" class="cart-items"></div>
+
+        <div class="cart-footer">
+            <a class="continue-button" href="@Url.Action("Index", "Catalog")">
+                <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                Tiếp tục chọn thiết bị
+            </a>
+
+            <p class="shipping-note">
+                <span class="material-symbols-outlined" aria-hidden="true">local_shipping</span>
+                Phí vận chuyển sẽ được xác nhận theo địa điểm và lịch giao hàng.
+            </p>
+        </div>
+    </section>
+
+    <aside class="summary-column" aria-label="Tóm tắt đơn hàng">
+        <section class="promo-card">
+            <h2>
+                <span class="material-symbols-outlined" aria-hidden="true">local_offer</span>
+                Mã ưu đãi đối tác B2B
+            </h2>
+
+            <form id="promo-form" class="promo-form">
+                <label class="sr-only" for="promo-code">Mã ưu đãi</label>
+
+                <input id="promo-code"
+                       name="promo-code"
+                       type="text"
+                       autocomplete="off"
+                       placeholder="Nhập mã ưu đãi"
+                       aria-describedby="promo-help promo-message" />
+
+                <button type="submit">Áp dụng</button>
+            </form>
+
+            <p id="promo-help" class="promo-help">
+                Mã mẫu: B2BVIP hoặc TECHEVENT2025
+            </p>
+
+            <p id="promo-message"
+               class="promo-message"
+               role="status"
+               aria-live="polite"
+               hidden>
+            </p>
+        </section>
+
+        <section class="summary-card">
+            <div class="summary-title">
+                <h2>Tóm tắt chi phí</h2>
+                <span id="summary-item-count"></span>
+            </div>
+
+            <div class="financial-rows">
+                <div class="financial-row">
+                    <span>Tạm tính thiết bị</span>
+                    <strong id="subtotal"></strong>
+                </div>
+
+                <div id="discount-row" class="financial-row discount-row" hidden>
+                    <span id="discount-label"></span>
+                    <strong id="discount-amount"></strong>
+                </div>
+
+                <div class="financial-row">
+                    <span>Vận chuyển &amp; bốc xếp</span>
+                    <strong id="shipping-fee"></strong>
+                </div>
+
+                <div class="vat-row">
+                    <label for="vat-enabled">
+                        <span>
+                            <input id="vat-enabled" type="checkbox" checked />
+                            Xuất hóa đơn GTGT (VAT 10%)
+                        </span>
+                    </label>
+
+                    <strong id="vat-amount"></strong>
+                </div>
+
+                <div id="deposit-row" class="deposit-row" hidden>
+                    <span>
+                        Tiền cọc thuê tạm tính
+                        <small>(hoàn lại sau khi đối soát)</small>
+                    </span>
+
+                    <strong id="deposit-amount"></strong>
+                </div>
+
+                <div class="total-row">
+                    <span>Tổng dự toán</span>
+                    <strong id="grand-total"></strong>
+                </div>
+            </div>
+
+            <p id="estimate-note" class="estimate-note"></p>
+
+            <button id="checkout-button" class="checkout-button" type="button">
+                <span class="material-symbols-outlined" aria-hidden="true">verified</span>
+                Gửi yêu cầu xác nhận đơn
+            </button>
+
+            <p class="checkout-note">
+                Đơn hàng chỉ được xác nhận sau khi nhân viên liên hệ,
+                kiểm tra tồn kho và thống nhất các yêu cầu an toàn.
+            </p>
+        </section>
+
+        <section class="trust-card">
+            <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
+
+            <div>
+                <h2>Cần hỗ trợ cho dự án?</h2>
+                <p>Liên hệ để xác nhận giá, vận chuyển và hồ sơ kỹ thuật.</p>
+                <a href="tel:0988683977">0988 683 977</a>
+            </div>
+        </section>
+    </aside>
+</div>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/cart.css")" />
+}
+
+
+@section scripts {
+    <script>
+        window.STAGEFX_CHECKOUT_URL =
+            '@Url.Action("Index", "Checkout")';
+    </script>
+
+    <script src="@Url.Content("~/Scripts/cart.js")"></script>
+}

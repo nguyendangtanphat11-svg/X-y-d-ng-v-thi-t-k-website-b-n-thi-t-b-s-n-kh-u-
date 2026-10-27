@@ -1,0 +1,431 @@
+﻿
+@{
+    ViewBag.Title = "Xác nhận dự án | STAGEFX PRO";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="page-shell">
+    <nav class="breadcrumbs" aria-label="Điều hướng">
+        <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+        <span aria-hidden="true">/</span>
+        <a href="@Url.Action("Index", "Cart")">Giỏ hàng</a>
+        <span aria-hidden="true">/</span>
+        <span class="current">Thông tin dự án &amp; xác nhận</span>
+    </nav>
+
+    <section class="page-heading">
+        <span class="eyebrow">YÊU CẦU B2B • BẢN DEMO</span>
+        <h1>
+            <span class="material-symbols-outlined" aria-hidden="true">fact_check</span>
+            Thông tin dự án &amp; xác nhận an toàn
+        </h1>
+        <p>
+            Gửi thông tin để chuẩn bị yêu cầu dự án. Giá, tồn kho, thanh toán
+            và yêu cầu kỹ thuật cần được nhân viên xác nhận.
+        </p>
+    </section>
+
+    <section id="empty-cart" class="empty-cart" hidden>
+        <span class="material-symbols-outlined" aria-hidden="true">production_quantity_limits</span>
+        <h2>Chưa có thiết bị để xác nhận</h2>
+        <p>Thêm thiết bị vào giỏ trước khi nhập thông tin dự án.</p>
+        <a class="primary-button" href="@Url.Action("Index", "Catalog")">
+            <span class="material-symbols-outlined" aria-hidden="true">view_cozy</span>
+            Mở danh mục thiết bị
+        </a>
+    </section>
+
+    <div id="checkout-content" class="checkout-layout" hidden>
+        <section class="form-column">
+            <nav class="stepper" aria-label="Các bước xác nhận">
+                <button class="step-button active" type="button"
+                        data-step="1" aria-current="step">
+                    <span class="step-number">1</span>
+                    <span class="step-copy">
+                        <strong>Thông tin dự án</strong>
+                        <small>Đơn vị &amp; địa điểm</small>
+                    </span>
+                </button>
+
+                <button class="step-button" type="button" data-step="2">
+                    <span class="step-number">2</span>
+                    <span class="step-copy">
+                        <strong>An toàn &amp; vận hành</strong>
+                        <small>Đánh giá tại địa điểm</small>
+                    </span>
+                </button>
+
+                <button class="step-button" type="button" data-step="3">
+                    <span class="step-number">3</span>
+                    <span class="step-copy">
+                        <strong>Hình thức thanh toán</strong>
+                        <small>Chờ nhân viên xác nhận</small>
+                    </span>
+                </button>
+            </nav>
+
+            <form id="checkout-form" class="checkout-form" novalidate>
+                <!-- BƯỚC 1: THÔNG TIN DỰ ÁN -->
+                <section class="form-step" data-step-panel="1">
+                    <div class="section-heading">
+                        <span class="material-symbols-outlined" aria-hidden="true">badge</span>
+                        <div>
+                            <h2 tabindex="-1">Thông tin đơn vị &amp; người liên hệ</h2>
+                            <p>Thông tin này chỉ được dùng để tạo bản xem trước trên thiết bị hiện tại.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <label class="field field-wide">
+                            Tên công ty / đơn vị <span class="required">*</span>
+                            <input name="company" type="text"
+                                   autocomplete="organization" required
+                                   maxlength="120" placeholder="Tên công ty hoặc đơn vị" />
+                        </label>
+
+                        <label class="field">
+                            Mã số thuế <span class="required">*</span>
+                            <input name="taxId" type="text" inputmode="numeric"
+                                   autocomplete="off" required maxlength="20"
+                                   placeholder="Mã số thuế doanh nghiệp" />
+                        </label>
+
+                        <label class="field">
+                            Người phụ trách <span class="required">*</span>
+                            <input name="contactName" type="text"
+                                   autocomplete="name" required maxlength="100"
+                                   placeholder="Họ và tên" />
+                        </label>
+
+                        <label class="field">
+                            Điện thoại liên hệ <span class="required">*</span>
+                            <input name="phone" type="tel" autocomplete="tel"
+                                   required maxlength="25" placeholder="Số điện thoại" />
+                        </label>
+
+                        <label class="field">
+                            Email nhận phản hồi <span class="required">*</span>
+                            <input name="email" type="email" autocomplete="email"
+                                   required maxlength="160" placeholder="name@company.vn" />
+                        </label>
+                    </div>
+
+                    <div class="subsection-heading">
+                        <span class="material-symbols-outlined" aria-hidden="true">stadium</span>
+                        <div>
+                            <h3>Thông tin chương trình / sự kiện</h3>
+                            <p>Thông tin địa điểm giúp lên kế hoạch giao nhận và đánh giá yêu cầu kỹ thuật.</p>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <label class="field field-wide">
+                            Tên chương trình / sự kiện <span class="required">*</span>
+                            <input name="eventName" type="text" required
+                                   maxlength="140" placeholder="Tên sự kiện" />
+                        </label>
+
+                        <label class="field">
+                            Ngày dự kiến <span class="required">*</span>
+                            <input name="eventDate" type="date" required />
+                        </label>
+
+                        <fieldset class="field venue-field">
+                            <legend>Loại địa điểm <span class="required">*</span></legend>
+                            <div class="choice-row">
+                                <label class="choice-card">
+                                    <input type="radio" name="venueType"
+                                           value="outdoor" required />
+                                    <span>Ngoài trời</span>
+                                </label>
+                                <label class="choice-card">
+                                    <input type="radio" name="venueType"
+                                           value="indoor" required />
+                                    <span>Trong nhà</span>
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <label class="field field-wide">
+                            Địa chỉ giao nhận / địa điểm <span class="required">*</span>
+                            <input name="eventLocation" type="text"
+                                   autocomplete="street-address" required
+                                   maxlength="220"
+                                   placeholder="Địa chỉ, quận/huyện, tỉnh/thành" />
+                        </label>
+                    </div>
+
+                    <div class="step-actions end">
+                        <button class="primary-button next-button"
+                                type="button" data-next="2">
+                            Tiếp tục: an toàn &amp; vận hành
+                            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- BƯỚC 2: AN TOÀN -->
+                <section class="form-step" data-step-panel="2" hidden>
+                    <div class="section-heading">
+                        <span class="material-symbols-outlined" aria-hidden="true">health_and_safety</span>
+                        <div>
+                            <h2 tabindex="-1">Thông tin chuẩn bị an toàn tại địa điểm</h2>
+                            <p>
+                                Đây là thông tin sơ bộ; không thay thế đánh giá tại hiện trường,
+                                hồ sơ được phê duyệt hoặc hướng dẫn của nhà sản xuất.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="notice-card">
+                        <span class="material-symbols-outlined" aria-hidden="true">info</span>
+                        <p>
+                            Yêu cầu an toàn phụ thuộc vào thiết bị cụ thể, tài liệu nhà sản xuất,
+                            quy định hiện hành và yêu cầu của địa điểm tổ chức. Không dùng biểu mẫu
+                            này để xác định khoảng cách hay phương án vận hành.
+                        </p>
+                    </div>
+
+                    <div class="form-grid">
+                        <label class="field">
+                            Chiều cao / cấu trúc khu vực lắp đặt
+                            <input name="structureInfo" type="text" maxlength="160"
+                                   placeholder="Mô tả sơ bộ nếu đã biết" />
+                        </label>
+
+                        <label class="field">
+                            Người phụ trách kỹ thuật tại địa điểm
+                            <input name="siteTechnician" type="text" maxlength="100"
+                                   placeholder="Tên hoặc chức danh" />
+                        </label>
+
+                        <label class="field field-wide">
+                            Ghi chú, yêu cầu hoặc tài liệu đã có
+                            <textarea name="safetyNotes" rows="3" maxlength="700"
+                                      placeholder="Ví dụ: yêu cầu của địa điểm, giấy phép hoặc tài liệu cần được rà soát"></textarea>
+                        </label>
+                    </div>
+
+                    <fieldset class="safety-checklist">
+                        <legend>
+                            Vui lòng xác nhận các nội dung phù hợp trước khi gửi yêu cầu
+                            <span class="required">*</span>
+                        </legend>
+
+                        <label class="check-card">
+                            <input name="siteReview" type="checkbox" required />
+                            <span>
+                                <strong>Địa điểm và các yêu cầu áp dụng sẽ được rà soát.</strong>
+                                <small>Việc bố trí thiết bị chỉ thực hiện sau khi người phụ trách kiểm tra điều kiện thực tế và yêu cầu của nhà sản xuất, địa điểm.</small>
+                            </span>
+                        </label>
+
+                        <label class="check-card">
+                            <input name="emergencyPlan" type="checkbox" required />
+                            <span>
+                                <strong>Đơn vị tổ chức sẽ phối hợp về phương án ứng phó khẩn cấp.</strong>
+                                <small>Phương án, nhân sự và thiết bị hỗ trợ cần được xác nhận bởi người có chuyên môn trước sự kiện.</small>
+                            </span>
+                        </label>
+
+                        <label class="check-card">
+                            <input name="qualifiedOperator" type="checkbox" required />
+                            <span>
+                                <strong>Thiết bị sẽ do người có chuyên môn phù hợp phụ trách.</strong>
+                                <small>Không vận hành nếu chưa được đào tạo, chưa có phê duyệt cần thiết hoặc điều kiện tại chỗ chưa được xác nhận.</small>
+                            </span>
+                        </label>
+                    </fieldset>
+
+                    <div class="step-actions">
+                        <button class="secondary-button" type="button" data-previous="1">
+                            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                            Quay lại
+                        </button>
+
+                        <button class="primary-button next-button"
+                                type="button" data-next="3">
+                            Tiếp tục: thanh toán
+                            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+                        </button>
+                    </div>
+                </section>
+
+                <!-- BƯỚC 3: THANH TOÁN -->
+                <section class="form-step" data-step-panel="3" hidden>
+                    <div class="section-heading">
+                        <span class="material-symbols-outlined" aria-hidden="true">payments</span>
+                        <div>
+                            <h2 tabindex="-1">Hình thức thanh toán dự kiến</h2>
+                            <p>Chỉ ghi nhận lựa chọn để trao đổi. Trang demo không thu tiền và không xử lý giao dịch.</p>
+                        </div>
+                    </div>
+
+                    <fieldset class="payment-options">
+                        <legend>Chọn hình thức muốn trao đổi</legend>
+
+                        <label class="payment-card selected">
+                            <input type="radio" name="paymentMethod"
+                                   value="bank_transfer" checked />
+                            <span class="material-symbols-outlined" aria-hidden="true">account_balance</span>
+                            <span>
+                                <strong>Chuyển khoản</strong>
+                                <small>Chi tiết chỉ xác nhận qua kênh chính thức sau khi có báo giá.</small>
+                            </span>
+                        </label>
+
+                        <label class="payment-card">
+                            <input type="radio" name="paymentMethod" value="card" />
+                            <span class="material-symbols-outlined" aria-hidden="true">credit_card</span>
+                            <span>
+                                <strong>Thẻ doanh nghiệp</strong>
+                                <small>Tùy thuộc cổng thanh toán được xác nhận.</small>
+                            </span>
+                        </label>
+
+                        <label class="payment-card">
+                            <input type="radio" name="paymentMethod" value="credit" />
+                            <span class="material-symbols-outlined" aria-hidden="true">handshake</span>
+                            <span>
+                                <strong>Thỏa thuận công nợ</strong>
+                                <small>Cần xác nhận điều kiện và hợp đồng riêng.</small>
+                            </span>
+                        </label>
+                    </fieldset>
+
+                    <div class="review-notice">
+                        <span class="material-symbols-outlined" aria-hidden="true">fact_check</span>
+                        <div>
+                            <strong>Kiểm tra trước khi xác nhận</strong>
+                            <p>
+                                Đọc lại thông tin dự án, thiết bị và nội dung an toàn.
+                                Bản xem trước được tạo trong trình duyệt này; chưa gửi đến
+                                STAGEFX PRO và chưa phải đơn hàng.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="step-actions">
+                        <button class="secondary-button" type="button" data-previous="2">
+                            <span class="material-symbols-outlined" aria-hidden="true">arrow_back</span>
+                            Quay lại
+                        </button>
+
+                        <button class="primary-button" id="preview-order" type="submit">
+                            <span class="material-symbols-outlined" aria-hidden="true">visibility</span>
+                            Tạo bản xem trước
+                        </button>
+                    </div>
+                </section>
+
+                <p id="form-error" class="form-error" role="alert" hidden></p>
+            </form>
+
+            <div class="local-data-note">
+                <span class="material-symbols-outlined" aria-hidden="true">lock</span>
+                Dữ liệu nhập không được gửi lên máy chủ hoặc lưu vào trình duyệt bởi trang demo này.
+            </div>
+        </section>
+
+        <!-- TÓM TẮT THIẾT BỊ -->
+        <aside class="summary-column" aria-label="Tóm tắt yêu cầu">
+            <section class="summary-card">
+                <div class="summary-heading">
+                    <h2>Thiết bị trong yêu cầu</h2>
+                    <span id="summary-count"></span>
+                </div>
+
+                <div id="summary-items" class="summary-items"></div>
+
+                <div class="financial-rows">
+                    <div class="financial-row">
+                        <span>Tạm tính thiết bị</span>
+                        <strong id="subtotal"></strong>
+                    </div>
+                    <div class="financial-row">
+                        <span>Vận chuyển tham khảo</span>
+                        <strong id="shipping"></strong>
+                    </div>
+                    <div class="financial-row">
+                        <span>VAT 10% tham khảo</span>
+                        <strong id="vat"></strong>
+                    </div>
+                    <div id="deposit-row" class="financial-row deposit-row" hidden>
+                        <span>Tiền cọc thuê tạm tính</span>
+                        <strong id="deposit"></strong>
+                    </div>
+                    <div class="grand-total">
+                        <span>Tổng dự toán</span>
+                        <strong id="grand-total"></strong>
+                    </div>
+                </div>
+
+                <p class="estimate-note">
+                    Giá, phí giao hàng, VAT và tiền cọc trong trang demo chỉ là ước tính
+                    để tham khảo. Nhân viên cần xác nhận trước khi đặt hàng.
+                </p>
+            </section>
+
+            <section class="safety-support-card">
+                <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+                <div>
+                    <h2>Rà soát trước sự kiện</h2>
+                    <p>
+                        Đơn vị cung cấp và người phụ trách tại địa điểm cần xác nhận
+                        yêu cầu, hồ sơ và điều kiện an toàn phù hợp.
+                    </p>
+                </div>
+            </section>
+
+            <section class="contact-card">
+                <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
+                <div>
+                    <h2>Cần trao đổi trực tiếp?</h2>
+                    <p>Gọi để hỏi về danh mục và quy trình báo giá.</p>
+                    <a href="tel:0988683977">0988 683 977</a>
+                </div>
+            </section>
+        </aside>
+    </div>
+</main>
+
+<dialog id="preview-dialog" class="preview-dialog" aria-labelledby="preview-title">
+    <button id="close-preview" class="dialog-close" type="button"
+            aria-label="Đóng bản xem trước">
+        <span class="material-symbols-outlined" aria-hidden="true">close</span>
+    </button>
+
+    <div class="success-icon">
+        <span class="material-symbols-outlined" aria-hidden="true">description</span>
+    </div>
+
+    <span class="eyebrow">BẢN XEM TRƯỚC TRÊN THIẾT BỊ</span>
+    <h2 id="preview-title">Thông tin yêu cầu đã được kiểm tra</h2>
+    <p id="preview-order-id" class="preview-order-id"></p>
+
+    <p class="preview-warning">
+        Đây chỉ là bản xem trước cục bộ. Chưa có đơn hàng nào được gửi,
+        chưa có thanh toán và giỏ hàng vẫn được giữ nguyên.
+    </p>
+
+    <div id="preview-details" class="preview-details"></div>
+
+    <div class="dialog-actions">
+        <button id="close-preview-secondary" class="secondary-button" type="button">
+            Đóng
+        </button>
+
+        <a class="primary-button" href="tel:0988683977">
+            <span class="material-symbols-outlined" aria-hidden="true">call</span>
+            Liên hệ để xác nhận
+        </a>
+    </div>
+</dialog>
+
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/checkout.css")" />
+}
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/checkout.js")"></script>
+}

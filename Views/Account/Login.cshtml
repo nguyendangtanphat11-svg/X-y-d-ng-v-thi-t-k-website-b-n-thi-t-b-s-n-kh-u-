@@ -1,0 +1,139 @@
+﻿
+@{
+    ViewBag.Title = "Đăng nhập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="auth-page">
+    <section class="auth-panel" aria-labelledby="auth-title">
+
+        <div class="auth-intro">
+            <span class="auth-kicker">
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    verified_user
+                </span>
+                CỔNG THÔNG TIN KHÁCH HÀNG B2B
+            </span>
+
+            <a class="auth-brand"
+               href="@Url.Action("Index", "Home")"
+               aria-label="STAGEFX PRO - Trang chủ">
+                <span class="auth-brand-mark" aria-hidden="true">S</span>
+                <span>
+                    STAGEFX <b>PRO</b>
+                    <small>STAGE EFFECTS • B2B SOLUTIONS</small>
+                </span>
+            </a>
+
+            <h1 id="auth-title">
+                Chào mừng<br />
+                <span>quay trở lại.</span>
+            </h1>
+
+            <p>
+                Đăng nhập để tiếp tục theo dõi danh mục thiết bị
+                và chuẩn bị yêu cầu dự án của bạn.
+            </p>
+
+            <ul class="auth-benefits">
+                <li>
+                    <span class="material-symbols-outlined">inventory_2</span>
+                    Quản lý danh sách thiết bị quan tâm
+                </li>
+                <li>
+                    <span class="material-symbols-outlined">support_agent</span>
+                    Kết nối yêu cầu tư vấn dự án
+                </li>
+                <li>
+                    <span class="material-symbols-outlined">description</span>
+                    Chuẩn bị thông tin báo giá B2B
+                </li>
+            </ul>
+        </div>
+
+        <div class="auth-form-wrap">
+            <div class="auth-form-heading">
+                <span class="auth-eyebrow">TÀI KHOẢN STAGEFX PRO</span>
+                <h2>Đăng nhập</h2>
+                <p>Nhập thông tin tài khoản của bạn.</p>
+            </div>
+
+            @using (Html.BeginForm("Login", "Account",
+                FormMethod.Post, new { @class = "auth-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                <label for="login-email">Email</label>
+                <input id="login-email"
+                       name="email"
+                       type="email"
+                       autocomplete="email"
+                       placeholder="ten@congty.vn"
+                       required />
+
+                <label for="login-password">Mật khẩu</label>
+                <div class="auth-password-field">
+                    <input id="login-password"
+                           name="password"
+                           type="password"
+                           autocomplete="current-password"
+                           placeholder="Nhập mật khẩu"
+                           required />
+
+                    <button type="button"
+                            class="password-toggle"
+                            data-password-toggle="login-password"
+                            aria-label="Hiện mật khẩu"
+                            aria-pressed="false">
+                        <span class="material-symbols-outlined">
+                            visibility
+                        </span>
+                    </button>
+                </div>
+
+                <div class="auth-form-options">
+                    <label class="auth-checkbox">
+                        <input type="checkbox" name="remember" value="true" />
+                        Ghi nhớ trên thiết bị này
+                    </label>
+
+                    <a href="@Url.Action("Index", "Home")#tu-van">
+                        Cần hỗ trợ?
+                    </a>
+                </div>
+
+                <button class="auth-submit" type="submit">
+                    Đăng nhập
+                    <span class="material-symbols-outlined">
+                        arrow_forward
+                    </span>
+                </button>
+
+                @Html.ValidationSummary(
+                    false, "", new { @class = "auth-message" })
+            }
+
+            <p class="auth-switch">
+                Chưa có tài khoản?
+                <a href="@Url.Action("Register", "Account")">
+                    Tạo tài khoản mới
+                </a>
+            </p>
+
+            <p class="auth-demo-note">
+                <span class="material-symbols-outlined">info</span>
+                Vui lòng đăng nhập bằng tài khoản đã đăng ký.
+            </p>
+        </div>
+
+    </section>
+</main>
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/auth.css")" />
+}
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/auth.js")" defer></script>
+}

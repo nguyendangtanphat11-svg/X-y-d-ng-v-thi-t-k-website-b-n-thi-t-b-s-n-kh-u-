@@ -1,0 +1,160 @@
+﻿:root {
+    color-scheme: dark;
+    --background: #131313;
+    --page: #131313;
+    --surface: #1c1b1b;
+    --panel: #1c1b1b;
+    --surface-raised: #201f1f;
+    --panel-strong: #0e0e0e;
+    --panel-dark: #0e0e0e;
+    --surface-dark: #0e0e0e;
+    --border: #2e2e2e;
+    --border-soft: #262626;
+    --text: #f7f7f7;
+    --muted: #a3a3a3;
+    --amber: #e50920;
+    --red: #e50920;
+    --green: #10b981;
+    --blue: #ffb3ac;
+    font-family: "Be Vietnam Pro", Arial, sans-serif;
+}
+
+body {
+    background: var(--background);
+    color: var(--text);
+    font-family: "Be Vietnam Pro", Arial, sans-serif;
+}
+
+.page-shell,
+.page-container {
+    width: min(1440px, calc(100% - 40px));
+}
+
+.primary-button,
+.segment.active,
+.button-primary,
+.checkout-button,
+.step-button.active .step-number,
+.step-button.completed .step-number {
+    color: #fff;
+}
+
+    .primary-button,
+    .primary-button:hover,
+    .button-primary,
+    .button-primary:hover,
+    .checkout-button,
+    .checkout-button:hover {
+        border-color: #e50920;
+        background: #e50920;
+        color: #fff;
+    }
+
+        .checkout-button:hover,
+        .primary-button:hover,
+        .button-primary:hover {
+            background: #f02030;
+        }
+
+.item-sku,
+.item-type,
+.item-unit-price strong,
+.item-total,
+.promo-card h2 .material-symbols-outlined,
+.promo-form button,
+.total-row strong,
+.trust-card a,
+.price,
+.volume-tiers strong,
+.subtotal strong,
+.tab-button.active,
+.related-heading > a,
+.related-card-body strong,
+.choice-card:has(input:checked),
+.grand-total strong,
+.contact-card a {
+    color: #ff6675;
+}
+
+.item-type {
+    border-color: #8d1e2b;
+    background: #e509201f;
+}
+
+.item-total,
+.total-row strong,
+.price,
+.volume-tiers strong,
+.subtotal strong,
+.related-card-body strong,
+.grand-total strong {
+    color: #ff6675;
+}
+
+.promo-form button {
+    border-color: #4a2529;
+    background: #201f1f;
+}
+
+    .promo-form button:hover {
+        border-color: #8d1e2b;
+        background: #38151a;
+    }
+
+.tab-button.active {
+    border-bottom-color: #e50920;
+}
+
+.choice-card:has(input:checked) {
+    border-color: #8d1e2b;
+    background: #e5092014;
+}
+
+.cart-items,
+.promo-card,
+.summary-card,
+.trust-card,
+.empty-cart,
+.checkout-form,
+.safety-support-card,
+.contact-card {
+    background: var(--surface);
+}
+
+.filter-panel,
+.results-toolbar,
+.empty-state,
+.pagination,
+.bulk-cta,
+.purchase-card,
+.compliance-card,
+.technical-card {
+    background: var(--surface);
+}
+
+.cart-item:hover {
+    background: var(--surface-raised);
+}
+
+.site-shell-account:focus-visible,
+.site-shell-header a:focus-visible,
+.site-shell-header button:focus-visible,
+.site-shell-header input:focus-visible,
+.site-shell-footer a:focus-visible {
+    outline: 2px solid #ffb3ac;
+    outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+    .page-shell,
+    .page-container {
+        width: calc(100% - 32px);
+    }
+}
+
+@media (max-width: 420px) {
+    .page-shell,
+    .page-container {
+        width: calc(100% - 28px);
+    }
+}

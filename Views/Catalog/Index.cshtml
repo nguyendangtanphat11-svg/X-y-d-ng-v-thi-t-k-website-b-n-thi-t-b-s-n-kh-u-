@@ -1,0 +1,311 @@
+﻿
+@{
+    ViewBag.Title = "Danh mục thiết bị";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/catalog.css")" />
+}
+
+<section class="status-bar">
+    <div class="page-container status-inner">
+        <nav class="breadcrumbs" aria-label="Điều hướng">
+            <a href="@Url.Action("Index", "Home")">
+                <span class="material-symbols-outlined" aria-hidden="true">home</span>
+                Trang chủ
+            </a>
+            <span aria-hidden="true">/</span>
+            <span class="current">Thiết bị sân khấu</span>
+            <span id="sku-count" class="sku-count">0 SKU</span>
+        </nav>
+
+        <div class="status-items">
+            <span class="compliance-status">
+                <span class="material-symbols-outlined" aria-hidden="true">verified_user</span>
+                Hồ sơ an toàn xác nhận theo từng sản phẩm
+            </span>
+            <span class="warehouse-status">
+                <i aria-hidden="true"></i>
+                DANH MỤC THAM KHẢO
+            </span>
+        </div>
+    </div>
+</section>
+
+<section class="catalog-intro">
+    <div class="page-container intro-inner">
+        <div class="intro-heading">
+            <div class="eyebrow-row">
+                <span class="catalog-label">B2B CATALOG</span>
+                <span class="intro-kicker">GIẢI PHÁP THIẾT BỊ SÂN KHẤU</span>
+            </div>
+
+            <h1>THIẾT BỊ HIỆU ỨNG SÂN KHẤU CHUYÊN NGHIỆP</h1>
+
+            <p>
+                Tham khảo các dòng máy khói, haze, cold spark, CO₂ jet,
+                máy phun lửa và phụ kiện điều khiển cho sự kiện.
+            </p>
+
+            <p class="demo-note">
+                Giá, tồn kho và thông số bên dưới là dữ liệu mẫu để xem giao diện,
+                không phải báo giá hoặc thông số vận hành chính thức.
+            </p>
+        </div>
+
+        <div class="service-summary" aria-label="Chính sách tham khảo">
+            <div>
+                <span>HỖ TRỢ DỰ ÁN</span>
+                <strong>Tư vấn kỹ thuật</strong>
+            </div>
+
+            <div class="summary-divider" aria-hidden="true"></div>
+
+            <div>
+                <span>CHÍNH SÁCH</span>
+                <strong>Xác nhận khi báo giá</strong>
+            </div>
+        </div>
+
+        <form id="search-form" class="search-panel" role="search">
+            <label class="search-field" for="search-input">
+                <span class="material-symbols-outlined" aria-hidden="true">manage_search</span>
+
+                <input id="search-input"
+                       type="search"
+                       placeholder="Tìm theo tên, mã SKU, danh mục hoặc thông số..."
+                       autocomplete="off" />
+
+                <button id="clear-search"
+                        class="clear-search"
+                        type="button"
+                        aria-label="Xóa từ khóa"
+                        hidden>
+                    Xóa
+                </button>
+            </label>
+
+            <div class="quick-searches" aria-label="Từ khóa tìm nhanh">
+                <span class="quick-label">Tìm nhanh:</span>
+
+                <button type="button" data-query="máy khói">
+                    <span class="material-symbols-outlined" aria-hidden="true">cloud</span>
+                    Máy khói
+                </button>
+
+                <button type="button" data-query="cold spark">
+                    <span class="material-symbols-outlined" aria-hidden="true">flare</span>
+                    Cold spark
+                </button>
+
+                <button type="button" data-query="phun lửa">
+                    <span class="material-symbols-outlined" aria-hidden="true">local_fire_department</span>
+                    Phun lửa
+                </button>
+
+                <button type="button" data-query="co2">
+                    <span class="material-symbols-outlined" aria-hidden="true">air</span>
+                    CO₂
+                </button>
+            </div>
+        </form>
+    </div>
+</section>
+
+<main class="page-container catalog-layout">
+    <aside class="filter-panel" aria-labelledby="filter-heading">
+        <div class="filter-heading">
+            <h2 id="filter-heading">
+                <span class="material-symbols-outlined" aria-hidden="true">tune</span>
+                BỘ LỌC KỸ THUẬT
+            </h2>
+
+            <button id="reset-filters" class="reset-button" type="button">
+                <span class="material-symbols-outlined" aria-hidden="true">restart_alt</span>
+                Đặt lại
+            </button>
+        </div>
+
+        <fieldset class="filter-group category-filter">
+            <legend>DANH MỤC THIẾT BỊ</legend>
+
+            <label><input type="radio" name="category" value="all" checked /><span>Tất cả danh mục</span></label>
+            <label><input type="radio" name="category" value="flame" /><span>Máy phun lửa DMX</span></label>
+            <label><input type="radio" name="category" value="fog-haze" /><span>Máy tạo khói &amp; Haze</span></label>
+            <label><input type="radio" name="category" value="spark" /><span>Cold spark</span></label>
+            <label><input type="radio" name="category" value="confetti" /><span>Máy bắn giấy</span></label>
+            <label><input type="radio" name="category" value="co2" /><span>Thiết bị CO₂ Jet</span></label>
+            <label><input type="radio" name="category" value="controller" /><span>Điều khiển &amp; phụ kiện</span></label>
+        </fieldset>
+
+        <fieldset class="filter-group price-filter">
+            <legend>KHOẢNG GIÁ TỐI ĐA</legend>
+
+            <div class="price-heading">
+                <span>Giá B2B tham khảo</span>
+                <output id="price-output" for="price-range"></output>
+            </div>
+
+            <input id="price-range"
+                   type="range"
+                   min="5000000"
+                   max="50000000"
+                   step="1000000"
+                   value="50000000" />
+
+            <div class="price-presets">
+                <button type="button" data-max-price="10000000">Dưới 10 triệu</button>
+                <button type="button" data-max-price="20000000">Dưới 20 triệu</button>
+                <button type="button" data-max-price="30000000">Dưới 30 triệu</button>
+                <button type="button" data-max-price="50000000">Tất cả mức giá</button>
+            </div>
+        </fieldset>
+
+        <fieldset class="filter-group extra-filter">
+            <legend>BỘ LỌC BỔ SUNG</legend>
+
+            <label>
+                <input id="stock-only" type="checkbox" />
+                <span>Chỉ hiện sản phẩm còn hàng</span>
+            </label>
+
+            <label>
+                <input id="dmx-only" type="checkbox" />
+                <span>Tương thích DMX512</span>
+            </label>
+        </fieldset>
+
+        <section class="support-card" aria-label="Liên hệ kỹ thuật">
+            <h2>
+                <span class="material-symbols-outlined" aria-hidden="true">support_agent</span>
+                TƯ VẤN DỰ ÁN
+            </h2>
+
+            <p>
+                Liên hệ để xác nhận khả năng tương thích, hồ sơ an toàn
+                và báo giá theo nhu cầu sự kiện.
+            </p>
+
+            <a href="tel:0988683977">
+                <span class="material-symbols-outlined" aria-hidden="true">call</span>
+                0988 683 977
+            </a>
+        </section>
+    </aside>
+
+    <section id="catalog-results" class="results-column" aria-label="Danh sách thiết bị">
+        <div class="results-toolbar">
+            <p id="results-summary" class="results-summary" aria-live="polite"></p>
+
+            <div class="toolbar-actions">
+                <label class="sort-control" for="sort-select">
+                    SẮP XẾP
+
+                    <select id="sort-select">
+                        <option value="bestseller">Phổ biến</option>
+                        <option value="price-asc">Giá: thấp đến cao</option>
+                        <option value="price-desc">Giá: cao đến thấp</option>
+                        <option value="name-az">Tên: A - Z</option>
+                    </select>
+                </label>
+
+                <div class="view-switch" role="group" aria-label="Kiểu hiển thị">
+                    <button type="button"
+                            class="view-button active"
+                            data-view="grid"
+                            aria-label="Hiển thị dạng lưới"
+                            aria-pressed="true">
+                        <span class="material-symbols-outlined" aria-hidden="true">grid_view</span>
+                    </button>
+
+                    <button type="button"
+                            class="view-button"
+                            data-view="list"
+                            aria-label="Hiển thị dạng danh sách"
+                            aria-pressed="false">
+                        <span class="material-symbols-outlined" aria-hidden="true">view_list</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="product-list" class="product-list grid-view"></div>
+
+        <section id="empty-state" class="empty-state" hidden>
+            <span class="material-symbols-outlined" aria-hidden="true">search_off</span>
+
+            <h2>Không tìm thấy thiết bị phù hợp</h2>
+
+            <p>
+                Thử đổi từ khóa hoặc nới bộ lọc giá, danh mục và tình trạng hàng.
+            </p>
+
+            <button id="empty-reset" type="button" class="primary-button">
+                Xóa bộ lọc
+            </button>
+        </section>
+
+        <nav id="pagination"
+             class="pagination"
+             aria-label="Phân trang sản phẩm">
+        </nav>
+
+        <section class="bulk-cta">
+            <div class="bulk-copy">
+                <div class="bulk-badges">
+                    <span>B2B ENTERPRISE</span>
+
+                    <span>
+                        <span class="material-symbols-outlined" aria-hidden="true">receipt_long</span>
+                        Báo giá theo dự án
+                    </span>
+                </div>
+
+                <h2>CẦN BÁO GIÁ THIẾT BỊ CHO TOUR?</h2>
+
+                <p>
+                    Gửi nhu cầu để đội ngũ tư vấn xác nhận sản phẩm, số lượng,
+                    lịch cung ứng và chính sách phù hợp.
+                </p>
+            </div>
+
+            <div class="bulk-actions">
+                <a class="primary-button"
+                   href="@Url.Action("Index", "Home")#tu-van">
+                    <span class="material-symbols-outlined" aria-hidden="true">request_quote</span>
+                    Yêu cầu báo giá
+                </a>
+
+                <button id="download-catalog" class="secondary-button" type="button">
+                    <span class="material-symbols-outlined" aria-hidden="true">download</span>
+                    Tải danh mục mẫu
+                </button>
+            </div>
+        </section>
+    </section>
+</main>
+
+<dialog id="product-dialog" class="product-dialog" aria-labelledby="dialog-name">
+    <form method="dialog">
+        <button class="dialog-close" aria-label="Đóng chi tiết">
+            <span class="material-symbols-outlined" aria-hidden="true">close</span>
+        </button>
+    </form>
+
+    <div id="dialog-content"></div>
+</dialog>
+
+<div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+
+@section scripts {
+    <script>
+        window.STAGEFX_PRODUCT_DETAILS_URL =
+            '@Url.Action("Details", "Product", new { id = "__PRODUCT_ID__" })';
+    </script>
+
+    <script src="@Url.Content("~/Scripts/catalog.js")"></script>
+}
+

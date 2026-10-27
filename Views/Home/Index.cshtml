@@ -1,33 +1,448 @@
-﻿@{
-    ViewBag.Title = "Home Page";
+﻿
+@{
+    ViewBag.Title = "STAGEFX PRO | Giải pháp hiệu ứng sân khấu";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<main>
-    <section class="row" aria-labelledby="aspnetTitle">
-        <h1 id="title">ASP.NET</h1>
-        <p class="lead">ASP.NET is a free web framework for building great Web sites and Web applications using HTML, CSS and JavaScript.</p>
-        <p><a href="https://asp.net" class="btn btn-primary btn-md">Learn more &raquo;</a></p>
+<main id="home">
+    <section class="hero">
+        <div class="hero-bg"></div>
+        <div class="hero-scrim"></div>
+
+        <div class="container hero-content">
+            <div class="status-pill">
+                <i></i> DMX512 CONTROLLED
+                <span>|</span> CE/ROHS VERIFIED
+                <span>|</span> SYSTEM REV 4.2
+            </div>
+
+            <h1>GIẢI PHÁP HIỆU ỨNG SÂN KHẤU <em>CHUYÊN NGHIỆP</em></h1>
+
+            <p class="hero-copy">
+                Thiết bị hiệu ứng hiện đại – Nâng tầm mọi sự kiện, đại nhạc hội
+                &amp; sân khấu truyền hình đỉnh cao với kiểm soát DMX chính xác
+                và tiêu chuẩn an toàn biểu diễn.
+            </p>
+
+            <div class="hero-actions">
+                <button class="btn btn-primary" type="button" data-scroll="#danh-muc">
+                    Khám phá thiết bị <span>→</span>
+                </button>
+
+                <button class="btn btn-secondary" type="button" data-scroll="#tu-van">
+                    <span class="material-symbols-outlined">support_agent</span>
+                    Nhận tư vấn B2B
+                </button>
+
+                <span class="cert-note">
+                    <span class="material-symbols-outlined">verified_user</span>
+                    Hồ sơ CO/CQ &amp; PCCC đầy đủ
+                </span>
+            </div>
+
+            <div class="stats">
+                <div class="stat">
+                    <span class="material-symbols-outlined red">stadium</span>
+                    <div><strong>500+</strong><small>Dự án đại nhạc hội toàn quốc</small></div>
+                </div>
+                <div class="stat">
+                    <span class="material-symbols-outlined green">verified</span>
+                    <div><strong>100%</strong><small>Chuẩn an toàn CE / RoHS / ISO</small></div>
+                </div>
+                <div class="stat">
+                    <span class="material-symbols-outlined peach">published_with_changes</span>
+                    <div><strong>24 Tháng</strong><small>Bảo hành linh kiện tận nơi</small></div>
+                </div>
+                <div class="stat">
+                    <span class="material-symbols-outlined red">engineering</span>
+                    <div><strong>24/7 Live</strong><small>Kỹ sư trực chiến hiện trường</small></div>
+                </div>
+            </div>
+        </div>
     </section>
 
-    <div class="row">
-        <section class="col-md-4" aria-labelledby="gettingStartedTitle">
-            <h2 id="gettingStartedTitle">Getting started</h2>
-            <p>
-                ASP.NET MVC gives you a powerful, patterns-based way to build dynamic websites that
-                enables a clean separation of concerns and gives you full control over markup
-                for enjoyable, agile development.
+    <section class="trust section-dark">
+        <div class="container trust-grid">
+            <article class="trust-card">
+                <div class="trust-top">
+                    <span class="material-symbols-outlined red">precision_manufacturing</span>
+                    <code>PIL-01</code>
+                </div>
+                <h3>Thiết bị chuyên nghiệp</h3>
+                <p>Thiết bị chuẩn touring, linh kiện công nghiệp chịu tải cao trong suốt show diễn.</p>
+            </article>
+
+            <article class="trust-card">
+                <div class="trust-top">
+                    <span class="material-symbols-outlined orange">analytics</span>
+                    <code>PIL-02</code>
+                </div>
+                <h3>Thông số minh bạch</h3>
+                <p>Công khai DMX512 profile, áp suất khí nén, công suất và chu kỳ vận hành.</p>
+            </article>
+
+            <article class="trust-card">
+                <div class="trust-top">
+                    <span class="material-symbols-outlined green">support_agent</span>
+                    <code>PIL-03</code>
+                </div>
+                <h3>Hỗ trợ kỹ thuật 24/7</h3>
+                <p>Đội ngũ kỹ thuật hỗ trợ vận hành tour, xử lý DMX và kiểm tra an toàn tại chỗ.</p>
+            </article>
+
+            <article class="trust-card">
+                <div class="trust-top">
+                    <span class="material-symbols-outlined peach">local_shipping</span>
+                    <code>PIL-04</code>
+                </div>
+                <h3>Giao hàng theo lịch hẹn</h3>
+                <p>Vận chuyển flight-case chuyên dụng đến địa điểm sự kiện theo kế hoạch.</p>
+            </article>
+        </div>
+    </section>
+
+    <section class="section categories" id="danh-muc">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">⌁ HỆ THỐNG PHÂN LOẠI PHẦN CỨNG</span>
+                    <h2>DANH MỤC THIẾT BỊ SÂN KHẤU</h2>
+                </div>
+                <p>Các dòng máy touring tương thích hệ thống điều khiển GrandMA2, GrandMA3 và Avolites.</p>
+            </div>
+
+            <div class="category-grid">
+                <article class="category-card" data-category="flame">
+                    <div class="category-image img-flame"><span>FLAME-DMX</span></div>
+                    <div class="category-body">
+                        <h3>Máy Phun Lửa Sân Khấu</h3>
+                        <p>Hệ thống Flame Projector điều khiển DMX512, tích hợp cảm biến an toàn.</p>
+                        <div class="card-bottom">
+                            <small>8 MODEL CÓ SẴN</small>
+                            <a class="text-button" href="@Url.Action("Index", "Catalog", new { q = "flame" })">Xem thiết bị →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="category-card" data-category="fog">
+                    <div class="category-image img-fog"><span>FOG / HAZE</span></div>
+                    <div class="category-body">
+                        <h3>Máy Tạo Khói &amp; Haze</h3>
+                        <p>Tạo hiệu ứng không gian, làm nổi bật tia sáng sân khấu và ánh đèn.</p>
+                        <div class="card-bottom">
+                            <small>12 MODEL CÓ SẴN</small>
+                            <a class="text-button" href="@Url.Action("Index", "Catalog", new { q = "may khoi" })">Xem thiết bị →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="category-card" data-category="spark">
+                    <div class="category-image img-spark"><span>COLD SPARK</span></div>
+                    <div class="category-body">
+                        <h3>Pháo Sáng Cold Spark</h3>
+                        <p>Hiệu ứng tia sáng sân khấu phù hợp chương trình biểu diễn và sự kiện.</p>
+                        <div class="card-bottom">
+                            <small>6 MODEL CÓ SẴN</small>
+                            <a class="text-button" href="@Url.Action("Index", "Catalog", new { q = "spark" })">Xem thiết bị →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="category-card" data-category="co2">
+                    <div class="category-image img-co2"><span>CO₂ JET</span></div>
+                    <div class="category-body">
+                        <h3>CO₂ Jet</h3>
+                        <p>Hiệu ứng luồng khí CO₂ mạnh mẽ cho sân khấu và đại nhạc hội.</p>
+                        <div class="card-bottom">
+                            <small>5 MODEL CÓ SẴN</small>
+                            <a class="text-button" href="@Url.Action("Index", "Catalog", new { q = "co2" })">Xem thiết bị →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="category-card" data-category="confetti">
+                    <div class="category-image img-confetti"><span>CONFETTI</span></div>
+                    <div class="category-body">
+                        <h3>Máy Bắn Giấy</h3>
+                        <p>Tạo khoảnh khắc cao trào với hiệu ứng giấy màu cho sự kiện trực tiếp.</p>
+                        <div class="card-bottom">
+                            <small>9 MODEL CÓ SẴN</small>
+                            <a class="text-button" href="@Url.Action("Index", "Catalog", new { q = "may ban giay" })">Xem thiết bị →</a>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="category-card" data-category="control">
+                    <div class="category-image img-control"><span>DMX CONTROL</span></div>
+                    <div class="category-body">
+                        <h3>Điều Khiển &amp; Phụ Kiện</h3>
+                        <p>Phụ kiện kết nối và điều khiển hỗ trợ tích hợp hệ thống hiệu ứng.</p>
+                        <div class="card-bottom">
+                            <small>PHỤ KIỆN CHUYÊN DỤNG</small>
+                            <a class="text-button" href="@Url.Action("Index", "Catalog", new { q = "dieu khien" })">Xem thiết bị →</a>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="featured section-dark" id="giai-phap-noi-bat">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">THIẾT BỊ ĐƯỢC QUAN TÂM</span>
+                    <h2>GIẢI PHÁP NỔI BẬT</h2>
+                </div>
+                <p>Danh mục tham khảo dành cho đơn vị tổ chức sự kiện, agency và nhà thầu sân khấu.</p>
+                <a class="featured-catalog-link" href="@Url.Action("Index", "Catalog")">
+                    Xem toàn bộ thiết bị <span aria-hidden="true">→</span>
+                </a>
+            </div>
+
+            <div class="filters" role="group" aria-label="Lọc thiết bị">
+                <button class="filter active" type="button" data-filter="all">Tất cả</button>
+                <button class="filter" type="button" data-filter="fog">Khói / Haze</button>
+                <button class="filter" type="button" data-filter="flame">Phun lửa</button>
+                <button class="filter" type="button" data-filter="co2">CO₂ Jet</button>
+            </div>
+
+            <div class="product-grid" id="productGrid">
+                <article class="product-card" data-product-category="fog">
+                    <div class="product-visual product-fog"><span class="product-tag">BÁN CHẠY</span></div>
+                    <div class="product-info">
+                        <small>FX-FOG-200</small>
+                        <h3>
+                            <a href="@Url.Action("Index", "Catalog", new { q = "may khoi touring 2000w" })">
+                                Professional Fog Machine 2000W
+                            </a>
+                        </h3>
+                        <p>DMX512 · 2000W · Touring Grade</p>
+                        <div class="product-bottom">
+                            <strong>Liên hệ báo giá</strong>
+                            <button class="add-button" type="button"
+                                    data-product="Professional Fog Machine 2000W"
+                                    aria-label="Yêu cầu báo giá">
+                                ＋
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-product-category="flame">
+                    <div class="product-visual product-flame"><span class="product-tag">PRO SERIES</span></div>
+                    <div class="product-info">
+                        <small>FX-FLM-10</small>
+                        <h3>
+                            <a href="@Url.Action("Index", "Catalog", new { q = "flame" })">
+                                DMX Flame Projector
+                            </a>
+                        </h3>
+                        <p>DMX512 · Điều khiển chuyên dụng</p>
+                        <div class="product-bottom">
+                            <strong>Liên hệ báo giá</strong>
+                            <button class="add-button" type="button"
+                                    data-product="DMX Flame Projector"
+                                    aria-label="Yêu cầu báo giá">
+                                ＋
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-product-category="co2">
+                    <div class="product-visual product-co2"><span class="product-tag">TOURING</span></div>
+                    <div class="product-info">
+                        <small>FX-CO2-300</small>
+                        <h3>
+                            <a href="@Url.Action("Index", "Catalog", new { q = "co2" })">
+                                CO₂ Jet Professional
+                            </a>
+                        </h3>
+                        <p>DMX512 · Touring Grade</p>
+                        <div class="product-bottom">
+                            <strong>Liên hệ báo giá</strong>
+                            <button class="add-button" type="button"
+                                    data-product="CO2 Jet Professional"
+                                    aria-label="Yêu cầu báo giá">
+                                ＋
+                            </button>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="product-card" data-product-category="fog">
+                    <div class="product-visual product-haze"><span class="product-tag">STAGE SERIES</span></div>
+                    <div class="product-info">
+                        <small>FX-HAZE-1500</small>
+                        <h3>
+                            <a href="@Url.Action("Index", "Catalog", new { q = "haze 1500" })">
+                                Touring Haze Generator
+                            </a>
+                        </h3>
+                        <p>DMX512 · Công suất 1500W</p>
+                        <div class="product-bottom">
+                            <strong>Liên hệ báo giá</strong>
+                            <button class="add-button" type="button"
+                                    data-product="Touring Haze Generator"
+                                    aria-label="Yêu cầu báo giá">
+                                ＋
+                            </button>
+                        </div>
+                    </div>
+                </article>
+            </div>
+
+            <p class="demo-note">
+                * Sản phẩm và thông số trên trang mẫu là dữ liệu minh họa; báo giá thực tế được xác nhận theo cấu hình dự án.
             </p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301865">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="librariesTitle">
-            <h2 id="librariesTitle">Get more libraries</h2>
-            <p>NuGet is a free Visual Studio extension that makes it easy to add, remove, and update libraries and tools in Visual Studio projects.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301866">Learn more &raquo;</a></p>
-        </section>
-        <section class="col-md-4" aria-labelledby="hostingTitle">
-            <h2 id="hostingTitle">Web Hosting</h2>
-            <p>You can easily find a web hosting company that offers the right mix of features and price for your applications.</p>
-            <p><a class="btn btn-outline-dark" href="https://go.microsoft.com/fwlink/?LinkId=301867">Learn more &raquo;</a></p>
-        </section>
-    </div>
+        </div>
+    </section>
+
+    <section class="solutions section" id="giai-phap">
+        <div class="container solution-layout">
+            <div class="solution-art">
+                <div class="art-label">STAGEFX / FIELD OPERATIONS</div>
+                <div class="art-caption">
+                    <strong>PRECISION IN EVERY SHOW</strong>
+                    <span>DMX512 • TOURING • SAFETY</span>
+                </div>
+            </div>
+
+            <div class="solution-copy">
+                <span class="eyebrow">ĐỒNG HÀNH CÙNG ĐƠN VỊ TỔ CHỨC</span>
+                <h2>GIẢI PHÁP HIỆU ỨNG CHO MỌI QUY MÔ SỰ KIỆN</h2>
+                <p>
+                    STAGEFX PRO hỗ trợ lựa chọn thiết bị, tư vấn cấu hình điều khiển,
+                    lập kế hoạch vận chuyển và phối hợp kỹ thuật theo lịch trình sự kiện.
+                </p>
+
+                <ul>
+                    <li><span>✓</span> Tư vấn cấu hình theo quy mô sân khấu</li>
+                    <li><span>✓</span> Hỗ trợ tích hợp điều khiển DMX512</li>
+                    <li><span>✓</span> Lên kế hoạch giao nhận thiết bị</li>
+                    <li><span>✓</span> Hồ sơ kỹ thuật và checklist nghiệm thu</li>
+                </ul>
+
+                <button class="btn btn-primary" type="button" data-scroll="#tu-van">
+                    Trao đổi dự án <span>→</span>
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <section class="testimonials section-dark" id="doi-tac">
+        <div class="container">
+            <div class="section-heading">
+                <div>
+                    <span class="eyebrow">ĐỐI TÁC &amp; KHÁCH HÀNG</span>
+                    <h2>ĐỐI TÁC VÀ ĐẠO DIỄN NÓI GÌ</h2>
+                </div>
+                <p>Trải nghiệm hợp tác trong quá trình chuẩn bị và vận hành sự kiện.</p>
+            </div>
+
+            <div class="quote-grid">
+                <blockquote>
+                    <div class="stars">★★★★★</div>
+                    <p>“Quy trình tư vấn rõ ràng, thông số thiết bị được cung cấp đầy đủ để đội ngũ kỹ thuật lên phương án sân khấu.”</p>
+                    <footer>
+                        <span class="quote-avatar">EA</span>
+                        <span><b>Event Agency</b><small>Đối tác tổ chức sự kiện</small></span>
+                    </footer>
+                </blockquote>
+
+                <blockquote>
+                    <div class="stars">★★★★★</div>
+                    <p>“Việc phối hợp lịch giao nhận và kiểm tra thiết bị giúp đội ngũ sản xuất chủ động hơn trước giờ tổng duyệt.”</p>
+                    <footer>
+                        <span class="quote-avatar">SP</span>
+                        <span><b>Stage Production</b><small>Đội ngũ sản xuất sân khấu</small></span>
+                    </footer>
+                </blockquote>
+
+                <blockquote>
+                    <div class="stars">★★★★★</div>
+                    <p>“Đội ngũ tư vấn hỗ trợ lựa chọn cấu hình phù hợp với yêu cầu kỹ thuật và quy mô chương trình.”</p>
+                    <footer>
+                        <span class="quote-avatar">LE</span>
+                        <span><b>Live Event Team</b><small>Đối tác sự kiện trực tiếp</small></span>
+                    </footer>
+                </blockquote>
+            </div>
+
+            <p class="demo-note">* Các nhận xét trên là nội dung minh họa cho giao diện mẫu.</p>
+        </div>
+    </section>
+
+    <section class="consult section" id="tu-van">
+        <div class="container consult-layout">
+            <div class="consult-copy">
+                <span class="eyebrow">B2B PROJECT CONSULTATION</span>
+                <h2>BẮT ĐẦU DỰ ÁN SÂN KHẤU CỦA BẠN</h2>
+                <p>
+                    Gửi thông tin cơ bản, đội ngũ STAGEFX PRO sẽ liên hệ trao đổi nhu cầu,
+                    cấu hình thiết bị và phương án triển khai.
+                </p>
+
+                <div class="contact-line">
+                    <span class="material-symbols-outlined">call</span>
+                    <div>
+                        <small>HOTLINE TƯ VẤN</small>
+                        <a href="tel:0988683977">0988 683 977</a>
+                    </div>
+                </div>
+
+                <p class="response-note">
+                    Kỹ sư phản hồi phương án và báo giá chi tiết trong vòng 15 phút
+                    (theo thông tin giới thiệu mẫu).
+                </p>
+            </div>
+
+            <form class="consult-form" id="consultForm">
+                <h3>Yêu cầu tư vấn kỹ thuật</h3>
+                <p>Thông tin của quý đơn vị</p>
+
+                <label for="companyName">Tên công ty / đơn vị</label>
+                <input id="companyName" name="companyName" required
+                       placeholder="Ví dụ: ABC Event Agency" />
+
+                <label for="phone">Số điện thoại liên hệ</label>
+                <input id="phone" name="phone" type="tel" required
+                       pattern="[0-9+() .-]{9,18}"
+                       placeholder="Nhập số điện thoại" />
+
+                <label for="scale">Quy mô dự án</label>
+                <select id="scale" name="scale" required>
+                    <option value="">Chọn quy mô sự kiện</option>
+                    <option>Hội nghị / sự kiện doanh nghiệp</option>
+                    <option>Sân khấu vừa</option>
+                    <option>Đại nhạc hội / sân vận động</option>
+                    <option>Tour diễn nhiều địa điểm</option>
+                    <option>Khác / cần tư vấn</option>
+                </select>
+
+                <input type="hidden" id="requestedProduct" name="requestedProduct" />
+
+                <button class="btn btn-primary form-submit" type="submit">
+                    Gửi yêu cầu tư vấn <span>→</span>
+                </button>
+
+                <p class="form-message" id="formMessage"
+                   role="status" aria-live="polite"></p>
+
+                <small class="privacy-note">
+                    Bằng việc gửi biểu mẫu, bạn đồng ý để đội ngũ liên hệ về yêu cầu dự án.
+                </small>
+            </form>
+        </div>
+    </section>
 </main>
+
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/home.css")" />
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/home-links.css")" />
+}
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/home.js")" defer></script>
+}
