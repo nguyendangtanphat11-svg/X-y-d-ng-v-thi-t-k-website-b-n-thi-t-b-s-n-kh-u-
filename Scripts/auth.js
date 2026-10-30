@@ -44,40 +44,41 @@ function initializePasswordToggles() {
 }
 
 /**
- * Khởi tạo và kiểm tra biểu mẫu đăng nhập/đăng ký.
+ * Kiểm tra biểu mẫu trước khi gửi lên máy chủ.
  */
 function initializeAuthForms() {
-    const authForms = document.querySelectorAll('[data-auth-form]');
+    const authForms = document.querySelectorAll('.auth-form');
 
     authForms.forEach((form) => {
         form.addEventListener('submit', (event) => {
-            event.preventDefault();
-
             clearAuthMessage(form);
 
+            // Kiểm tra các trường HTML có required, type...
             if (!form.reportValidity()) {
+                event.preventDefault();
                 return;
             }
 
-            if (form.dataset.authForm === 'register') {
-                const isPasswordValid = validatePasswordConfirmation(form);
+            // Kiểm tra mật khẩu xác nhận khi đăng ký.
+            const isRegisterForm =
+                form.id === 'registerForm' ||
+                form.dataset.authForm === 'register';
 
-                if (!isPasswordValid) {
+            if (isRegisterForm) {
+                if (!validatePasswordConfirmation(form)) {
+                    event.preventDefault();
                     return;
                 }
             }
 
-            showAuthMessage(
-                form,
-                'Biểu mẫu hợp lệ. Đây là giao diện demo; dữ liệu chưa được gửi lên máy chủ.'
-            );
+            // Không gọi preventDefault ở đây.
+            // Form sẽ gửi POST đến AccountController.
         });
     });
 }
 
 /**
  * Kiểm tra mật khẩu và xác nhận mật khẩu.
- * Trả về true nếu hai trường khớp nhau.
  */
 function validatePasswordConfirmation(form) {
     const passwordInput = form.querySelector('#register-password');
@@ -88,12 +89,7 @@ function validatePasswordConfirmation(form) {
         !(confirmationInput instanceof HTMLInputElement)
     ) {
         console.error('Không tìm thấy trường mật khẩu hoặc xác nhận mật khẩu.');
-        showAuthMessage(
-            form,
-            'Không thể kiểm tra mật khẩu. Vui lòng tải lại trang.',
-            true
-        );
-        return false;
+        return true;
     }
 
     confirmationInput.setCustomValidity('');
@@ -102,6 +98,7 @@ function validatePasswordConfirmation(form) {
         confirmationInput.setCustomValidity('Mật khẩu xác nhận chưa khớp.');
         confirmationInput.reportValidity();
         confirmationInput.focus();
+
         return false;
     }
 
@@ -109,7 +106,30 @@ function validatePasswordConfirmation(form) {
 }
 
 /**
- * Xóa thông báo cũ và lỗi xác nhận mật khẩu khi người dùng nhập lại.
+ * Xóa lỗi xác nhận mật khẩu khi người dùng nhập lại.
+ */
+document.addEventListener('input', (event) => {
+    const target = event.target;
+
+    if (!(target instanceof HTMLInputElement)) {
+        return;
+    }
+
+    if (
+        target.id === 'register-confirm-password' ||
+        target.id === 'register-password'
+    ) {
+        const confirmationInput =
+            document.getElementById('register-confirm-password');
+
+        if (confirmationInput instanceof HTMLInputElement) {
+            confirmationInput.setCustomValidity('');
+        }
+    }
+});
+
+/**
+ * Xóa thông báo cũ.
  */
 function clearAuthMessage(form) {
     const message = form.querySelector('.auth-message');
@@ -118,32 +138,4 @@ function clearAuthMessage(form) {
         message.textContent = '';
         message.classList.remove('visible', 'error');
     }
-}
-
-document.addEventListener('input', (event) => {
-    const target = event.target;
-
-    if (!(target instanceof HTMLInputElement)) {
-        return;
-    }
-
-    if (target.id === 'register-confirm-password') {
-        target.setCustomValidity('');
-    }
-});
-
-/**
- * Hiển thị thông báo cho người dùng.
- */
-function showAuthMessage(form, text, isError = false) {
-    const message = form.querySelector('.auth-message');
-
-    if (!(message instanceof HTMLElement)) {
-        console.error('Không tìm thấy vùng thông báo của biểu mẫu tài khoản.');
-        return;
-    }
-
-    message.textContent = text;
-    message.classList.toggle('error', isError);
-    message.classList.add('visible');
 }

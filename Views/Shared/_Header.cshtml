@@ -2,12 +2,12 @@
 <header class="site-shell-header">
     <div class="site-shell-header-inner">
 
-        @* Logo thương hiệu *@
+        @* LOGO *@
         <a class="site-shell-brand"
            href="@Url.Action("Index", "Home")"
            aria-label="STAGEFX PRO - Trang chủ">
 
-            <span class="site-shell-brand-mark" aria-hidden="true">S</span>
+            <span class="site-shell-brand-mark">S</span>
 
             <span class="site-shell-brand-copy">
                 STAGEFX <b>PRO</b>
@@ -15,103 +15,148 @@
             </span>
         </a>
 
-        @* Nút menu trên thiết bị di động *@
+
+        @* MENU MOBILE *@
         <button class="site-shell-menu-toggle"
                 type="button"
                 aria-label="Mở menu"
                 aria-expanded="false"
                 aria-controls="site-shell-nav">
 
-            <span class="material-symbols-outlined"
-                  aria-hidden="true">menu</span>
+            <span class="material-symbols-outlined">menu</span>
         </button>
 
-        @* Điều hướng chính *@
+
+        @* ĐIỀU HƯỚNG *@
         <nav id="site-shell-nav"
              class="site-shell-nav"
              aria-label="Điều hướng chính">
 
-            <a href="@Url.Action("Index", "Home")">
-                Trang chủ
-            </a>
+            <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+            <a href="@Url.Action("Index", "Catalog")">Thiết bị</a>
+            <a href="@Url.Action("Index", "Home")#giai-phap">Giải pháp</a>
+            <a href="@Url.Action("Index", "Home")#doi-tac">Đối tác</a>
+            <a href="@Url.Action("Index", "Home")#tu-van">Liên hệ</a>
 
-            <a href="@Url.Action("Index", "Catalog")">
-                Thiết bị
-            </a>
-
-            <a href="@Url.Action("Index", "Home")#giai-phap">
-                Giải pháp
-            </a>
-
-            <a href="@Url.Action("Index", "Home")#doi-tac">
-                Đối tác
-            </a>
-
-            <a href="@Url.Action("Index", "Home")#tu-van">
-                Liên hệ
-            </a>
         </nav>
 
-        @* Các thao tác người dùng *@
-        <div class="site-shell-actions">
 
+        @* CÁC THAO TÁC *@
+    <div class="site-shell-actions">
+
+        @* TÌM KIẾM *@
+        <form class="site-shell-search"
+              action="@Url.Action("Index", "Catalog")"
+              method="get"
+              role="search">
+
+            <label class="site-shell-sr-only"
+                   for="site-shell-search-input">
+                Tìm thiết bị
+            </label>
+
+            <span class="material-symbols-outlined">search</span>
+
+            <input id="site-shell-search-input"
+                   name="q"
+                   type="search"
+                   placeholder="Tìm thiết bị..."
+                   autocomplete="off" />
+        </form>
+
+        @* TƯ VẤN B2B *@
+        <a class="site-shell-cta"
+           href="@Url.Action("Index", "Home")#tu-van">
+
+            Tư vấn B2B
+
+            <span class="material-symbols-outlined">
+                arrow_outward
+            </span>
+        </a>
+
+
+        @* GIỎ HÀNG *@
+        <a class="site-shell-cart"
+           href="@Url.Action("Index", "Cart")"
+           aria-label="Mở giỏ hàng">
+
+            <span class="material-symbols-outlined">shopping_cart</span>
+
+            <span class="site-shell-cart-label">Giỏ hàng</span>
+
+            <span id="site-cart-count"
+                  class="site-shell-cart-count">0</span>
+        </a>
+
+        @* TÀI KHOẢN *@
+        @if (Session["MaNguoiDung"] != null)
+        {
+            <div class="site-shell-user" id="siteUserDropdown">
+
+                <button type="button"
+                        class="site-shell-user-toggle"
+                        id="userDropdownToggle"
+                        aria-expanded="false"
+                        aria-controls="userDropdownMenu">
+
+                    <span class="material-symbols-outlined">
+                        account_circle
+                    </span>
+
+                    <span class="site-shell-user-name">
+                        @Session["HoTen"]
+                    </span>
+
+                    <span class="material-symbols-outlined user-chevron">
+                        expand_more
+                    </span>
+                </button>
+
+
+                <div class="site-shell-user-dropdown"
+                     id="userDropdownMenu">
+
+                    <a href="@Url.Action("Profile", "Account")"
+                       class="site-shell-dropdown-item">
+
+                        <span class="material-symbols-outlined">person</span>
+                        <span>Thông tin tài khoản</span>
+                    </a>
+
+                    <div class="site-shell-dropdown-divider"></div>
+
+                    <a href="@Url.Action("Logout", "Account")"
+                       class="site-shell-dropdown-item logout-item"
+                       onclick="return confirm('Bạn có chắc muốn đăng xuất?')">
+
+                        <span class="material-symbols-outlined">logout</span>
+                        <span>Đăng xuất</span>
+                    </a>
+
+                </div>
+            </div>
+        }
+        else
+        {
             <a class="site-shell-account"
-               href="@Url.Action("Login", "Account")"
-               aria-label="Đăng nhập hoặc tạo tài khoản">
+               href="@Url.Action("Login", "Account")">
 
-                <span class="material-symbols-outlined"
-                      aria-hidden="true">person</span>
-
-                <span>Tài khoản</span>
+                <span class="material-symbols-outlined">person</span>
+                <span>Đăng nhập</span>
             </a>
+        }
 
-            @* Tìm kiếm thiết bị *@
-            <form class="site-shell-search"
-                  action="@Url.Action("Index", "Catalog")"
-                  method="get"
-                  role="search">
 
-                <label class="site-shell-sr-only"
-                       for="site-shell-search-input">
-                    Tìm thiết bị
-                </label>
 
-                <span class="material-symbols-outlined"
-                      aria-hidden="true">search</span>
 
-                <input id="site-shell-search-input"
-                       name="q"
-                       type="search"
-                       placeholder="Tìm thiết bị..."
-                       autocomplete="off" />
-            </form>
 
-            @* Giỏ hàng *@
-            <a class="site-shell-cart"
-               href="@Url.Action("Index", "Cart")"
-               aria-label="Mở giỏ hàng">
 
-                <span class="material-symbols-outlined"
-                      aria-hidden="true">shopping_cart</span>
 
-                <span class="site-shell-cart-label">
-                    Giỏ hàng
-                </span>
 
-                <span id="site-cart-count"
-                      class="site-shell-cart-count">0</span>
-            </a>
 
-            @* Tư vấn B2B *@
-            <a class="site-shell-cta"
-               href="@Url.Action("Index", "Home")#tu-van">
 
-                Tư vấn B2B
+    </div>
 
-                <span class="material-symbols-outlined"
-                      aria-hidden="true">arrow_outward</span>
-            </a>
-
-        </div>
     </div>
 </header>

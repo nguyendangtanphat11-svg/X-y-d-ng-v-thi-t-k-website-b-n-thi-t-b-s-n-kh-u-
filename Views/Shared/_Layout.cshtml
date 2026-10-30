@@ -30,18 +30,34 @@
 
     @RenderSection("styles", required: false)
 </head>
+
 <body>
+
+    @* HEADER *@
     @Html.Partial("_Header")
 
+    @* NỘI DUNG TRANG *@
     <main id="main-content">
         @RenderBody()
     </main>
 
+    @* FOOTER *@
     @Html.Partial("_Footer")
 
+    @* JAVASCRIPT *@
     <script src="@Url.Content("~/Scripts/header.js")" defer></script>
-    <script src="@Url.Content("~/Scripts/footer.js")" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const yearElement = document.getElementById('site-shell-year');
+
+            if (yearElement) {
+                yearElement.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
 
     @RenderSection("scripts", required: false)
+
 </body>
 </html>

@@ -1,13 +1,26 @@
-﻿.site-shell-header {
+﻿
+/* =========================================================
+   STAGEFX PRO - HEADER
+   ASP.NET MVC 5 / RAZOR
+   DARK B2B - BLACK & RED
+========================================================= */
+
+
+/* =========================================================
+   0. HEADER BASE
+========================================================= */
+
+.site-shell-header {
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 1000;
     width: 100%;
-    border-bottom: 1px solid #2e2e2e;
-    background: #0e0e0ef5;
-    color: #f7f7f7;
+    color: #f5f5f5;
+    background: rgba(12, 12, 12, .97);
+    border-bottom: 1px solid #292929;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     font-family: "Be Vietnam Pro", Arial, sans-serif;
-    backdrop-filter: blur(14px);
 }
 
     .site-shell-header *,
@@ -19,208 +32,469 @@
 .site-shell-header-inner {
     display: flex;
     width: min(1440px, calc(100% - 64px));
-    min-height: 76px;
+    min-height: 78px;
     align-items: center;
     justify-content: space-between;
-    gap: 25px;
+    gap: 24px;
     margin: 0 auto;
 }
+
+
+/* =========================================================
+   1. BRAND
+========================================================= */
 
 .site-shell-brand {
     display: inline-flex;
     flex: 0 0 auto;
     align-items: center;
-    gap: 10px;
-    color: inherit;
+    gap: 11px;
+    color: #fff;
     text-decoration: none;
 }
 
 .site-shell-brand-mark {
     display: grid;
-    width: 39px;
-    height: 39px;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 42px;
     place-items: center;
-    border-radius: 6px;
-    background: #e50920;
+    border-radius: 7px;
+    background: linear-gradient(145deg, #f01830, #b90018);
+    box-shadow: 0 4px 15px rgba(229, 9, 32, .2);
     color: #fff;
-    font-size: 24px;
+    font-size: 25px;
     font-style: italic;
-    font-weight: 800;
+    font-weight: 900;
 }
 
 .site-shell-brand-copy {
     color: #fff;
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 800;
-    letter-spacing: .7px;
+    letter-spacing: .8px;
     white-space: nowrap;
 }
 
     .site-shell-brand-copy b {
-        color: #e50920;
+        color: #ed1c35;
     }
 
     .site-shell-brand-copy small {
         display: block;
-        margin-top: 2px;
-        color: #a3a3a3;
+        margin-top: 4px;
+        color: #858585;
         font-size: 8px;
         font-weight: 500;
-        letter-spacing: 1.15px;
+        letter-spacing: 1.25px;
     }
+
+
+/* =========================================================
+   2. NAVIGATION
+========================================================= */
 
 .site-shell-nav {
     display: flex;
+    flex: 1 1 auto;
     align-items: center;
-    gap: clamp(13px, 2vw, 27px);
+    justify-content: center;
+    gap: clamp(15px, 2vw, 30px);
 }
 
     .site-shell-nav a {
+        position: relative;
         display: inline-flex;
-        min-height: 44px;
+        min-height: 78px;
         align-items: center;
-        color: #c6c6c6;
-        font-size: 10px;
+        color: #bcbcbc;
+        font-size: 12px;
+        font-weight: 500;
         text-decoration: none;
-        transition: color .18s ease;
+        white-space: nowrap;
+        transition: color .2s ease;
     }
+
+        .site-shell-nav a::after {
+            position: absolute;
+            right: 0;
+            bottom: 19px;
+            left: 0;
+            height: 2px;
+            border-radius: 10px;
+            background: #e50920;
+            content: "";
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform .2s ease;
+        }
 
         .site-shell-nav a:hover,
         .site-shell-nav a[aria-current="page"] {
             color: #fff;
         }
 
+            .site-shell-nav a:hover::after,
+            .site-shell-nav a[aria-current="page"]::after {
+                transform: scaleX(1);
+            }
+
+
+/* =========================================================
+   3. ACTIONS
+========================================================= */
+
 .site-shell-actions {
     display: flex;
     flex: 0 0 auto;
     align-items: center;
-    gap: 9px;
+    gap: 13px;
 }
+
+
+/* =========================================================
+   4. LOGIN ACCOUNT
+========================================================= */
 
 .site-shell-account {
     display: inline-flex;
-    min-height: 40px;
+    min-height: 42px;
     align-items: center;
-    gap: 5px;
-    padding: 0 6px;
-    color: #d4d4d4;
-    font-size: 9px;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 9px;
+    border-radius: 6px;
+    color: #dedede;
+    font-size: 11px;
+    font-weight: 600;
     text-decoration: none;
-    transition: color .18s ease;
+    white-space: nowrap;
+    transition: background .2s ease, color .2s ease;
 }
 
     .site-shell-account:hover {
+        background: #1c1c1c;
         color: #fff;
     }
 
     .site-shell-account .material-symbols-outlined {
-        color: #ffb3ac;
-        font-size: 18px;
+        color: #f05262;
+        font-size: 21px;
     }
+
+
+/* =========================================================
+   5. LOGGED-IN ACCOUNT
+========================================================= */
+
+.site-shell-actions .site-shell-user {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 auto;
+    align-items: center;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+}
+
+/* Account button */
+
+.site-shell-user-toggle {
+    display: inline-flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    padding: 0 11px;
+    border: 1px solid #303030;
+    border-radius: 6px;
+    background: #181818;
+    color: #f5f5f5;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.4;
+    cursor: pointer;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+    .site-shell-user-toggle:hover,
+    .site-shell-user.active .site-shell-user-toggle {
+        border-color: #e50920;
+        background: #211416;
+        color: #fff;
+    }
+
+    .site-shell-user-toggle > .material-symbols-outlined:first-child {
+        color: #ed1c35;
+        font-size: 21px;
+    }
+
+.site-shell-user-name {
+    display: inline-block;
+    max-width: 130px;
+    overflow: hidden;
+    color: #f2f2f2;
+    font-size: 12px;
+    font-weight: 600;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.site-shell-user-toggle .user-chevron {
+    color: #999;
+    font-size: 18px;
+    transition: transform .2s ease;
+}
+
+.site-shell-user.active .user-chevron {
+    transform: rotate(180deg);
+}
+
+
+/* =========================================================
+   6. ACCOUNT DROPDOWN
+========================================================= */
+
+
+/* =========================================================
+   6. ACCOUNT DROPDOWN - FIX
+========================================================= */
+
+.site-shell-actions .site-shell-user {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+.site-shell-actions .site-shell-user-dropdown {
+    position: absolute !important;
+    top: calc(100% + 10px) !important;
+    right: 0 !important;
+    left: auto !important;
+    z-index: 99999 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    width: 250px !important;
+    min-width: 250px !important;
+    height: auto !important;
+    padding: 8px !important;
+    margin: 0 !important;
+    border: 1px solid #353535 !important;
+    border-top: 2px solid #e50920 !important;
+    border-radius: 8px !important;
+    background: #111111 !important;
+    color: #dedede !important;
+    box-shadow: 0 14px 35px rgba(0, 0, 0, .55) !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(8px);
+    transition: opacity .2s ease, transform .2s ease, visibility .2s ease;
+}
+
+.site-shell-actions .site-shell-user.active .site-shell-user-dropdown {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
+.site-shell-actions .site-shell-user-dropdown .site-shell-dropdown-item {
+    display: flex !important;
+    width: 100% !important;
+    min-height: 48px !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 0 13px !important;
+    border: 1px solid transparent !important;
+    border-radius: 5px !important;
+    background: transparent !important;
+    color: #dedede !important;
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 12px !important;
+    text-decoration: none !important;
+    white-space: nowrap !important;
+}
+
+    .site-shell-actions .site-shell-user-dropdown .site-shell-dropdown-item:hover {
+        border-color: #382126 !important;
+        background: #211416 !important;
+        color: #ffffff !important;
+    }
+
+.site-shell-actions .site-shell-user-dropdown .site-shell-dropdown-divider {
+    display: block !important;
+    width: calc(100% - 16px) !important;
+    height: 1px !important;
+    margin: 3px auto !important;
+    background: #303030 !important;
+    flex: 0 0 1px !important;
+}
+
+.site-shell-actions .site-shell-user-dropdown .logout-item {
+    color: #ff5968 !important;
+}
+
+
+
+/* =========================================================
+   7. SEARCH
+========================================================= */
 
 .site-shell-search {
     display: flex;
-    width: clamp(130px, 15vw, 195px);
-    min-height: 38px;
+    width: clamp(145px, 15vw, 205px);
+    min-height: 40px;
     align-items: center;
-    gap: 6px;
-    padding: 0 9px;
-    border: 1px solid #2e2e2e;
+    gap: 9px;
+    padding: 0 12px;
+    border: 1px solid #303030;
     border-radius: 6px;
-    background: #171717;
+    background: #181818;
+    transition: border-color .2s ease, background .2s ease;
 }
 
+    .site-shell-search:hover {
+        border-color: #505050;
+    }
+
     .site-shell-search:focus-within {
-        border-color: #777;
+        border-color: #e50920;
+        background: #1d1d1d;
     }
 
     .site-shell-search > .material-symbols-outlined {
-        color: #a3a3a3;
-        font-size: 17px;
+        flex: 0 0 auto;
+        color: #929292;
+        font-size: 19px;
     }
 
     .site-shell-search input {
         width: 100%;
         min-width: 0;
+        padding: 0;
         border: 0;
         outline: 0;
         background: transparent;
         color: #fff;
         font-family: inherit;
-        font-size: 10px;
+        font-size: 11px;
     }
 
         .site-shell-search input::placeholder {
-            color: #929292;
+            color: #777;
         }
+
+
+/* =========================================================
+   8. CART
+========================================================= */
 
 .site-shell-cart {
     display: inline-flex;
     min-height: 42px;
     align-items: center;
-    gap: 5px;
-    padding: 0 7px;
-    color: #e5e5e5;
-    font-size: 9px;
+    justify-content: center;
+    gap: 7px;
+    padding: 0 5px;
+    color: #dedede;
+    font-size: 11px;
+    font-weight: 500;
     text-decoration: none;
+    white-space: nowrap;
+    transition: color .2s ease;
 }
 
+    .site-shell-cart:hover {
+        color: #fff;
+    }
+
     .site-shell-cart > .material-symbols-outlined {
-        color: #ffb3ac;
-        font-size: 19px;
+        color: #f05262;
+        font-size: 22px;
     }
 
 .site-shell-cart-count {
     display: grid;
-    min-width: 19px;
-    height: 19px;
+    min-width: 20px;
+    height: 20px;
     place-items: center;
-    padding: 0 4px;
-    border-radius: 99px;
-    background: #292929;
+    padding: 0 5px;
+    border-radius: 20px;
+    background: #e50920;
     color: #fff;
-    font: 10px "Roboto Mono", monospace;
+    font-family: "Roboto Mono", monospace;
+    font-size: 10px;
+    font-weight: 700;
 }
+
+
+/* =========================================================
+   9. B2B CTA
+========================================================= */
 
 .site-shell-cta {
     display: inline-flex;
-    min-height: 40px;
+    min-height: 42px;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    padding: 0 11px;
+    gap: 7px;
+    padding: 0 14px;
+    border: 1px solid #e50920;
     border-radius: 5px;
     background: #e50920;
     color: #fff;
-    font-size: 9px;
+    font-size: 11px;
     font-weight: 700;
     text-decoration: none;
-    transition: background .18s ease;
+    white-space: nowrap;
+    transition: background .2s ease, border-color .2s ease, box-shadow .2s ease;
 }
 
     .site-shell-cta:hover {
-        background: #f02030;
+        border-color: #ff344a;
+        background: #c90019;
+        box-shadow: 0 4px 16px rgba(229, 9, 32, .2);
     }
 
     .site-shell-cta .material-symbols-outlined {
-        font-size: 15px;
+        font-size: 17px;
     }
+
+
+/* =========================================================
+   10. MOBILE MENU BUTTON
+========================================================= */
 
 .site-shell-menu-toggle {
     display: none;
     width: 42px;
     height: 42px;
+    flex: 0 0 42px;
     place-items: center;
-    border: 1px solid #383838;
+    border: 1px solid #353535;
     border-radius: 6px;
-    background: #171717;
+    background: #191919;
     color: #fff;
     cursor: pointer;
+    transition: all .2s ease;
 }
 
-    .site-shell-menu-toggle .material-symbols-outlined {
-        font-size: 21px;
+    .site-shell-menu-toggle:hover {
+        border-color: #e50920;
+        background: #222;
     }
+
+    .site-shell-menu-toggle .material-symbols-outlined {
+        font-size: 22px;
+    }
+
+
+/* =========================================================
+   11. ACCESSIBILITY
+========================================================= */
 
 .site-shell-sr-only {
     position: absolute;
@@ -236,69 +510,99 @@
 .site-shell-header a:focus-visible,
 .site-shell-header button:focus-visible,
 .site-shell-header input:focus-visible {
-    outline: 2px solid #ffb3ac;
+    outline: 2px solid #ff7d89;
     outline-offset: 3px;
 }
 
-@media (max-width: 1080px) {
+
+/* =========================================================
+   12. TABLET
+========================================================= */
+
+@media (max-width: 1200px) {
+
     .site-shell-header-inner {
+        width: calc(100% - 40px);
         gap: 15px;
     }
 
     .site-shell-nav {
-        gap: 11px;
+        gap: 13px;
     }
 
+        .site-shell-nav a {
+            font-size: 11px;
+        }
+
     .site-shell-search {
-        width: 140px;
+        width: 145px;
+    }
+
+    .site-shell-actions {
+        gap: 7px;
     }
 
     .site-shell-cta {
-        padding-inline: 8px;
+        padding: 0 10px;
     }
 }
 
-@media (max-width: 900px) {
+
+/* =========================================================
+   13. MOBILE NAVIGATION
+========================================================= */
+
+@media (max-width: 980px) {
+
     .site-shell-header-inner {
         position: relative;
         width: calc(100% - 36px);
-        min-height: 68px;
+        min-height: 70px;
         justify-content: flex-start;
+        gap: 12px;
     }
 
     .site-shell-menu-toggle {
         display: grid;
         order: 3;
-        margin-left: auto;
+        margin-left: 0;
     }
 
     .site-shell-nav {
         position: absolute;
-        top: calc(100% - 1px);
+        top: 100%;
         right: 0;
         left: 0;
+        z-index: 1050;
         display: none;
+        flex: none;
+        flex-direction: column;
         align-items: stretch;
+        justify-content: flex-start;
         gap: 0;
-        padding: 7px 12px;
-        border: 1px solid #2e2e2e;
-        border-top: 0;
+        padding: 8px 14px;
+        border: 1px solid #303030;
+        border-top: 2px solid #e50920;
         border-radius: 0 0 9px 9px;
-        background: #0e0e0e;
-        box-shadow: 0 12px 24px #0008;
+        background: #111;
+        box-shadow: 0 14px 30px rgba(0, 0, 0, .45);
     }
 
         .site-shell-nav.open {
             display: flex;
-            flex-direction: column;
         }
 
         .site-shell-nav a {
-            min-height: 44px;
-            padding: 0 7px;
-            border-bottom: 1px solid #222;
+            display: flex;
+            width: 100%;
+            min-height: 46px;
+            border-bottom: 1px solid #292929;
             font-size: 12px;
         }
+
+            .site-shell-nav a::after {
+                display: none;
+            }
 
             .site-shell-nav a:last-child {
                 border-bottom: 0;
@@ -309,25 +613,22 @@
         margin-left: auto;
     }
 
-    .site-shell-menu-toggle {
-        order: 3;
-        margin-left: 0;
-    }
-
     .site-shell-search {
-        width: 150px;
+        width: 160px;
     }
 }
 
-@media (max-width: 540px) {
-    .site-shell-header-inner {
-        gap: 7px;
-    }
 
-    @media (max-width: 430px) {
-        .site-shell-cta {
-            display: none;
-        }
+/* =========================================================
+   14. SMALL MOBILE
+========================================================= */
+
+@media (max-width: 600px) {
+
+    .site-shell-header-inner {
+        width: calc(100% - 24px);
+        min-height: 66px;
+        gap: 5px;
     }
 
     .site-shell-brand {
@@ -335,8 +636,9 @@
     }
 
     .site-shell-brand-mark {
-        width: 34px;
-        height: 34px;
+        width: 35px;
+        height: 35px;
+        flex-basis: 35px;
         font-size: 21px;
     }
 
@@ -346,27 +648,53 @@
 
         .site-shell-brand-copy small {
             font-size: 6px;
-            letter-spacing: .75px;
+            letter-spacing: .8px;
         }
 
     .site-shell-actions {
-        gap: 4px;
+        gap: 3px;
     }
+
+    /* Login */
 
     .site-shell-account {
         width: 38px;
-        justify-content: center;
+        min-height: 38px;
         padding: 0;
     }
 
-        .site-shell-account span:last-child {
+        .site-shell-account > span:last-child {
             display: none;
         }
+
+    /* Logged-in account */
+
+    .site-shell-user-toggle {
+        min-height: 38px;
+        gap: 5px;
+        padding: 0 7px;
+    }
+
+    .site-shell-user-name {
+        max-width: 75px;
+        font-size: 11px;
+    }
+
+    /* Dropdown */
+
+    .site-shell-user-dropdown {
+        top: calc(100% + 9px);
+        right: 0;
+        width: 230px;
+    }
+
+    /* Search */
 
     .site-shell-search {
         width: 38px;
         min-height: 38px;
         justify-content: center;
+        gap: 0;
         padding: 0;
         border-color: transparent;
         background: transparent;
@@ -374,14 +702,15 @@
 
         .site-shell-search:focus-within {
             position: absolute;
-            right: 94px;
+            right: 90px;
             left: 0;
-            z-index: 2;
+            z-index: 5;
             width: auto;
             justify-content: flex-start;
-            padding-inline: 9px;
-            border-color: #777;
-            background: #171717;
+            gap: 8px;
+            padding: 0 10px;
+            border-color: #e50920;
+            background: #191919;
         }
 
         .site-shell-search input {
@@ -395,32 +724,82 @@
             opacity: 1;
         }
 
+    /* Cart */
+
     .site-shell-cart {
+        min-height: 38px;
         gap: 3px;
-        padding-inline: 2px;
+        padding: 0 3px;
     }
 
     .site-shell-cart-label {
         display: none;
     }
 
-    .site-shell-cta {
-        min-height: 36px;
-        padding-inline: 7px;
-        font-size: 8px;
+    .site-shell-cart-count {
+        min-width: 17px;
+        height: 17px;
+        font-size: 9px;
     }
 
-        .site-shell-cta .material-symbols-outlined {
-            display: none;
-        }
+    /* CTA */
+
+    .site-shell-cta {
+        display: none;
+    }
+
+    /* Menu */
+
+    .site-shell-menu-toggle {
+        width: 38px;
+        height: 38px;
+        flex-basis: 38px;
+    }
 }
 
+
+/* =========================================================
+   15. VERY SMALL MOBILE
+========================================================= */
+
+@media (max-width: 360px) {
+
+    .site-shell-header-inner {
+        width: calc(100% - 16px);
+    }
+
+    .site-shell-brand-copy small {
+        letter-spacing: .4px;
+    }
+
+    .site-shell-brand-mark {
+        width: 32px;
+        height: 32px;
+        flex-basis: 32px;
+    }
+
+    .site-shell-actions {
+        gap: 1px;
+    }
+
+    .site-shell-user-name {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   16. REDUCED MOTION
+========================================================= */
+
 @media (prefers-reduced-motion: reduce) {
+
     .site-shell-header *,
     .site-shell-header *::before,
     .site-shell-header *::after {
         scroll-behavior: auto !important;
         animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
         transition-duration: .01ms !important;
     }
 }

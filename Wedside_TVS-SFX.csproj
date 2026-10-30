@@ -200,6 +200,8 @@
     <Compile Include="Models\VaiTro.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\ConsultationViewModel.cs" />
+    <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="Models\YeuCauHuyDon.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
