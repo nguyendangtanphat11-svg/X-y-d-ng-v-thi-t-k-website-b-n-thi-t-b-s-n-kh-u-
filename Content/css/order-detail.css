@@ -1,0 +1,554 @@
+﻿
+/* =====================================================
+   STAGEFX PRO - ORDER DETAIL
+===================================================== */
+
+.order-detail-page {
+    min-height: 80vh;
+    padding: 50px 24px 80px;
+    background: #090909;
+    color: #f5f5f5;
+}
+
+.order-detail-container {
+    width: 100%;
+    max-width: 1150px;
+    margin: 0 auto;
+}
+
+.detail-breadcrumb,
+.cancel-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 25px;
+    color: #777;
+    font-size: 12px;
+}
+
+    .detail-breadcrumb a,
+    .cancel-breadcrumb a {
+        color: #999;
+        text-decoration: none;
+    }
+
+        .detail-breadcrumb a:hover,
+        .cancel-breadcrumb a:hover {
+            color: #e50920;
+        }
+
+.detail-page-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.detail-eyebrow {
+    color: #e50920;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+}
+
+.detail-page-heading h1 {
+    margin: 10px 0;
+    color: #fff;
+    font-size: 30px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.detail-page-heading p {
+    margin: 0;
+    color: #999;
+    font-size: 13px;
+}
+
+.detail-heading-icon,
+.cancel-heading-icon {
+    width: 65px;
+    height: 65px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border: 1px solid rgba(229, 9, 32, .35);
+    border-radius: 15px;
+    background: rgba(229, 9, 32, .08);
+    color: #e50920;
+}
+
+    .detail-heading-icon span,
+    .cancel-heading-icon span {
+        font-size: 34px;
+    }
+
+.detail-panel {
+    margin-bottom: 20px;
+    padding: 23px;
+    border: 1px solid #292929;
+    border-radius: 13px;
+    background: #151515;
+}
+
+.detail-panel-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+    .detail-panel-heading > div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+        .detail-panel-heading > div > span {
+            color: #e50920;
+            font-size: 23px;
+        }
+
+    .detail-panel-heading h2 {
+        margin: 0;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 800;
+        letter-spacing: .5px;
+    }
+
+.detail-status,
+.detail-count {
+    padding: 7px 12px;
+    border: 1px solid rgba(229, 9, 32, .3);
+    border-radius: 30px;
+    background: rgba(229, 9, 32, .08);
+    color: #ff5264;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.detail-overview-grid,
+.detail-recipient-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+}
+
+.detail-overview-item {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+    .detail-overview-item.full {
+        grid-column: 1 / -1;
+    }
+
+    .detail-overview-item > span {
+        color: #888;
+        font-size: 12px;
+    }
+
+    .detail-overview-item > strong {
+        color: #eee;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.6;
+        overflow-wrap: anywhere;
+    }
+
+/* Product table */
+
+.detail-table-wrapper {
+    overflow-x: auto;
+}
+
+.detail-product-table {
+    width: 100%;
+    min-width: 700px;
+    border-collapse: collapse;
+}
+
+    .detail-product-table th {
+        padding: 14px 12px;
+        border-bottom: 1px solid #333;
+        background: #101010;
+        color: #999;
+        font-size: 10px;
+        font-weight: 800;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .detail-product-table td {
+        padding: 17px 12px;
+        border-bottom: 1px solid #292929;
+        color: #ddd;
+        font-size: 12px;
+        vertical-align: middle;
+    }
+
+    .detail-product-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+.detail-product-name {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+    .detail-product-name strong {
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .detail-product-name small,
+    .detail-days {
+        color: #888;
+        font-size: 10px;
+    }
+
+    .detail-product-name .detail-flightcase {
+        color: #e9a23b;
+    }
+
+.detail-type {
+    display: inline-block;
+    padding: 5px 9px;
+    border: 1px solid #393939;
+    border-radius: 5px;
+    background: #202020;
+    color: #ddd;
+    font-size: 11px;
+}
+
+.detail-days {
+    display: block;
+    margin-top: 6px;
+}
+
+.detail-line-total {
+    color: #ff5264 !important;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* Totals */
+
+.detail-total-box {
+    width: 100%;
+    max-width: 480px;
+    margin-left: auto;
+}
+
+.detail-total-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 11px 0;
+}
+
+    .detail-total-row span {
+        color: #999;
+        font-size: 12px;
+    }
+
+    .detail-total-row strong {
+        color: #eee;
+        font-size: 13px;
+        text-align: right;
+    }
+
+    .detail-total-row .detail-discount {
+        color: #4ade80;
+    }
+
+.detail-total-divider {
+    height: 1px;
+    margin: 8px 0;
+    background: #333;
+}
+
+.detail-total-row.grand-total {
+    padding: 17px 0;
+}
+
+    .detail-total-row.grand-total span {
+        color: #fff;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .detail-total-row.grand-total strong {
+        color: #ff3349;
+        font-size: 23px;
+        font-weight: 800;
+    }
+
+.detail-total-row.deposit-total {
+    padding: 13px;
+    border: 1px solid rgba(229, 9, 32, .2);
+    border-radius: 8px;
+    background: rgba(229, 9, 32, .05);
+}
+
+    .detail-total-row.deposit-total strong {
+        color: #ff5264;
+    }
+
+/* Payments */
+
+.detail-payment-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-payment-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 15px;
+    padding: 17px;
+    border: 1px solid #292929;
+    border-radius: 10px;
+    background: #101010;
+}
+
+.payment-icon {
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    border-radius: 9px;
+    background: rgba(229, 9, 32, .1);
+    color: #e50920;
+}
+
+    .payment-icon span {
+        font-size: 22px;
+    }
+
+.payment-content {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+
+    .payment-content strong {
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .payment-content span {
+        color: #e9a23b;
+        font-size: 11px;
+    }
+
+    .payment-content small {
+        color: #888;
+        font-size: 10px;
+        overflow-wrap: anywhere;
+    }
+
+.payment-amount {
+    color: #ff5264;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+/* Cancellation timeline */
+
+.detail-cancel-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.detail-cancel-item {
+    position: relative;
+    display: flex;
+    gap: 15px;
+    padding-bottom: 23px;
+}
+
+    .detail-cancel-item:not(:last-child)::before {
+        position: absolute;
+        top: 15px;
+        bottom: 0;
+        left: 6px;
+        width: 1px;
+        background: #383838;
+        content: "";
+    }
+
+.cancel-timeline-dot {
+    position: relative;
+    z-index: 1;
+    width: 13px;
+    height: 13px;
+    flex-shrink: 0;
+    margin-top: 3px;
+    border: 3px solid #e50920;
+    border-radius: 50%;
+    background: #151515;
+}
+
+.cancel-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.cancel-content-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+    .cancel-content-heading strong {
+        color: #fff;
+        font-size: 13px;
+    }
+
+    .cancel-content-heading small,
+    .cancel-content > small {
+        color: #888;
+        font-size: 10px;
+    }
+
+.cancel-content p {
+    margin: 9px 0;
+    color: #aaa;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+    .cancel-content p b {
+        color: #ddd;
+    }
+
+/* Empty and actions */
+
+.detail-empty {
+    padding: 25px 15px;
+    border: 1px dashed #333;
+    border-radius: 9px;
+    color: #999;
+    font-size: 12px;
+    text-align: center;
+}
+
+.detail-actions {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 25px;
+}
+
+.detail-back-button,
+.detail-cancel-button {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 18px;
+    border: 1px solid #333;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 700;
+    text-decoration: none;
+    transition: .2s ease;
+}
+
+.detail-back-button {
+    background: #202020;
+    color: #ddd;
+}
+
+    .detail-back-button:hover {
+        border-color: #666;
+        color: #fff;
+    }
+
+.detail-cancel-button {
+    border-color: #e50920;
+    background: #e50920;
+    color: #fff;
+}
+
+    .detail-cancel-button:hover {
+        background: #ff263d;
+        color: #fff;
+    }
+
+.detail-actions span {
+    font-size: 18px;
+}
+
+@media (max-width: 650px) {
+    .order-detail-page {
+        padding: 30px 15px 55px;
+    }
+
+    .detail-page-heading h1 {
+        font-size: 22px;
+    }
+
+    .detail-heading-icon {
+        width: 50px;
+        height: 50px;
+    }
+
+    .detail-overview-grid,
+    .detail-recipient-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-overview-item.full {
+        grid-column: auto;
+    }
+
+    .detail-panel {
+        padding: 17px;
+    }
+
+    .detail-panel-heading h2 {
+        font-size: 12px;
+    }
+
+    .detail-payment-item {
+        flex-wrap: wrap;
+    }
+
+    .payment-amount {
+        width: 100%;
+        padding-left: 57px;
+    }
+
+    .detail-actions {
+        flex-direction: column;
+    }
+
+    .detail-back-button,
+    .detail-cancel-button {
+        width: 100%;
+    }
+
+    .detail-total-row.grand-total strong {
+        font-size: 19px;
+    }
+}

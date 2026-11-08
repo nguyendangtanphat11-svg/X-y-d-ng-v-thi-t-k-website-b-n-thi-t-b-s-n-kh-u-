@@ -3,7 +3,9 @@
 
 document.addEventListener('DOMContentLoaded', function () {
 
+    // ==========================================
     // DROPDOWN TÀI KHOẢN
+    // ==========================================
     const userDropdown = document.getElementById('siteUserDropdown');
     const userToggle = document.getElementById('userDropdownToggle');
 
@@ -33,7 +35,9 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    // ==========================================
     // MENU MOBILE
+    // ==========================================
     const menuToggle = document.querySelector('.site-shell-menu-toggle');
     const nav = document.getElementById('site-shell-nav');
 
@@ -44,17 +48,26 @@ document.addEventListener('DOMContentLoaded', function () {
             menuToggle.setAttribute('aria-label', 'Mở menu');
 
             const icon = menuToggle.querySelector('.material-symbols-outlined');
-            if (icon) icon.textContent = 'menu';
+
+            if (icon) {
+                icon.textContent = 'menu';
+            }
         }
 
         menuToggle.addEventListener('click', function () {
             const isOpen = nav.classList.toggle('open');
 
             menuToggle.setAttribute('aria-expanded', String(isOpen));
-            menuToggle.setAttribute('aria-label', isOpen ? 'Đóng menu' : 'Mở menu');
+            menuToggle.setAttribute(
+                'aria-label',
+                isOpen ? 'Đóng menu' : 'Mở menu'
+            );
 
             const icon = menuToggle.querySelector('.material-symbols-outlined');
-            if (icon) icon.textContent = isOpen ? 'close' : 'menu';
+
+            if (icon) {
+                icon.textContent = isOpen ? 'close' : 'menu';
+            }
         });
 
         nav.querySelectorAll('a').forEach(function (link) {
@@ -62,52 +75,20 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         document.addEventListener('keydown', function (event) {
-            if (event.key === 'Escape') closeMobileMenu();
+            if (event.key === 'Escape') {
+                closeMobileMenu();
+            }
         });
     }
 
+    // ==========================================
     // GIỎ HÀNG
-    function updateCartCount() {
-        const countElement = document.getElementById('site-cart-count');
+    // SỐ LƯỢNG ĐƯỢC LẤY TỪ SQL SERVER
+    // THÔNG QUA CARTCONTROLLER
+    // ==========================================
 
-        if (!countElement) return;
-
-        try {
-            const cart = JSON.parse(
-                localStorage.getItem('stagefx-demo-cart') || '[]'
-            );
-
-            if (!Array.isArray(cart)) {
-                countElement.textContent = '0';
-                return;
-            }
-
-            const total = cart.reduce(function (sum, item) {
-                const quantity = Number(item?.quantity);
-
-                return sum + (
-                    Number.isFinite(quantity) && quantity > 0
-                        ? quantity
-                        : 0
-                );
-            }, 0);
-
-            countElement.textContent = String(total);
-
-        } catch (error) {
-            console.error('Lỗi đọc giỏ hàng:', error);
-            countElement.textContent = '0';
-        }
-    }
-
-    updateCartCount();
-
-    window.addEventListener('stagefx:cart-change', updateCartCount);
-
-    window.addEventListener('storage', function (event) {
-        if (event.key === 'stagefx-demo-cart') {
-            updateCartCount();
-        }
-    });
+    // Không đọc localStorage nữa.
+    // Mỗi lần tải trang, Razor gọi CartCount()
+    // để lấy số lượng mới nhất từ database.
 
 });

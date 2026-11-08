@@ -77,6 +77,7 @@
 
 
         @* GIỎ HÀNG *@
+        @* GIỎ HÀNG *@
         <a class="site-shell-cart"
            href="@Url.Action("Index", "Cart")"
            aria-label="Mở giỏ hàng">
@@ -85,8 +86,8 @@
 
             <span class="site-shell-cart-label">Giỏ hàng</span>
 
-            <span id="site-cart-count"
-                  class="site-shell-cart-count">0</span>
+            @Html.Action("CartCount", "Cart")
+
         </a>
 
         @* TÀI KHOẢN *@
@@ -117,12 +118,20 @@
                 <div class="site-shell-user-dropdown"
                      id="userDropdownMenu">
 
+                    @* THÔNG TIN TÀI KHOẢN *@
                     <a href="@Url.Action("Profile", "Account")"
                        class="site-shell-dropdown-item">
 
                         <span class="material-symbols-outlined">person</span>
                         <span>Thông tin tài khoản</span>
                     </a>
+
+                    @* LỊCH SỬ MUA HÀNG *@
+                <a href="@Url.Action("Index", "OrderHistory")"
+                   class="site-shell-dropdown-item order-history-item">
+                    <span class="material-symbols-outlined">receipt_long</span>
+                    <span>Lịch sử mua hàng</span>
+                </a>
 
                     <div class="site-shell-dropdown-divider"></div>
 

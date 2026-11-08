@@ -19,6 +19,10 @@ namespace Wedside_TVS_SFX.Models
         public int MaSanPham { get; set; }
         public int SoLuong { get; set; }
         public System.DateTime NgayThem { get; set; }
+        public string HinhThucDat { get; set; }
+        public Nullable<int> SoNgayThue { get; set; }
+        public bool CoFlightcase { get; set; }
+        public decimal PhiFlightcase { get; set; }
     
         public virtual GioHang GioHang { get; set; }
         public virtual SanPham SanPham { get; set; }

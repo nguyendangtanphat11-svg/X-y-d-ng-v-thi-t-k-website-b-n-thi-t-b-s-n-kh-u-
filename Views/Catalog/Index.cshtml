@@ -1,4 +1,4 @@
-﻿
+
 @{
     ViewBag.Title = "Danh mục thiết bị";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -8,6 +8,36 @@
     <link rel="stylesheet"
           href="@Url.Content("~/Content/css/catalog.css")" />
 }
+
+@using (Html.BeginForm("Add", "Cart", FormMethod.Post, new { id = "catalog-cart-form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <input type="hidden"
+           id="catalog-product-id"
+           name="id" />
+
+    <input type="hidden"
+           id="catalog-quantity"
+           name="quantity"
+           value="1" />
+
+    <input type="hidden"
+           id="catalog-order-type"
+           name="hinhThucDat"
+           value="Mua" />
+
+    <input type="hidden"
+           id="catalog-rental-days"
+           name="soNgayThue"
+           value="1" />
+
+    <input type="hidden"
+           id="catalog-flightcase"
+           name="coFlightcase"
+           value="false" />
+}
+
 
 <section class="status-bar">
     <div class="page-container status-inner">
@@ -300,12 +330,28 @@
 <div id="toast" class="toast" role="status" aria-live="polite"></div>
 
 
+
 @section scripts {
+
     <script>
+        // Danh sách danh mục lấy từ SQL Server
+        window.STAGEFX_CATEGORIES =
+            @Html.Raw(ViewBag.CategoriesJson ?? "[]");
+
+        // Danh sách sản phẩm lấy từ SQL Server
+        window.STAGEFX_PRODUCTS =
+            @Html.Raw(ViewBag.ProductsJson ?? "[]");
+
+        // Đường dẫn trang chi tiết sản phẩm
         window.STAGEFX_PRODUCT_DETAILS_URL =
             '@Url.Action("Details", "Product", new { id = "__PRODUCT_ID__" })';
+
+        // Kiểm tra dữ liệu được truyền sang JavaScript
+        console.log("STAGEFX CATEGORIES:", window.STAGEFX_CATEGORIES);
+        console.log("STAGEFX PRODUCTS:", window.STAGEFX_PRODUCTS);
     </script>
 
     <script src="@Url.Content("~/Scripts/catalog.js")"></script>
 }
+
 

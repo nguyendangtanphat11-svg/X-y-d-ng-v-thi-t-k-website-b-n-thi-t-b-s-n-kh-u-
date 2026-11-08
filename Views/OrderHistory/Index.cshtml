@@ -1,0 +1,337 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.OrderHistoryViewModel
+
+@{
+    ViewBag.Title = "Lịch sử mua hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string GetOrderStatus(string status)
+    {
+        switch (status)
+        {
+            case "ChoXacNhan": return "Chờ xác nhận";
+            case "DaXacNhan": return "Đã xác nhận";
+            case "DangChuanBi": return "Đang chuẩn bị";
+            case "DangGiao": return "Đang giao hàng";
+            case "HoanThanh": return "Hoàn thành";
+            case "DaHuy": return "Đã hủy";
+            case "ChoHuy": return "Chờ duyệt hủy";
+            case "TuChoi": return "Từ chối";
+            default: return status ?? "Không xác định";
+        }
+    }
+
+    string GetPaymentStatus(string status)
+    {
+        switch (status)
+        {
+            case "DaThanhToan": return "Đã thanh toán";
+            case "ChoThanhToan": return "Chờ thanh toán";
+            case "ChuaThanhToan": return "Chưa thanh toán";
+            case "ChoXuLy": return "Chờ xử lý";
+            case "ThatBai": return "Thanh toán thất bại";
+            case "DaHoanTien": return "Đã hoàn tiền";
+            default: return status ?? "Không xác định";
+        }
+    }
+
+    string GetOrderStatusClass(string status)
+    {
+        switch (status)
+        {
+            case "HoanThanh": return "success";
+            case "DaHuy":
+            case "TuChoi": return "danger";
+            case "ChoHuy": return "warning";
+            case "DangGiao":
+            case "DangChuanBi":
+            case "DaXacNhan": return "info";
+            default: return "pending";
+        }
+    }
+
+    var orders = Model?.DonHangs;
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/order-history.css")" />
+}
+
+<main class="order-history-page">
+
+    <div class="order-history-container">
+
+        <!-- PAGE HEADER -->
+        <div class="order-history-header">
+            <div>
+                <div class="order-history-breadcrumb">
+                    <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+                    <span>/</span>
+                    <span>Lịch sử mua hàng</span>
+                </div>
+
+                <h1>LỊCH SỬ MUA HÀNG</h1>
+
+                <p>
+                    Theo dõi đơn hàng, trạng thái thanh toán
+                    và thông tin các giao dịch của bạn.
+                </p>
+            </div>
+
+            <div class="order-history-header-icon">
+                <span class="material-symbols-outlined">receipt_long</span>
+            </div>
+        </div>
+
+        <!-- SUMMARY -->
+        <div class="order-history-summary">
+
+            <div class="order-summary-card">
+                <div class="order-summary-icon">
+                    <span class="material-symbols-outlined">inventory_2</span>
+                </div>
+
+                <div>
+                    <span>TỔNG SỐ ĐƠN HÀNG</span>
+                    <strong>@(Model?.TongSoDon ?? 0)</strong>
+                </div>
+            </div>
+
+            <div class="order-summary-card">
+                <div class="order-summary-icon">
+                    <span class="material-symbols-outlined">shopping_bag</span>
+                </div>
+
+                <div>
+                    <span>ĐƠN HÀNG HIỂN THỊ</span>
+                    <strong>@(orders?.Count ?? 0)</strong>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- FILTER -->
+        <div class="order-history-filter">
+
+            <div class="order-filter-heading">
+                <span class="material-symbols-outlined">filter_list</span>
+                <span>LỌC ĐƠN HÀNG</span>
+            </div>
+
+            @using (Html.BeginForm("Index", "OrderHistory", FormMethod.Get))
+            {
+                <div class="order-filter-controls">
+
+                    <select name="trangThai" class="order-filter-select">
+
+                        <option value="">Tất cả đơn hàng</option>
+
+                        <option value="ChoXacNhan"
+                                @(Model?.TrangThaiLoc == "ChoXacNhan" ? "selected" : "")>
+                            Chờ xác nhận
+                        </option>
+
+                        <option value="DaXacNhan"
+                                @(Model?.TrangThaiLoc == "DaXacNhan" ? "selected" : "")>
+                            Đã xác nhận
+                        </option>
+
+                        <option value="DangChuanBi"
+                                @(Model?.TrangThaiLoc == "DangChuanBi" ? "selected" : "")>
+                            Đang chuẩn bị
+                        </option>
+
+                        <option value="DangGiao"
+                                @(Model?.TrangThaiLoc == "DangGiao" ? "selected" : "")>
+                            Đang giao hàng
+                        </option>
+
+                        <option value="HoanThanh"
+                                @(Model?.TrangThaiLoc == "HoanThanh" ? "selected" : "")>
+                            Hoàn thành
+                        </option>
+
+                        <option value="ChoHuy"
+                                @(Model?.TrangThaiLoc == "ChoHuy" ? "selected" : "")>
+                            Chờ duyệt hủy
+                        </option>
+
+                        <option value="DaHuy"
+                                @(Model?.TrangThaiLoc == "DaHuy" ? "selected" : "")>
+                            Đã hủy
+                        </option>
+
+                    </select>
+
+                    <button type="submit" class="order-filter-button">
+                        <span class="material-symbols-outlined">search</span>
+                        Lọc đơn hàng
+                    </button>
+
+                    <a href="@Url.Action("Index", "OrderHistory")"
+                       class="order-filter-reset">
+                        Đặt lại
+                    </a>
+
+                </div>
+            }
+
+        </div>
+
+        <!-- ORDER LIST -->
+        <div class="order-history-list">
+
+            <div class="order-list-heading">
+                <h2>ĐƠN HÀNG CỦA BẠN</h2>
+                <span>@(orders?.Count ?? 0) đơn hàng</span>
+            </div>
+
+            @if (orders == null || !orders.Any())
+            {
+                <div class="order-history-empty">
+
+                    <span class="material-symbols-outlined">
+                        shopping_bag
+                    </span>
+
+                    <h3>CHƯA CÓ ĐƠN HÀNG</h3>
+
+                    <p>
+                        Bạn chưa có đơn hàng nào hoặc không tìm thấy
+                        đơn hàng phù hợp với bộ lọc.
+                    </p>
+
+                    <a href="@Url.Action("Index", "SanPham")"
+                       class="order-empty-button">
+                        <span class="material-symbols-outlined">storefront</span>
+                        Khám phá sản phẩm
+                    </a>
+
+                </div>
+            }
+            else
+            {
+                foreach (var order in orders)
+                {
+                    <article class="order-history-card">
+
+                        <!-- CARD HEADER -->
+                        <div class="order-card-header">
+
+                            <div class="order-card-code">
+                                <span class="material-symbols-outlined">
+                                    receipt
+                                </span>
+
+                                <div>
+                                    <span>MÃ ĐƠN HÀNG</span>
+                                    <strong>@order.MaSoDonHang</strong>
+                                </div>
+                            </div>
+
+                            <span class="order-status-badge @GetOrderStatusClass(order.TrangThai)">
+                                @GetOrderStatus(order.TrangThai)
+                            </span>
+
+                        </div>
+
+                        <!-- CARD CONTENT -->
+                        <div class="order-card-content">
+
+                            <div class="order-card-info">
+
+                                <div class="order-info-item">
+                                    <span>Ngày đặt hàng</span>
+                                    <strong>
+                                        @order.NgayDat.ToString("dd/MM/yyyy HH:mm")
+                                    </strong>
+                                </div>
+
+                                <div class="order-info-item">
+                                    <span>Số lượng sản phẩm</span>
+                                    <strong>@order.SoLuongSanPham sản phẩm</strong>
+                                </div>
+
+                                <div class="order-info-item">
+                                    <span>Phương thức thanh toán</span>
+                                    <strong>
+                                        @(order.PhuongThucThanhToan ?? "Chưa xác định")
+                                    </strong>
+                                </div>
+
+                                <div class="order-info-item">
+                                    <span>Thanh toán</span>
+                                    <strong>
+                                        @GetPaymentStatus(order.TrangThaiThanhToan)
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                            <div class="order-card-total">
+
+                                <span>TỔNG GIÁ TRỊ ĐƠN HÀNG</span>
+
+                                <strong>
+                                    @String.Format("{0:N0} ₫", order.TongTien)
+                                </strong>
+
+                                <small>
+                                    Tiền đặt cọc:
+                                    @String.Format("{0:N0} ₫", order.TienCoc)
+                                </small>
+
+                            </div>
+
+                        </div>
+
+                        <!-- CARD FOOTER -->
+                        <div class="order-card-footer">
+
+                            <div class="order-card-cancel-status">
+                                @if (!String.IsNullOrEmpty(order.TrangThaiYeuCauHuy))
+                                {
+                                    <span>
+                                        Yêu cầu hủy:
+                                        <strong>@GetOrderStatus(order.TrangThaiYeuCauHuy)</strong>
+                                    </span>
+                                }
+                            </div>
+
+                            <div class="order-card-actions">
+
+                                <a href="@Url.Action("Details", "OrderHistory", new { id = order.MaDonHang })"
+                                   class="order-action-detail">
+                                    <span class="material-symbols-outlined">visibility</span>
+                                    Chi tiết
+                                </a>
+
+                                @if (order.TrangThai == "ChoXacNhan"
+                                    || order.TrangThai == "DaXacNhan"
+                                    || order.TrangThai == "DangChuanBi")
+                                {
+                                    if (order.TrangThaiYeuCauHuy != "ChoXuLy")
+                                    {
+                                        <a href="@Url.Action("RequestCancel", "OrderHistory", new { id = order.MaDonHang })"
+                                           class="order-action-cancel">
+                                            <span class="material-symbols-outlined">cancel</span>
+                                            Yêu cầu hủy
+                                        </a>
+                                    }
+                                }
+
+                            </div>
+
+                        </div>
+
+                    </article>
+                }
+            }
+
+        </div>
+
+    
+    </div>
+
+</main>

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using System.Web.Mvc;
 using Wedside_TVS_SFX.Models;
-
+using Wedside_TVS_SFX.ViewModels;
 namespace STAGEFX_PRO.Controllers
 {
     public class AccountController : Controller
@@ -179,16 +179,144 @@ namespace STAGEFX_PRO.Controllers
         // TRANG CÁ NHÂN
         // =========================
 
+        // =========================
+        // TRANG CÁ NHÂN - GET
+        // =========================
+
+        [HttpGet]
         public ActionResult Profile()
+        {
+            if (Session["MaNguoiDung"] == null)
+            {
+                TempData["AuthError"] = "Vui lòng đăng nhập để xem thông tin tài khoản.";
+                return RedirectToAction("Login");
+            }
+
+            int userId = Convert.ToInt32(Session["MaNguoiDung"]);
+
+            using (var db = new StageFxEntities())
+            {
+                var user = db.NguoiDung.Find(userId);
+
+                if (user == null)
+                {
+                    Session.Clear();
+                    return RedirectToAction("Login");
+                }
+
+                var model = new ProfileViewModel
+                {
+                    MaNguoiDung = user.MaNguoiDung,
+                    HoTen = user.HoTen,
+                    Email = user.Email,
+                    SoDienThoai = user.SoDienThoai,
+                    MaVaiTro = user.MaVaiTro,
+                    TenVaiTro = user.VaiTro != null
+                        ? user.VaiTro.TenVaiTro
+                        : "Khách hàng",
+                    TrangThai = user.TrangThai,
+                    NgayTao = user.NgayTao,
+                    LanDangNhapCuoi = user.LanDangNhapCuoi
+                };
+
+                return View(model);
+            }
+        }
+
+        // =========================
+        // CẬP NHẬT THÔNG TIN - POST
+        // =========================
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Profile(ProfileViewModel model)
         {
             if (Session["MaNguoiDung"] == null)
             {
                 return RedirectToAction("Login");
             }
 
-            return View();
-        }
+            int userId = Convert.ToInt32(Session["MaNguoiDung"]);
 
+            using (var db = new StageFxEntities())
+            {
+                var user = db.NguoiDung.Find(userId);
+
+                if (user == null)
+                {
+                    Session.Clear();
+                    return RedirectToAction("Login");
+                }
+
+                // Chuẩn hóa dữ liệu
+                model.HoTen = (model.HoTen ?? "").Trim();
+                model.Email = (model.Email ?? "").Trim().ToLowerInvariant();
+                model.SoDienThoai = (model.SoDienThoai ?? "").Trim();
+
+                // Không cho người dùng tự thay đổi thông tin hệ thống
+                model.MaNguoiDung = user.MaNguoiDung;
+                model.MaVaiTro = user.MaVaiTro;
+                model.TenVaiTro = user.VaiTro != null
+                    ? user.VaiTro.TenVaiTro
+                    : "Khách hàng";
+                model.TrangThai = user.TrangThai;
+                model.NgayTao = user.NgayTao;
+                model.LanDangNhapCuoi = user.LanDangNhapCuoi;
+
+                // Kiểm tra dữ liệu
+                if (!ModelState.IsValid)
+                {
+                    return View(model);
+                }
+
+                // Kiểm tra email đã được tài khoản khác sử dụng chưa
+                bool emailExists = db.NguoiDung.Any(x =>
+                    x.Email == model.Email &&
+                    x.MaNguoiDung != userId
+                );
+
+                if (emailExists)
+                {
+                    ModelState.AddModelError(
+                        "Email",
+                        "Email này đã được sử dụng bởi tài khoản khác."
+                    );
+
+                    return View(model);
+                }
+
+                try
+                {
+                    // Chỉ cập nhật thông tin được phép chỉnh sửa
+                    user.HoTen = model.HoTen;
+                    user.Email = model.Email;
+                    user.SoDienThoai = string.IsNullOrWhiteSpace(model.SoDienThoai)
+                        ? null
+                        : model.SoDienThoai;
+
+                    user.NgayCapNhat = DateTime.Now;
+
+                    db.SaveChanges();
+
+                    // Đồng bộ thông tin mới vào Session
+                    Session["HoTen"] = user.HoTen;
+                    Session["Email"] = user.Email;
+
+                    TempData["ProfileSuccess"] = "Cập nhật thông tin tài khoản thành công.";
+
+                    return RedirectToAction("Profile");
+                }
+                catch (Exception)
+                {
+                    ModelState.AddModelError(
+                        "",
+                        "Không thể cập nhật thông tin. Vui lòng thử lại sau."
+                    );
+
+                    return View(model);
+                }
+            }
+        }
         // =========================
         // MÃ HÓA MẬT KHẨU
         // =========================

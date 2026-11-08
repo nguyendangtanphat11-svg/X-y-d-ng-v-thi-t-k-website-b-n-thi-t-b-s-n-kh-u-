@@ -692,12 +692,22 @@ a {
     .info-row span {
         color: var(--muted);
     }
+/* Font đồng nhất cho nội dung tab kỹ thuật */
+.technical-card .info-row strong {
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 11px;
+    font-weight: 600;
+    text-align: right;
+}
 
-    .info-row strong {
-        text-align: right;
-        font: 600 10px "Roboto Mono", monospace;
-    }
-
+.technical-card .info-row,
+.technical-card .info-row span,
+.technical-card .info-card h3,
+.technical-card .tab-button,
+.technical-card .download-card,
+.technical-card .download-card * {
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+}
 .safety-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -1169,4 +1179,83 @@ a {
         transition-duration: .01ms;
         animation-duration: .01ms;
     }
+}
+/* ==========================================
+   PRODUCT SPECIFICATIONS - FONT FIX
+========================================== */
+
+/* Font chính cho toàn bộ nội dung kỹ thuật */
+.technical-card,
+.technical-card *:not(.material-symbols-outlined) {
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+}
+
+/* Khung thông số kỹ thuật */
+.product-specifications {
+    display: block;
+    width: 100%;
+    margin: 0 0 22px;
+    color: #d4d4d4;
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+/* Khung mô tả chi tiết */
+.product-detail-description {
+    display: block;
+    width: 100%;
+    margin-top: 8px;
+    color: #d4d4d4;
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.8;
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+/* Tiêu đề trong tab */
+.technical-card .info-card h3 {
+    margin: 18px 0 12px;
+    color: #ffffff;
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+    /* Tiêu đề đầu tiên */
+    .technical-card .info-card h3:first-child {
+        margin-top: 0;
+    }
+
+/* Nội dung DMX-512 và tài liệu */
+.technical-card .info-card p,
+.technical-card .info-row span,
+.technical-card .info-row strong {
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 11px;
+    line-height: 1.8;
+}
+
+/* Giá trị thông số */
+.technical-card .info-row strong {
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Các tab */
+.technical-card .tab-button {
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* Tài liệu kỹ thuật */
+.technical-card .download-card,
+.technical-card .download-card *:not(.material-symbols-outlined) {
+    font-family: "Be Vietnam Pro", Arial, sans-serif !important;
 }

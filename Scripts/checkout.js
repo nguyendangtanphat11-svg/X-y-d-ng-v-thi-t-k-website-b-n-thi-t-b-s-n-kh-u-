@@ -1,276 +1,547 @@
-﻿'use strict';
+﻿document.addEventListener('DOMContentLoaded', function () {
 
-const CART_STORAGE_KEY = 'stagefx-demo-cart';
-const SHIPPING_THRESHOLD = 20000000;
-const SHIPPING_ESTIMATE = 350000;
-const RENTAL_DEPOSIT_RATE = 0.3;
-const money = new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', maximumFractionDigits: 0 });
-const paymentLabels = {
-    bank_transfer: 'Chuyển khoản',
-    card: 'Thẻ doanh nghiệp',
-    credit: 'Thỏa thuận công nợ'
-};
-const productImages = {
-    'fog-200': 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=120&q=70',
-    'fog-2000': 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?auto=format&fit=crop&w=120&q=70',
-    'haze-pro': 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=120&q=70',
-    'haze-1500': 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=120&q=70',
-    'co2-jet': 'https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&w=120&q=70',
-    'spark-300': 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=120&q=70',
-    'cold-spark': 'https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=120&q=70',
-    'flame-dmx': 'https://images.unsplash.com/photo-1506157786151-b8491531f063?auto=format&fit=crop&w=120&q=70'
-};
+    // ==========================================
+    // 1. CẤU HÌNH VÀ TRẠNG THÁI
+    // ==========================================
 
-const state = {
-    items: [],
-    step: 1
-};
-
-const elements = {
-    emptyCart: document.querySelector('#empty-cart'),
-    checkoutContent: document.querySelector('#checkout-content'),
-    form: document.querySelector('#checkout-form'),
-    formError: document.querySelector('#form-error'),
-    summaryCount: document.querySelector('#summary-count'),
-    summaryItems: document.querySelector('#summary-items'),
-    subtotal: document.querySelector('#subtotal'),
-    shipping: document.querySelector('#shipping'),
-    vat: document.querySelector('#vat'),
-    depositRow: document.querySelector('#deposit-row'),
-    deposit: document.querySelector('#deposit'),
-    grandTotal: document.querySelector('#grand-total'),
-    previewDialog: document.querySelector('#preview-dialog'),
-    previewOrderId: document.querySelector('#preview-order-id'),
-    previewDetails: document.querySelector('#preview-details')
-};
-
-function makeElement(tag, className, text) {
-    const element = document.createElement(tag);
-    if (className) element.className = className;
-    if (text !== undefined) element.textContent = text;
-    return element;
-}
-
-function parseMoney(value) {
-    const amount = Number(value);
-    return Number.isFinite(amount) && amount >= 0 ? amount : 0;
-}
-
-function normalizeItem(item, index) {
-    if (!item || typeof item !== 'object' || Array.isArray(item)) return null;
-    const productId = String(item.productId || item.id || `item-${index}`);
-    const caseOption = item.flightcaseOption && typeof item.flightcaseOption === 'object'
-        ? { name: String(item.flightcaseOption.name || 'Flightcase'), price: parseMoney(item.flightcaseOption.price) }
-        : (typeof item.flightcase === 'string' && item.flightcase.trim()
-            ? { name: item.flightcase.trim(), price: 0 }
-            : null);
-    const quantity = Math.max(1, Math.min(999, Math.floor(Number(item.quantity) || 1)));
-
-    return {
-        id: String(item.id || `${productId}-${index}`),
-        productId,
-        productName: typeof item.productName === 'string' && item.productName.trim() ? item.productName.trim() : 'Thiết bị sân khấu',
-        productSku: String(item.productSku || item.sku || 'SKU'),
-        productImage: typeof item.productImage === 'string' && item.productImage
-            ? item.productImage
-            : (productImages[productId] || 'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?auto=format&fit=crop&w=120&q=70'),
-        quantity,
-        unitPrice: parseMoney(item.unitPrice),
-        isRental: item.isRental === true,
-        rentalDays: item.isRental === true ? Math.max(1, Math.min(30, Math.floor(Number(item.rentalDays) || 1))) : 1,
-        flightcase: caseOption
+    const state = {
+        currentStep: 1,
+        totalSteps: 3,
+        submitting: false
     };
-}
 
-function loadCart() {
-    try {
-        const stored = localStorage.getItem(CART_STORAGE_KEY);
-        if (!stored) return [];
-        const parsed = JSON.parse(stored);
-        if (!Array.isArray(parsed)) throw new TypeError('Dữ liệu giỏ hàng không đúng định dạng.');
-        return parsed.map(normalizeItem).filter(Boolean);
-    } catch (error) {
-        console.error('Không thể đọc giỏ hàng đã lưu:', error);
-        return [];
+    const elements = {
+        form: document.querySelector('#checkout-form'),
+        formError: document.querySelector('#form-error'),
+        submitButton: document.querySelector('#submit-order'),
+        eventDate: document.querySelector('[name="EventDate"]')
+    };
+
+    // Không chạy nếu không phải trang Checkout.
+    if (!elements.form) {
+        console.warn('[STAGEFX] Không tìm thấy form Checkout.');
+        return;
     }
-}
 
-function itemTotal(item) {
-    return (item.unitPrice + (item.flightcase?.price || 0))
-        * item.quantity
-        * (item.isRental ? item.rentalDays : 1);
-}
+    // ==========================================
+    // 2. HÀM HỖ TRỢ
+    // ==========================================
 
-function calculateTotals() {
-    const subtotal = state.items.reduce((sum, item) => sum + itemTotal(item), 0);
-    const shipping = subtotal === 0 || subtotal >= SHIPPING_THRESHOLD ? 0 : SHIPPING_ESTIMATE;
-    const vat = Math.round((subtotal + shipping) * 0.1);
-    const rentalTotal = state.items
-        .filter((item) => item.isRental)
-        .reduce((sum, item) => sum + itemTotal(item), 0);
-    const deposit = Math.round(rentalTotal * RENTAL_DEPOSIT_RATE);
-    return { subtotal, shipping, vat, deposit, total: subtotal + shipping + vat };
-}
-
-function renderSummaryItems() {
-    elements.summaryItems.replaceChildren(...state.items.map((item) => {
-        const row = makeElement('div', 'summary-item');
-        const image = makeElement('img');
-        image.src = item.productImage;
-        image.alt = '';
-        image.loading = 'lazy';
-        const details = makeElement('div', 'summary-item-details');
-        details.append(
-            makeElement('strong', '', item.productName),
-            makeElement('span', '', `${item.productSku} • SL: ${item.quantity}${item.isRental ? ` • ${item.rentalDays} ngày` : ''}`)
+    function getStepPanel(step) {
+        return document.querySelector(
+            '.form-step[data-step-panel="' + step + '"]'
         );
-        row.append(image, details, makeElement('strong', 'summary-item-price', money.format(itemTotal(item))));
-        return row;
-    }));
-}
-
-function renderTotals() {
-    const totals = calculateTotals();
-    elements.subtotal.textContent = money.format(totals.subtotal);
-    elements.shipping.textContent = totals.shipping === 0 ? 'Miễn phí*' : money.format(totals.shipping);
-    elements.vat.textContent = money.format(totals.vat);
-    elements.depositRow.hidden = totals.deposit <= 0;
-    elements.deposit.textContent = money.format(totals.deposit);
-    elements.grandTotal.textContent = money.format(totals.total);
-}
-
-function renderCart() {
-    const totalQuantity = state.items.reduce((sum, item) => sum + item.quantity, 0);
-    elements.emptyCart.hidden = state.items.length > 0;
-    elements.checkoutContent.hidden = state.items.length === 0;
-    if (state.items.length === 0) return;
-    elements.summaryCount.textContent = `${state.items.length} mục • ${totalQuantity} thiết bị`;
-    renderSummaryItems();
-    renderTotals();
-}
-
-function updateStep() {
-    document.querySelectorAll('.form-step').forEach((panel) => {
-        panel.hidden = Number(panel.dataset.stepPanel) !== state.step;
-    });
-    document.querySelectorAll('.step-button').forEach((button) => {
-        const buttonStep = Number(button.dataset.step);
-        button.classList.toggle('active', buttonStep === state.step);
-        button.classList.toggle('completed', buttonStep < state.step);
-        if (buttonStep === state.step) button.setAttribute('aria-current', 'step');
-        else button.removeAttribute('aria-current');
-    });
-    elements.formError.hidden = true;
-    elements.formError.textContent = '';
-    const heading = document.querySelector(`[data-step-panel="${state.step}"] h2`);
-    if (heading) heading.focus({ preventScroll: true });
-}
-
-function validateCurrentStep() {
-    const panel = document.querySelector(`[data-step-panel="${state.step}"]`);
-    const requiredFields = [...panel.querySelectorAll('[required]')];
-    const invalidField = requiredFields.find((field) => {
-        if (field.type === 'radio') {
-            return !panel.querySelector(`input[name="${field.name}"]:checked`);
-        }
-        return !field.checkValidity();
-    });
-
-    if (invalidField) {
-        if (invalidField.type === 'radio') {
-            elements.formError.textContent = 'Vui lòng chọn loại địa điểm trước khi tiếp tục.';
-            elements.formError.hidden = false;
-            panel.querySelector(`[name="${invalidField.name}"]`).focus();
-        } else {
-            invalidField.reportValidity();
-            elements.formError.textContent = 'Vui lòng kiểm tra các trường bắt buộc được đánh dấu.';
-            elements.formError.hidden = false;
-        }
-        return false;
     }
-    return true;
-}
 
-function appendDetail(container, label, value) {
-    const row = makeElement('div', 'preview-detail-row');
-    row.append(makeElement('span', '', label), makeElement('strong', '', value || 'Chưa cung cấp'));
-    container.append(row);
-}
-
-function createPreview() {
-    const formData = new FormData(elements.form);
-    const totals = calculateTotals();
-    const orderId = `SFX-DEMO-${new Date().toISOString().slice(0, 10).replace(/-/g, '')}-${Math.random().toString(36).slice(2, 6).toUpperCase()}`;
-    const venueType = formData.get('venueType') === 'indoor' ? 'Trong nhà' : 'Ngoài trời';
-    const paymentMethod = paymentLabels[formData.get('paymentMethod')] || 'Chưa chọn';
-
-    elements.previewOrderId.textContent = orderId;
-    elements.previewDetails.replaceChildren();
-    appendDetail(elements.previewDetails, 'Đơn vị', formData.get('company'));
-    appendDetail(elements.previewDetails, 'Người liên hệ', formData.get('contactName'));
-    appendDetail(elements.previewDetails, 'Sự kiện', formData.get('eventName'));
-    appendDetail(elements.previewDetails, 'Ngày dự kiến', formData.get('eventDate'));
-    appendDetail(elements.previewDetails, 'Địa điểm', `${venueType} • ${formData.get('eventLocation')}`);
-    appendDetail(elements.previewDetails, 'Hình thức thanh toán', paymentMethod);
-    appendDetail(elements.previewDetails, 'Tổng dự toán tham khảo', money.format(totals.total));
-    elements.previewDialog.showModal();
-}
-
-document.querySelectorAll('[data-next]').forEach((button) => {
-    button.addEventListener('click', () => {
-        if (!validateCurrentStep()) return;
-        state.step = Number(button.dataset.next);
-        updateStep();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-});
-
-document.querySelectorAll('[data-previous]').forEach((button) => {
-    button.addEventListener('click', () => {
-        state.step = Number(button.dataset.previous);
-        updateStep();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
-});
-
-document.querySelectorAll('.step-button').forEach((button) => {
-    button.addEventListener('click', () => {
-        const targetStep = Number(button.dataset.step);
-        if (targetStep <= state.step) {
-            state.step = targetStep;
-            updateStep();
+    function showError(message) {
+        if (!elements.formError) {
+            console.warn('[STAGEFX Checkout]', message);
             return;
         }
-        if (targetStep === state.step + 1 && validateCurrentStep()) {
-            state.step = targetStep;
-            updateStep();
+
+        elements.formError.textContent = message;
+        elements.formError.hidden = false;
+
+        elements.formError.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    }
+
+    function clearError() {
+        if (!elements.formError) return;
+
+        elements.formError.textContent = '';
+        elements.formError.hidden = true;
+    }
+
+    function scrollToTop() {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
+        });
+    }
+
+    // ==========================================
+    // 3. CẬP NHẬT GIAO DIỆN CÁC BƯỚC
+    // ==========================================
+
+    function updateStep() {
+
+        document.querySelectorAll('.form-step').forEach(function (panel) {
+
+            const panelStep = Number(panel.dataset.stepPanel);
+
+            panel.hidden = panelStep !== state.currentStep;
+        });
+
+        document.querySelectorAll('.step-button').forEach(function (button) {
+
+            const buttonStep = Number(button.dataset.step);
+
+            button.classList.toggle(
+                'active',
+                buttonStep === state.currentStep
+            );
+
+            button.classList.toggle(
+                'completed',
+                buttonStep < state.currentStep
+            );
+
+            if (buttonStep === state.currentStep) {
+                button.setAttribute('aria-current', 'step');
+            } else {
+                button.removeAttribute('aria-current');
+            }
+        });
+
+        clearError();
+
+        const panel = getStepPanel(state.currentStep);
+        const heading = panel ? panel.querySelector('h2') : null;
+
+        if (heading) {
+            heading.setAttribute('tabindex', '-1');
+            heading.focus({ preventScroll: true });
         }
-    });
-});
+    }
 
-elements.form.addEventListener('submit', (event) => {
-    event.preventDefault();
-    if (!validateCurrentStep()) return;
-    createPreview();
-});
+    // ==========================================
+    // 4. KIỂM TRA RADIO BUTTON
+    // ==========================================
 
-document.querySelectorAll('input[name="paymentMethod"]').forEach((input) => {
-    input.addEventListener('change', () => {
-        document.querySelectorAll('.payment-card').forEach((card) => {
-            card.classList.toggle('selected', card.contains(input) && input.checked);
+    function validateRadioGroup(field, panel) {
+
+        const groupName = field.name;
+
+        const checked = panel.querySelector(
+            'input[type="radio"][name="' + groupName + '"]:checked'
+        );
+
+        if (checked) {
+            return true;
+        }
+
+        showError('Vui lòng chọn một phương án bắt buộc.');
+
+        const firstRadio = panel.querySelector(
+            'input[type="radio"][name="' + groupName + '"]'
+        );
+
+        if (firstRadio) {
+            firstRadio.focus();
+        }
+
+        return false;
+    }
+
+    // ==========================================
+    // 5. KIỂM TRA CHECKBOX
+    // ==========================================
+
+    function validateCheckbox(field) {
+
+        if (field.checked) {
+            return true;
+        }
+
+        showError('Vui lòng xác nhận các nội dung bắt buộc.');
+
+        field.focus();
+
+        return false;
+    }
+
+    // ==========================================
+    // 6. KIỂM TRA BƯỚC HIỆN TẠI
+    // ==========================================
+
+    function validateCurrentStep() {
+
+        const panel = getStepPanel(state.currentStep);
+
+        if (!panel) {
+            showError(
+                'Không tìm thấy nội dung bước ' + state.currentStep + '.'
+            );
+
+            return false;
+        }
+
+        const requiredFields = panel.querySelectorAll('[required]');
+
+        for (const field of requiredFields) {
+
+            if (field.disabled) {
+                continue;
+            }
+
+            // Radio button
+            if (field.type === 'radio') {
+
+                if (!validateRadioGroup(field, panel)) {
+                    return false;
+                }
+
+                continue;
+            }
+
+            // Checkbox
+            if (field.type === 'checkbox') {
+
+                if (!validateCheckbox(field)) {
+                    return false;
+                }
+
+                continue;
+            }
+
+            // Input, select, textarea
+            if (!field.checkValidity()) {
+
+                field.reportValidity();
+
+                showError(
+                    'Vui lòng kiểm tra và nhập đầy đủ thông tin.'
+                );
+
+                field.focus();
+
+                return false;
+            }
+        }
+
+        clearError();
+
+        return true;
+    }
+
+    // ==========================================
+    // 7. KIỂM TRA TOÀN BỘ 3 BƯỚC
+    // ==========================================
+
+    function validateAllSteps() {
+
+        const previousStep = state.currentStep;
+
+        for (let step = 1; step <= state.totalSteps; step++) {
+
+            state.currentStep = step;
+
+            updateStep();
+
+            if (!validateCurrentStep()) {
+
+                const panel = getStepPanel(step);
+
+                if (panel) {
+                    panel.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+
+                return false;
+            }
+        }
+
+        // Khôi phục bước ban đầu nếu tất cả đều hợp lệ.
+        state.currentStep = previousStep;
+
+        updateStep();
+
+        return true;
+    }
+
+    // ==========================================
+    // 8. NÚT TIẾP TỤC
+    // ==========================================
+
+    document.querySelectorAll('[data-next]').forEach(function (button) {
+
+        button.addEventListener('click', function () {
+
+            if (!validateCurrentStep()) {
+                return;
+            }
+
+            const nextStep = Number(button.dataset.next);
+
+            if (
+                !Number.isInteger(nextStep) ||
+                nextStep < 1 ||
+                nextStep > state.totalSteps
+            ) {
+                return;
+            }
+
+            state.currentStep = nextStep;
+
+            updateStep();
+
+            scrollToTop();
         });
     });
-});
 
-document.querySelector('#close-preview').addEventListener('click', () => elements.previewDialog.close());
-document.querySelector('#close-preview-secondary').addEventListener('click', () => elements.previewDialog.close());
-elements.previewDialog.addEventListener('click', (event) => {
-    if (event.target === elements.previewDialog) elements.previewDialog.close();
-});
+    // ==========================================
+    // 9. NÚT QUAY LẠI
+    // ==========================================
 
-const eventDate = document.querySelector('[name="eventDate"]');
-const today = new Date();
-eventDate.min = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
-state.items = loadCart();
-renderCart();
-updateStep();
+    document.querySelectorAll('[data-previous]').forEach(function (button) {
+
+        button.addEventListener('click', function () {
+
+            const previousStep = Number(button.dataset.previous);
+
+            if (
+                !Number.isInteger(previousStep) ||
+                previousStep < 1 ||
+                previousStep >= state.currentStep
+            ) {
+                return;
+            }
+
+            state.currentStep = previousStep;
+
+            updateStep();
+
+            scrollToTop();
+        });
+    });
+
+    // ==========================================
+    // 10. CLICK STEPPER
+    // ==========================================
+
+    document.querySelectorAll('.step-button').forEach(function (button) {
+
+        button.addEventListener('click', function () {
+
+            const targetStep = Number(button.dataset.step);
+
+            if (
+                !Number.isInteger(targetStep) ||
+                targetStep < 1 ||
+                targetStep > state.totalSteps
+            ) {
+                return;
+            }
+
+            // Cho phép quay lại bước trước.
+            if (targetStep < state.currentStep) {
+
+                state.currentStep = targetStep;
+
+                updateStep();
+
+                return;
+            }
+
+            // Chỉ cho phép tiến từng bước.
+            if (targetStep === state.currentStep + 1) {
+
+                if (!validateCurrentStep()) {
+                    return;
+                }
+
+                state.currentStep = targetStep;
+
+                updateStep();
+            }
+        });
+    });
+
+    // ==========================================
+    // 11. CẬP NHẬT THẺ THANH TOÁN
+    // ==========================================
+
+    function updatePaymentCards() {
+
+        document.querySelectorAll('.payment-card').forEach(function (card) {
+
+            const radio = card.querySelector(
+                'input[name="PaymentMethod"]'
+            );
+
+            card.classList.toggle(
+                'selected',
+                Boolean(radio && radio.checked)
+            );
+        });
+    }
+
+    document.querySelectorAll(
+        'input[name="PaymentMethod"]'
+    ).forEach(function (input) {
+
+        input.addEventListener('change', updatePaymentCards);
+    });
+
+    updatePaymentCards();
+
+    // ==========================================
+    // 12. CẬP NHẬT THẺ LOẠI ĐỊA ĐIỂM
+    // ==========================================
+
+    function updateVenueCards() {
+
+        document.querySelectorAll(
+            '.venue-field .choice-card'
+        ).forEach(function (card) {
+
+            const radio = card.querySelector(
+                'input[name="VenueType"]'
+            );
+
+            card.classList.toggle(
+                'selected',
+                Boolean(radio && radio.checked)
+            );
+        });
+    }
+
+    document.querySelectorAll(
+        'input[name="VenueType"]'
+    ).forEach(function (input) {
+
+        input.addEventListener('change', updateVenueCards);
+    });
+
+    updateVenueCards();
+
+    // ==========================================
+    // 13. CẬP NHẬT THẺ KỸ THUẬT VIÊN
+    // ==========================================
+
+    function updateTechnicianCards() {
+
+        document.querySelectorAll(
+            'input[name="SiteTechnician"]'
+        ).forEach(function (input) {
+
+            const group = input.closest('.field');
+
+            if (!group) {
+                return;
+            }
+
+            group.querySelectorAll('.choice-card').forEach(function (card) {
+
+                const radio = card.querySelector(
+                    'input[name="SiteTechnician"]'
+                );
+
+                card.classList.toggle(
+                    'selected',
+                    Boolean(radio && radio.checked)
+                );
+            });
+        });
+    }
+
+    document.querySelectorAll(
+        'input[name="SiteTechnician"]'
+    ).forEach(function (input) {
+
+        input.addEventListener('change', updateTechnicianCards);
+    });
+
+    updateTechnicianCards();
+
+    // ==========================================
+    // 14. GIỚI HẠN NGÀY TỔ CHỨC
+    // ==========================================
+
+    function setMinimumEventDate() {
+
+        if (!elements.eventDate) {
+            return;
+        }
+
+        const today = new Date();
+
+        const year = today.getFullYear();
+
+        const month = String(
+            today.getMonth() + 1
+        ).padStart(2, '0');
+
+        const day = String(
+            today.getDate()
+        ).padStart(2, '0');
+
+        // Định dạng yyyy-MM-dd, không có khoảng trắng.
+        const minimumDate = year + '-' + month + '-' + day;
+
+        elements.eventDate.min = minimumDate;
+    }
+
+    setMinimumEventDate();
+
+    // ==========================================
+    // 15. XỬ LÝ SUBMIT ĐẶT HÀNG
+    // ==========================================
+
+    elements.form.addEventListener('submit', function (event) {
+
+        console.log('[STAGEFX] Submit event triggered.');
+
+        // Chặn gửi lặp.
+        if (state.submitting) {
+
+            event.preventDefault();
+
+            console.warn('[STAGEFX] Form đang được gửi.');
+
+            return;
+        }
+
+        // Kiểm tra cả 3 bước.
+        if (!validateAllSteps()) {
+
+            event.preventDefault();
+
+            console.warn('[STAGEFX] Validation failed.');
+
+            return;
+        }
+
+        console.log(
+            '[STAGEFX] Validation passed. Sending order to server.'
+        );
+
+        // Không preventDefault ở đây.
+        // Trình duyệt sẽ POST đến Checkout/PlaceOrder.
+
+        state.submitting = true;
+
+        if (elements.submitButton) {
+
+            elements.submitButton.disabled = true;
+
+            const submitText = elements.submitButton.querySelector(
+                '.submit-text'
+            );
+
+            if (submitText) {
+
+                submitText.textContent = 'Đang gửi yêu cầu...';
+
+            } else {
+
+                elements.submitButton.textContent =
+                    'Đang gửi yêu cầu...';
+            }
+        }
+    });
+
+    // ==========================================
+    // 16. KHỞI TẠO CHECKOUT
+    // ==========================================
+
+    updateStep();
+
+    console.log('[STAGEFX] Checkout JavaScript initialized.');
+
+});

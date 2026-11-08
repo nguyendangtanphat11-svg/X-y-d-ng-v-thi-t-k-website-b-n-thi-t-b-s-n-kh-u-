@@ -4,7 +4,7 @@
   <edmx:Runtime>
     <!-- SSDL content -->
     <edmx:StorageModels>
-      <Schema Namespace="STAGEFX_PROModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+    <Schema Namespace="STAGEFX_PROModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
         <EntityType Name="ChiTietDonHang">
           <Key>
             <PropertyRef Name="MaChiTietDonHang" />
@@ -16,7 +16,11 @@
           <Property Name="SKULucDat" Type="nvarchar" MaxLength="50" Nullable="false" />
           <Property Name="DonGia" Type="decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="SoLuong" Type="int" Nullable="false" />
-          <Property Name="ThanhTien" Type="decimal" Precision="29" Scale="2" StoreGeneratedPattern="Computed" />
+          <Property Name="HinhThucDat" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="SoNgayThue" Type="int" />
+          <Property Name="CoFlightcase" Type="bit" Nullable="false" />
+          <Property Name="PhiFlightcase" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="ThanhTien" Type="decimal" Precision="38" Scale="2" StoreGeneratedPattern="Computed" />
         </EntityType>
         <EntityType Name="ChiTietGioHang">
           <Key>
@@ -27,6 +31,10 @@
           <Property Name="MaSanPham" Type="int" Nullable="false" />
           <Property Name="SoLuong" Type="int" Nullable="false" />
           <Property Name="NgayThem" Type="datetime2" Precision="0" Nullable="false" />
+          <Property Name="HinhThucDat" Type="nvarchar" MaxLength="10" Nullable="false" />
+          <Property Name="SoNgayThue" Type="int" />
+          <Property Name="CoFlightcase" Type="bit" Nullable="false" />
+          <Property Name="PhiFlightcase" Type="decimal" Precision="18" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="DanhGiaSanPham">
           <Key>
@@ -88,6 +96,8 @@
           <Property Name="MaKhuyenMai" Type="int" />
           <Property Name="NgayTao" Type="datetime2" Precision="0" Nullable="false" />
           <Property Name="NgayCapNhat" Type="datetime2" Precision="0" />
+          <Property Name="TienCoc" Type="decimal" Precision="18" Scale="2" Nullable="false" />
+          <Property Name="TyLeDatCoc" Type="decimal" Precision="5" Scale="2" Nullable="false" />
         </EntityType>
         <EntityType Name="GioHang">
           <Key>
@@ -186,6 +196,7 @@
           <Property Name="TrangThai" Type="bit" Nullable="false" />
           <Property Name="NgayTao" Type="datetime2" Precision="0" Nullable="false" />
           <Property Name="NgayCapNhat" Type="datetime2" Precision="0" />
+          <Property Name="GiaThueNgay" Type="decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="SuDungKhuyenMai">
           <Key>
@@ -211,6 +222,29 @@
           <Property Name="DonViThanhToan" Type="nvarchar" MaxLength="50" />
           <Property Name="NgayThanhToan" Type="datetime2" Precision="0" />
           <Property Name="NgayTao" Type="datetime2" Precision="0" Nullable="false" />
+        </EntityType>
+        <EntityType Name="ThongTinDuAn">
+          <Key>
+            <PropertyRef Name="MaThongTinDuAn" />
+          </Key>
+          <Property Name="MaThongTinDuAn" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="MaDonHang" Type="int" Nullable="false" />
+          <Property Name="TenCongTy" Type="nvarchar" MaxLength="200" />
+          <Property Name="MaSoThue" Type="nvarchar" MaxLength="20" />
+          <Property Name="TenNguoiLienHe" Type="nvarchar" MaxLength="150" />
+          <Property Name="EmailLienHe" Type="nvarchar" MaxLength="256" />
+          <Property Name="TenSuKien" Type="nvarchar" MaxLength="200" />
+          <Property Name="NgayToChuc" Type="date" />
+          <Property Name="LoaiDiaDiem" Type="nvarchar" MaxLength="20" />
+          <Property Name="DiaDiemToChuc" Type="nvarchar" MaxLength="500" />
+          <Property Name="ThongTinKetCau" Type="nvarchar(max)" />
+          <Property Name="CoKyThuatVien" Type="bit" Nullable="false" />
+          <Property Name="GhiChuAnToan" Type="nvarchar(max)" />
+          <Property Name="XacNhanKhaoSat" Type="bit" Nullable="false" />
+          <Property Name="XacNhanKeHoachUngPho" Type="bit" Nullable="false" />
+          <Property Name="XacNhanNguoiVanHanh" Type="bit" Nullable="false" />
+          <Property Name="PhuongThucThanhToan" Type="nvarchar" MaxLength="30" />
+          <Property Name="NgayTao" Type="datetime2" Precision="7" Nullable="false" />
         </EntityType>
         <EntityType Name="VaiTro">
           <Key>
@@ -531,6 +565,18 @@
             </Dependent>
           </ReferentialConstraint>
         </Association>
+        <Association Name="FK_ThongTinDuAn_DonHang">
+          <End Role="DonHang" Type="Self.DonHang" Multiplicity="1" />
+          <End Role="ThongTinDuAn" Type="Self.ThongTinDuAn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonHang">
+              <PropertyRef Name="MaDonHang" />
+            </Principal>
+            <Dependent Role="ThongTinDuAn">
+              <PropertyRef Name="MaDonHang" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
         <Association Name="FK_YeuCauHuyDon_DonHang">
           <End Role="DonHang" Type="Self.DonHang" Multiplicity="1" />
           <End Role="YeuCauHuyDon" Type="Self.YeuCauHuyDon" Multiplicity="*" />
@@ -607,6 +653,7 @@
           <EntitySet Name="SanPham" EntityType="Self.SanPham" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="SuDungKhuyenMai" EntityType="Self.SuDungKhuyenMai" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="ThanhToan" EntityType="Self.ThanhToan" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="ThongTinDuAn" EntityType="Self.ThongTinDuAn" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="VaiTro" EntityType="Self.VaiTro" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="YeuCauHuyDon" EntityType="Self.YeuCauHuyDon" Schema="dbo" store:Type="Tables" />
           <EntitySet Name="YeuCauTuVan" EntityType="Self.YeuCauTuVan" Schema="dbo" store:Type="Tables" />
@@ -702,6 +749,10 @@
             <End Role="DonHang" EntitySet="DonHang" />
             <End Role="ThanhToan" EntitySet="ThanhToan" />
           </AssociationSet>
+          <AssociationSet Name="FK_ThongTinDuAn_DonHang" Association="Self.FK_ThongTinDuAn_DonHang">
+            <End Role="DonHang" EntitySet="DonHang" />
+            <End Role="ThongTinDuAn" EntitySet="ThongTinDuAn" />
+          </AssociationSet>
           <AssociationSet Name="FK_YeuCauHuyDon_DonHang" Association="Self.FK_YeuCauHuyDon_DonHang">
             <End Role="DonHang" EntitySet="DonHang" />
             <End Role="YeuCauHuyDon" EntitySet="YeuCauHuyDon" />
@@ -723,8 +774,7 @@
             <End Role="YeuCauTuVan" EntitySet="YeuCauTuVan" />
           </AssociationSet>
         </EntityContainer>
-      </Schema>
-    </edmx:StorageModels>
+      </Schema></edmx:StorageModels>
     <!-- CSDL content -->
     <edmx:ConceptualModels>
       <Schema Namespace="STAGEFX_PROModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
@@ -739,10 +789,14 @@
           <Property Name="SKULucDat" Type="String" MaxLength="50" FixedLength="false" Unicode="true" Nullable="false" />
           <Property Name="DonGia" Type="Decimal" Precision="18" Scale="2" Nullable="false" />
           <Property Name="SoLuong" Type="Int32" Nullable="false" />
-          <Property Name="ThanhTien" Type="Decimal" Precision="29" Scale="2" annotation:StoreGeneratedPattern="Computed" />
+          <Property Name="ThanhTien" Type="Decimal" Precision="38" Scale="2" annotation:StoreGeneratedPattern="Computed" />
           <NavigationProperty Name="DonHang" Relationship="Self.FK_ChiTietDonHang_DonHang" FromRole="ChiTietDonHang" ToRole="DonHang" />
           <NavigationProperty Name="SanPham" Relationship="Self.FK_ChiTietDonHang_SanPham" FromRole="ChiTietDonHang" ToRole="SanPham" />
           <NavigationProperty Name="DanhGiaSanPham" Relationship="Self.FK_DanhGiaSanPham_ChiTietDonHang" FromRole="ChiTietDonHang" ToRole="DanhGiaSanPham" />
+          <Property Name="HinhThucDat" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SoNgayThue" Type="Int32" />
+          <Property Name="CoFlightcase" Type="Boolean" Nullable="false" />
+          <Property Name="PhiFlightcase" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="ChiTietGioHang">
           <Key>
@@ -755,6 +809,10 @@
           <Property Name="NgayThem" Type="DateTime" Nullable="false" Precision="0" />
           <NavigationProperty Name="GioHang" Relationship="Self.FK_ChiTietGioHang_GioHang" FromRole="ChiTietGioHang" ToRole="GioHang" />
           <NavigationProperty Name="SanPham" Relationship="Self.FK_ChiTietGioHang_SanPham" FromRole="ChiTietGioHang" ToRole="SanPham" />
+          <Property Name="HinhThucDat" Type="String" Nullable="false" MaxLength="10" FixedLength="false" Unicode="true" />
+          <Property Name="SoNgayThue" Type="Int32" />
+          <Property Name="CoFlightcase" Type="Boolean" Nullable="false" />
+          <Property Name="PhiFlightcase" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="DanhGiaSanPham">
           <Key>
@@ -829,6 +887,9 @@
           <NavigationProperty Name="SuDungKhuyenMai" Relationship="Self.FK_SuDungKhuyenMai_DonHang" FromRole="DonHang" ToRole="SuDungKhuyenMai" />
           <NavigationProperty Name="ThanhToan" Relationship="Self.FK_ThanhToan_DonHang" FromRole="DonHang" ToRole="ThanhToan" />
           <NavigationProperty Name="YeuCauHuyDon" Relationship="Self.FK_YeuCauHuyDon_DonHang" FromRole="DonHang" ToRole="YeuCauHuyDon" />
+          <Property Name="TienCoc" Type="Decimal" Nullable="false" Precision="18" Scale="2" />
+          <Property Name="TyLeDatCoc" Type="Decimal" Nullable="false" Precision="5" Scale="2" />
+          <NavigationProperty Name="ThongTinDuAn" Relationship="STAGEFX_PROModel.FK_ThongTinDuAn_DonHang" FromRole="DonHang" ToRole="ThongTinDuAn" />
         </EntityType>
         <EntityType Name="GioHang">
           <Key>
@@ -955,6 +1016,7 @@
           <NavigationProperty Name="DanhMuc" Relationship="Self.FK_SanPham_DanhMuc" FromRole="SanPham" ToRole="DanhMuc" />
           <NavigationProperty Name="HinhAnhSanPham" Relationship="Self.FK_HinhAnhSanPham_SanPham" FromRole="SanPham" ToRole="HinhAnhSanPham" />
           <NavigationProperty Name="LichSuKho" Relationship="Self.FK_LichSuKho_SanPham" FromRole="SanPham" ToRole="LichSuKho" />
+          <Property Name="GiaThueNgay" Type="Decimal" Precision="18" Scale="2" />
         </EntityType>
         <EntityType Name="SuDungKhuyenMai">
           <Key>
@@ -1501,7 +1563,48 @@
             <End Role="NguoiDung" EntitySet="NguoiDung" />
             <End Role="YeuCauTuVan" EntitySet="YeuCauTuVan" />
           </AssociationSet>
+          <EntitySet Name="ThongTinDuAn" EntityType="STAGEFX_PROModel.ThongTinDuAn" />
+          <AssociationSet Name="FK_ThongTinDuAn_DonHang" Association="STAGEFX_PROModel.FK_ThongTinDuAn_DonHang">
+            <End Role="DonHang" EntitySet="DonHang" />
+            <End Role="ThongTinDuAn" EntitySet="ThongTinDuAn" />
+          </AssociationSet>
         </EntityContainer>
+        <EntityType Name="ThongTinDuAn">
+          <Key>
+            <PropertyRef Name="MaThongTinDuAn" />
+          </Key>
+          <Property Name="MaThongTinDuAn" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="MaDonHang" Type="Int32" Nullable="false" />
+          <Property Name="TenCongTy" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="MaSoThue" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="TenNguoiLienHe" Type="String" MaxLength="150" FixedLength="false" Unicode="true" />
+          <Property Name="EmailLienHe" Type="String" MaxLength="256" FixedLength="false" Unicode="true" />
+          <Property Name="TenSuKien" Type="String" MaxLength="200" FixedLength="false" Unicode="true" />
+          <Property Name="NgayToChuc" Type="DateTime" Precision="0" />
+          <Property Name="LoaiDiaDiem" Type="String" MaxLength="20" FixedLength="false" Unicode="true" />
+          <Property Name="DiaDiemToChuc" Type="String" MaxLength="500" FixedLength="false" Unicode="true" />
+          <Property Name="ThongTinKetCau" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="CoKyThuatVien" Type="Boolean" Nullable="false" />
+          <Property Name="GhiChuAnToan" Type="String" MaxLength="Max" FixedLength="false" Unicode="true" />
+          <Property Name="XacNhanKhaoSat" Type="Boolean" Nullable="false" />
+          <Property Name="XacNhanKeHoachUngPho" Type="Boolean" Nullable="false" />
+          <Property Name="XacNhanNguoiVanHanh" Type="Boolean" Nullable="false" />
+          <Property Name="PhuongThucThanhToan" Type="String" MaxLength="30" FixedLength="false" Unicode="true" />
+          <Property Name="NgayTao" Type="DateTime" Nullable="false" Precision="7" />
+          <NavigationProperty Name="DonHang" Relationship="STAGEFX_PROModel.FK_ThongTinDuAn_DonHang" FromRole="ThongTinDuAn" ToRole="DonHang" />
+        </EntityType>
+        <Association Name="FK_ThongTinDuAn_DonHang">
+          <End Type="STAGEFX_PROModel.DonHang" Role="DonHang" Multiplicity="1" />
+          <End Type="STAGEFX_PROModel.ThongTinDuAn" Role="ThongTinDuAn" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="DonHang">
+              <PropertyRef Name="MaDonHang" />
+            </Principal>
+            <Dependent Role="ThongTinDuAn">
+              <PropertyRef Name="MaDonHang" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
       </Schema>
     </edmx:ConceptualModels>
     <!-- C-S mapping content -->
@@ -1511,6 +1614,10 @@
           <EntitySetMapping Name="ChiTietDonHang">
             <EntityTypeMapping TypeName="STAGEFX_PROModel.ChiTietDonHang">
               <MappingFragment StoreEntitySet="ChiTietDonHang">
+                <ScalarProperty Name="PhiFlightcase" ColumnName="PhiFlightcase" />
+                <ScalarProperty Name="CoFlightcase" ColumnName="CoFlightcase" />
+                <ScalarProperty Name="SoNgayThue" ColumnName="SoNgayThue" />
+                <ScalarProperty Name="HinhThucDat" ColumnName="HinhThucDat" />
                 <ScalarProperty Name="MaChiTietDonHang" ColumnName="MaChiTietDonHang" />
                 <ScalarProperty Name="MaDonHang" ColumnName="MaDonHang" />
                 <ScalarProperty Name="MaSanPham" ColumnName="MaSanPham" />
@@ -1525,6 +1632,10 @@
           <EntitySetMapping Name="ChiTietGioHang">
             <EntityTypeMapping TypeName="STAGEFX_PROModel.ChiTietGioHang">
               <MappingFragment StoreEntitySet="ChiTietGioHang">
+                <ScalarProperty Name="PhiFlightcase" ColumnName="PhiFlightcase" />
+                <ScalarProperty Name="CoFlightcase" ColumnName="CoFlightcase" />
+                <ScalarProperty Name="SoNgayThue" ColumnName="SoNgayThue" />
+                <ScalarProperty Name="HinhThucDat" ColumnName="HinhThucDat" />
                 <ScalarProperty Name="MaChiTietGioHang" ColumnName="MaChiTietGioHang" />
                 <ScalarProperty Name="MaGioHang" ColumnName="MaGioHang" />
                 <ScalarProperty Name="MaSanPham" ColumnName="MaSanPham" />
@@ -1578,6 +1689,8 @@
           <EntitySetMapping Name="DonHang">
             <EntityTypeMapping TypeName="STAGEFX_PROModel.DonHang">
               <MappingFragment StoreEntitySet="DonHang">
+                <ScalarProperty Name="TyLeDatCoc" ColumnName="TyLeDatCoc" />
+                <ScalarProperty Name="TienCoc" ColumnName="TienCoc" />
                 <ScalarProperty Name="MaDonHang" ColumnName="MaDonHang" />
                 <ScalarProperty Name="MaSoDonHang" ColumnName="MaSoDonHang" />
                 <ScalarProperty Name="MaNguoiDung" ColumnName="MaNguoiDung" />
@@ -1687,6 +1800,7 @@
           <EntitySetMapping Name="SanPham">
             <EntityTypeMapping TypeName="STAGEFX_PROModel.SanPham">
               <MappingFragment StoreEntitySet="SanPham">
+                <ScalarProperty Name="GiaThueNgay" ColumnName="GiaThueNgay" />
                 <ScalarProperty Name="MaSanPham" ColumnName="MaSanPham" />
                 <ScalarProperty Name="MaDanhMuc" ColumnName="MaDanhMuc" />
                 <ScalarProperty Name="SKU" ColumnName="SKU" />
@@ -1769,6 +1883,30 @@
                 <ScalarProperty Name="PhanHoi" ColumnName="PhanHoi" />
                 <ScalarProperty Name="NgayTao" ColumnName="NgayTao" />
                 <ScalarProperty Name="NgayHoanTat" ColumnName="NgayHoanTat" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="ThongTinDuAn">
+            <EntityTypeMapping TypeName="STAGEFX_PROModel.ThongTinDuAn">
+              <MappingFragment StoreEntitySet="ThongTinDuAn">
+                <ScalarProperty Name="NgayTao" ColumnName="NgayTao" />
+                <ScalarProperty Name="PhuongThucThanhToan" ColumnName="PhuongThucThanhToan" />
+                <ScalarProperty Name="XacNhanNguoiVanHanh" ColumnName="XacNhanNguoiVanHanh" />
+                <ScalarProperty Name="XacNhanKeHoachUngPho" ColumnName="XacNhanKeHoachUngPho" />
+                <ScalarProperty Name="XacNhanKhaoSat" ColumnName="XacNhanKhaoSat" />
+                <ScalarProperty Name="GhiChuAnToan" ColumnName="GhiChuAnToan" />
+                <ScalarProperty Name="CoKyThuatVien" ColumnName="CoKyThuatVien" />
+                <ScalarProperty Name="ThongTinKetCau" ColumnName="ThongTinKetCau" />
+                <ScalarProperty Name="DiaDiemToChuc" ColumnName="DiaDiemToChuc" />
+                <ScalarProperty Name="LoaiDiaDiem" ColumnName="LoaiDiaDiem" />
+                <ScalarProperty Name="NgayToChuc" ColumnName="NgayToChuc" />
+                <ScalarProperty Name="TenSuKien" ColumnName="TenSuKien" />
+                <ScalarProperty Name="EmailLienHe" ColumnName="EmailLienHe" />
+                <ScalarProperty Name="TenNguoiLienHe" ColumnName="TenNguoiLienHe" />
+                <ScalarProperty Name="MaSoThue" ColumnName="MaSoThue" />
+                <ScalarProperty Name="TenCongTy" ColumnName="TenCongTy" />
+                <ScalarProperty Name="MaDonHang" ColumnName="MaDonHang" />
+                <ScalarProperty Name="MaThongTinDuAn" ColumnName="MaThongTinDuAn" />
               </MappingFragment>
             </EntityTypeMapping>
           </EntitySetMapping>

@@ -133,6 +133,7 @@
     <Compile Include="Controllers\CatalogController.cs" />
     <Compile Include="Controllers\CheckoutController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\OrderHistoryController.cs" />
     <Compile Include="Controllers\ProductController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -197,9 +198,14 @@
     <Compile Include="Models\ThanhToan.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\ThongTinDuAn.cs">
+      <DependentUpon>StageFxModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\VaiTro.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\CartViewModels.cs" />
+    <Compile Include="ViewModels\CheckoutViewModel.cs" />
     <Compile Include="ViewModels\ConsultationViewModel.cs" />
     <Compile Include="ViewModels\HomeViewModel.cs" />
     <Compile Include="Models\YeuCauHuyDon.cs">
@@ -209,6 +215,11 @@
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ViewModels\OrderCancelRequestViewModel.cs" />
+    <Compile Include="ViewModels\OrderDetailViewModel.cs" />
+    <Compile Include="ViewModels\OrderHistoryViewModel.cs" />
+    <Compile Include="ViewModels\ProductDetailViewModel.cs" />
+    <Compile Include="ViewModels\ProfileViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\css\auth.css" />
@@ -219,7 +230,11 @@
     <Content Include="Content\css\header.css" />
     <Content Include="Content\css\home-links.css" />
     <Content Include="Content\css\home.css" />
+    <Content Include="Content\css\order-cancel.css" />
+    <Content Include="Content\css\order-detail.css" />
+    <Content Include="Content\css\order-history.css" />
     <Content Include="Content\css\product-detail.css" />
+    <Content Include="Content\css\profile.css" />
     <Content Include="Content\css\site-theme.css" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
@@ -273,6 +288,12 @@
     <Content Include="Views\Product\Details.cshtml" />
     <Content Include="Views\Cart\Index.cshtml" />
     <Content Include="Views\Checkout\Index.cshtml" />
+    <Content Include="Views\Cart\_CartCount.cshtml" />
+    <Content Include="Views\Checkout\Confirmation.cshtml" />
+    <Content Include="Views\OrderHistory\Details.cshtml" />
+    <Content Include="Views\OrderHistory\RequestCancel.cshtml" />
+    <Content Include="Views\OrderHistory\Index.cshtml" />
+    <Content Include="Views\Account\Profile.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

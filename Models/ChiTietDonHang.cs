@@ -28,6 +28,10 @@ namespace Wedside_TVS_SFX.Models
         public decimal DonGia { get; set; }
         public int SoLuong { get; set; }
         public Nullable<decimal> ThanhTien { get; set; }
+        public string HinhThucDat { get; set; }
+        public Nullable<int> SoNgayThue { get; set; }
+        public bool CoFlightcase { get; set; }
+        public decimal PhiFlightcase { get; set; }
     
         public virtual DonHang DonHang { get; set; }
         public virtual SanPham SanPham { get; set; }

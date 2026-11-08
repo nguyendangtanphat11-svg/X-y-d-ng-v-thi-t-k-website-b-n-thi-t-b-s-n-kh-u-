@@ -803,3 +803,27 @@
         transition-duration: .01ms !important;
     }
 }
+/* =========================================================
+   ORDER HISTORY - ACCOUNT DROPDOWN
+========================================================= */
+
+.site-shell-user-dropdown .order-history-item {
+    position: relative;
+}
+
+    .site-shell-user-dropdown .order-history-item
+    .material-symbols-outlined {
+        color: #ed1c35;
+        font-size: 20px;
+    }
+
+    .site-shell-user-dropdown .order-history-item:hover {
+        border-color: #382126 !important;
+        background: #211416 !important;
+        color: #fff !important;
+    }
+
+        .site-shell-user-dropdown .order-history-item:hover
+        .material-symbols-outlined {
+            color: #ff5968;
+        }

@@ -37,6 +37,7 @@ namespace Wedside_TVS_SFX.Models
         public bool TrangThai { get; set; }
         public System.DateTime NgayTao { get; set; }
         public Nullable<System.DateTime> NgayCapNhat { get; set; }
+        public Nullable<decimal> GiaThueNgay { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ChiTietDonHang> ChiTietDonHang { get; set; }

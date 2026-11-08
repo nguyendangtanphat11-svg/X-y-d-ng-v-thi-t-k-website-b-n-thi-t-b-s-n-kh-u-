@@ -1,0 +1,228 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.ProfileViewModel
+
+@{
+    ViewBag.Title = "Thông tin tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/profile.css")" />
+}
+
+<main class="profile-page">
+    <div class="profile-container">
+
+        <div class="profile-breadcrumb">
+            <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+            <span>/</span>
+            <span>Thông tin tài khoản</span>
+        </div>
+
+        <div class="profile-heading">
+            <div>
+                <span class="profile-eyebrow">STAGEFX PRO / MY ACCOUNT</span>
+                <h1>THÔNG TIN TÀI KHOẢN</h1>
+                <p>Quản lý thông tin cá nhân và thông tin đăng nhập của bạn.</p>
+            </div>
+
+            <div class="profile-heading-icon">
+                <span class="material-symbols-outlined">account_circle</span>
+            </div>
+        </div>
+
+        @if (TempData["ProfileSuccess"] != null)
+        {
+            <div class="profile-alert success">
+                <span class="material-symbols-outlined">check_circle</span>
+                @TempData["ProfileSuccess"]
+            </div>
+        }
+
+        <div class="profile-layout">
+
+            <!-- LEFT: ACCOUNT CARD -->
+            <aside class="profile-sidebar">
+
+                <div class="profile-user-card">
+
+                    <div class="profile-avatar">
+                        <span class="material-symbols-outlined">person</span>
+                    </div>
+
+                    <h2>@Model.HoTen</h2>
+
+                    <p>@Model.Email</p>
+
+                    <span class="profile-role">
+                        @(String.IsNullOrWhiteSpace(Model.TenVaiTro)
+                            ? "Khách hàng"
+                            : Model.TenVaiTro)
+                    </span>
+
+                    <div class="profile-user-divider"></div>
+
+                    <div class="profile-user-meta">
+                        <span>Mã tài khoản</span>
+                        <strong>#@Model.MaNguoiDung</strong>
+                    </div>
+
+                    <div class="profile-user-meta">
+                        <span>Ngày tham gia</span>
+                        <strong>
+                            @(Model.NgayTao.HasValue
+                                ? Model.NgayTao.Value.ToString("dd/MM/yyyy")
+                                : "Chưa cập nhật")
+                        </strong>
+                    </div>
+
+                    <div class="profile-user-meta">
+                        <span>Trạng thái</span>
+                        <strong class="@(Model.TrangThai ? "text-active" : "text-locked")">
+                            @(Model.TrangThai ? "Đang hoạt động" : "Đã khóa")
+                        </strong>
+                    </div>
+
+                </div>
+
+                <div class="profile-side-links">
+
+                    <a href="@Url.Action("Profile", "Account")"
+                       class="active">
+                        <span class="material-symbols-outlined">person</span>
+                        Thông tin cá nhân
+                    </a>
+
+                    <a href="@Url.Action("Index", "OrderHistory")">
+                        <span class="material-symbols-outlined">receipt_long</span>
+                        Lịch sử mua hàng
+                    </a>
+
+                </div>
+
+            </aside>
+
+            <!-- RIGHT: EDIT PROFILE -->
+            <section class="profile-content">
+
+                <div class="profile-content-heading">
+                    <div>
+                        <h2>THÔNG TIN CÁ NHÂN</h2>
+                        <p>Cập nhật thông tin liên hệ của tài khoản.</p>
+                    </div>
+
+                    <span class="material-symbols-outlined">manage_accounts</span>
+                </div>
+
+                @using (Html.BeginForm(
+                    "Profile",
+                    "Account",
+                    FormMethod.Post,
+                    new { @class = "profile-form" }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    @Html.ValidationSummary(
+                        false,
+                        "",
+                        new { @class = "profile-validation-summary" })
+
+                    <div class="profile-form-grid">
+
+                        <div class="profile-form-group">
+                            <label>Mã tài khoản</label>
+
+                            <input type="text"
+                                   value="@Model.MaNguoiDung"
+                                   readonly />
+                        </div>
+
+                        <div class="profile-form-group">
+                            <label>Vai trò</label>
+
+                            <input type="text"
+                                   value="@Model.TenVaiTro"
+                                   readonly />
+                        </div>
+
+                        <div class="profile-form-group full">
+                            @Html.LabelFor(m => m.HoTen, "Họ và tên")
+
+                            @Html.TextBoxFor(
+                                m => m.HoTen,
+                                new
+                                {
+                                    @class = "profile-input",
+                                    placeholder = "Nhập họ và tên"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.HoTen,
+                                "",
+                                new { @class = "profile-field-error" })
+                        </div>
+
+                        <div class="profile-form-group full">
+                            @Html.LabelFor(m => m.Email, "Địa chỉ email")
+
+                            @Html.TextBoxFor(
+                                m => m.Email,
+                                new
+                                {
+                                    @class = "profile-input",
+                                    type = "email",
+                                    placeholder = "example@email.com"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.Email,
+                                "",
+                                new { @class = "profile-field-error" })
+                        </div>
+
+                        <div class="profile-form-group full">
+                            @Html.LabelFor(m => m.SoDienThoai, "Số điện thoại")
+
+                            @Html.TextBoxFor(
+                                m => m.SoDienThoai,
+                                new
+                                {
+                                    @class = "profile-input",
+                                    type = "tel",
+                                    placeholder = "Nhập số điện thoại"
+                                })
+
+                            @Html.ValidationMessageFor(
+                                m => m.SoDienThoai,
+                                "",
+                                new { @class = "profile-field-error" })
+                        </div>
+
+                    </div>
+
+                    <div class="profile-form-note">
+                        <span class="material-symbols-outlined">info</span>
+                        Mã tài khoản và vai trò không thể chỉnh sửa.
+                    </div>
+
+                    <div class="profile-form-actions">
+
+                        <a href="@Url.Action("Index", "Home")"
+                           class="profile-back-button">
+                            Quay lại
+                        </a>
+
+                        <button type="submit" class="profile-save-button">
+                            <span class="material-symbols-outlined">save</span>
+                            Lưu thay đổi
+                        </button>
+
+                    </div>
+                }
+
+            </section>
+
+        </div>
+
+    </div>
+</main>

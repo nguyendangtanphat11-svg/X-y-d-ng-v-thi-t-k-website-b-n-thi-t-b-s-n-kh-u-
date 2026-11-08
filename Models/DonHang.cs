@@ -23,6 +23,7 @@ namespace Wedside_TVS_SFX.Models
             this.SuDungKhuyenMai = new HashSet<SuDungKhuyenMai>();
             this.ThanhToan = new HashSet<ThanhToan>();
             this.YeuCauHuyDon = new HashSet<YeuCauHuyDon>();
+            this.ThongTinDuAn = new HashSet<ThongTinDuAn>();
         }
     
         public int MaDonHang { get; set; }
@@ -42,6 +43,8 @@ namespace Wedside_TVS_SFX.Models
         public Nullable<int> MaKhuyenMai { get; set; }
         public System.DateTime NgayTao { get; set; }
         public Nullable<System.DateTime> NgayCapNhat { get; set; }
+        public decimal TienCoc { get; set; }
+        public decimal TyLeDatCoc { get; set; }
     
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<ChiTietDonHang> ChiTietDonHang { get; set; }
@@ -57,5 +60,7 @@ namespace Wedside_TVS_SFX.Models
         public virtual ICollection<ThanhToan> ThanhToan { get; set; }
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<YeuCauHuyDon> YeuCauHuyDon { get; set; }
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<ThongTinDuAn> ThongTinDuAn { get; set; }
     }
 }
