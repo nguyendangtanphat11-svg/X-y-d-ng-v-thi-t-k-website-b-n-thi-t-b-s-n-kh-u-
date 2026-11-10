@@ -1,4 +1,3 @@
-
 @{
     string pageTitle = ViewBag.Title ?? "Bảng điều khiển";
     string currentController = ViewContext.RouteData.Values["controller"] as string ?? "";
@@ -16,6 +15,8 @@
         string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
 
     bool isOrdersActive = isActive("AdminOrder");
+    bool isProductsActive = isActive("AdminProduct");
+    bool isCustomersActive = isActive("AdminCustomer");
 }
 <!DOCTYPE html>
 <html lang="vi">
@@ -121,10 +122,13 @@
                 </a>
 
                 <a href="@Url.Action("Products", "AdminProduct")"
-                   class="admin-nav-item">
+                   class="admin-nav-item @(isProductsActive ? "is-active" : "")"
+                   @(isProductsActive ? "aria-current=page" : "")>
+
                     <span class="material-symbols-outlined" aria-hidden="true">
                         inventory_2
                     </span>
+
                     <span class="admin-nav-text">Sản phẩm</span>
                 </a>
 
@@ -159,13 +163,16 @@
 
                 <span class="admin-nav-label">CUSTOMER MANAGEMENT</span>
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "business" },
-                        { "Text", "Khách hàng B2B" }
-                     }
-                     )
+                <a href="@Url.Action("Index", "AdminCustomer")"
+                   class="admin-nav-item @(isCustomersActive ? "is-active" : "")"
+                   @(isCustomersActive ? "aria-current=page" : "")>
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        group
+                    </span>
+
+                    <span class="admin-nav-text">Khách hàng B2B</span>
+                </a>
 
                 @Html.Partial(
                          "~/Views/Admin/_AdminComingSoonItem.cshtml",

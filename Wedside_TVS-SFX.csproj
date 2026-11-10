@@ -195,6 +195,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AdminCustomerController.cs" />
     <Compile Include="Controllers\AdminOrderController.cs" />
     <Compile Include="Controllers\AdminProductController.cs" />
     <Compile Include="Controllers\Base\AdminAuthorizeAttribute.cs" />
@@ -273,6 +274,7 @@
     <Compile Include="Models\VaiTro.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Admin\AdminCustomerViewModels.cs" />
     <Compile Include="ViewModels\Admin\AdminDashboardViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminOrderDetailViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminOrderListViewModel.cs" />
@@ -395,6 +397,7 @@
     <Content Include="Views\Admin\ProductEdit.cshtml" />
     <Content Include="Views\Admin\_AdminProductForm.cshtml" />
     <Content Include="Views\Admin\ProductDetail.cshtml" />
+    <Content Include="Views\Admin\Customers.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
