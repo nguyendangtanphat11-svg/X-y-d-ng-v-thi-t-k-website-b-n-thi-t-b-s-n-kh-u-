@@ -1,0 +1,873 @@
+
+/* =========================================================
+   STAGEFX PRO - ADMIN PRODUCT FORM
+   Create Product / Edit Product
+   Theme: Dark / Red Accent
+========================================================= */
+/* =========================
+   1. BASE
+========================= */
+.admin-product-form {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-bottom: 32px;
+    color: #F5F5F5;
+    box-sizing: border-box;
+}
+
+.admin-product-form *,
+.admin-product-form *::before,
+.admin-product-form *::after {
+    box-sizing: border-box;
+}
+
+.admin-eyebrow {
+    display: inline-block;
+    color: #E50920;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+/* =========================
+   2. PAGE HEADER
+========================= */
+
+.product-form-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 26px;
+}
+
+.product-form-heading-content {
+    min-width: 0;
+}
+
+.product-form-heading h1 {
+    margin: 9px 0 0;
+    color: #FFFFFF;
+    font-size: 28px;
+    font-weight: 800;
+    line-height: 1.3;
+}
+
+.product-form-heading p {
+    margin: 9px 0 0;
+    color: #9999A1;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.product-form-heading-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* =========================
+   3. BACK BUTTON
+========================= */
+
+.product-form-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 0 15px;
+    color: #E5E5E5;
+    background: #202020;
+    border: 1px solid #383838;
+    border-radius: 7px;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+    transition: background .2s ease, border-color .2s ease, color .2s ease;
+}
+
+    .product-form-back:hover {
+        color: #FFFFFF;
+        background: #292929;
+        border-color: #E50920;
+        text-decoration: none;
+    }
+
+    .product-form-back .material-symbols-outlined {
+        font-size: 18px;
+    }
+
+/* =========================
+   4. FORM CONTAINER
+========================= */
+
+.product-form-container {
+    width: 100%;
+}
+
+.product-form-card {
+    padding: 24px;
+    background: #151515;
+    border: 1px solid #2A2A2A;
+    border-radius: 10px;
+}
+
+.product-form-card-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding-bottom: 20px;
+    margin-bottom: 22px;
+    border-bottom: 1px solid #2A2A2A;
+}
+
+    .product-form-card-heading h2 {
+        margin: 0;
+        color: #F5F5F5;
+        font-size: 18px;
+        font-weight: 750;
+    }
+
+    .product-form-card-heading p {
+        margin: 7px 0 0;
+        color: #909098;
+        font-size: 12px;
+        line-height: 1.6;
+    }
+
+.product-form-create-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    color: #FF6979;
+    background: rgba(229, 9, 32, .12);
+    border: 1px solid rgba(229, 9, 32, .25);
+    border-radius: 9px;
+    font-size: 23px;
+}
+
+/* =========================
+   5. FORM GRID
+========================= */
+
+.product-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+    .product-form-grid label,
+    .product-form-wide label {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        min-width: 0;
+        color: #C7C7CC;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.5;
+    }
+
+    .product-form-grid input,
+    .product-form-grid select,
+    .product-form-grid textarea,
+    .product-form-wide input,
+    .product-form-wide select,
+    .product-form-wide textarea,
+    .product-images input[type="file"] {
+        width: 100%;
+        min-height: 42px;
+        padding: 10px 12px;
+        color: #F5F5F5;
+        background: #101010;
+        border: 1px solid #353535;
+        border-radius: 6px;
+        outline: none;
+        font-family: inherit;
+        font-size: 13px;
+        transition: border-color .2s ease, box-shadow .2s ease;
+    }
+
+        .product-form-grid input::placeholder,
+        .product-form-grid textarea::placeholder,
+        .product-form-wide input::placeholder,
+        .product-form-wide textarea::placeholder {
+            color: #686870;
+        }
+
+    .product-form-grid select,
+    .product-form-wide select {
+        cursor: pointer;
+    }
+
+        .product-form-grid select option,
+        .product-form-wide select option {
+            color: #F5F5F5;
+            background: #151515;
+        }
+
+    .product-form-grid textarea,
+    .product-form-wide textarea {
+        min-height: 110px;
+        resize: vertical;
+        line-height: 1.6;
+    }
+
+        .product-form-grid input:focus,
+        .product-form-grid select:focus,
+        .product-form-grid textarea:focus,
+        .product-form-wide input:focus,
+        .product-form-wide select:focus,
+        .product-form-wide textarea:focus {
+            border-color: #E50920;
+            box-shadow: 0 0 0 3px rgba(229, 9, 32, .12);
+        }
+
+        .product-form-grid input:disabled,
+        .product-form-grid select:disabled,
+        .product-form-grid textarea:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+/* =========================
+   6. WIDE FORM FIELDS
+========================= */
+
+.product-form-wide {
+    margin-top: 20px;
+}
+
+    .product-form-wide label {
+        margin-bottom: 18px;
+    }
+
+    .product-form-wide textarea {
+        min-height: 120px;
+    }
+
+/* =========================
+   7. CHECKBOX
+========================= */
+
+.product-form-check {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 20px 0;
+    color: #DDDDDD;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+    .product-form-check input {
+        width: 16px;
+        height: 16px;
+        margin: 0;
+        accent-color: #E50920;
+        cursor: pointer;
+    }
+
+/* =========================
+   8. IMAGE UPLOAD
+========================= */
+
+.product-images {
+    margin-top: 22px;
+    padding: 20px;
+    background: #111111;
+    border: 1px solid #303030;
+    border-radius: 8px;
+}
+
+    .product-images h2 {
+        margin: 0 0 15px;
+        color: #F5F5F5;
+        font-size: 16px;
+        font-weight: 700;
+    }
+
+    .product-images small {
+        display: block;
+        margin-top: 9px;
+        color: #85858D;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .product-images input[type="file"] {
+        padding: 9px;
+        cursor: pointer;
+    }
+
+        .product-images input[type="file"]::file-selector-button {
+            margin-right: 12px;
+            padding: 7px 12px;
+            color: #FFFFFF;
+            background: #292929;
+            border: 1px solid #444444;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .product-images input[type="file"]::file-selector-button:hover {
+                background: #383838;
+            }
+
+/* Existing images */
+
+.existing-image {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 9px;
+    margin: 16px 14px 0 0;
+    color: #BDBDC3;
+    font-size: 11px;
+    vertical-align: top;
+}
+
+    .existing-image img,
+    .detail-image {
+        display: block;
+        width: 140px;
+        height: 105px;
+        object-fit: cover;
+        background: #101010;
+        border: 1px solid #353535;
+        border-radius: 6px;
+    }
+
+    .existing-image input {
+        accent-color: #E50920;
+    }
+
+    .existing-image label {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+    }
+
+/* =========================
+   9. VALIDATION
+========================= */
+
+.product-form-errors {
+    margin: 0 0 20px;
+    padding: 14px 16px;
+    color: #FFB4B4;
+    background: #281416;
+    border: 1px solid #693038;
+    border-radius: 7px;
+    font-size: 12px;
+    line-height: 1.7;
+}
+
+    .product-form-errors ul {
+        margin: 8px 0 0;
+        padding-left: 20px;
+    }
+
+.field-validation-error {
+    display: block;
+    margin-top: 5px;
+    color: #FF858F;
+    font-size: 11px;
+    font-weight: 400;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border-color: #E50920 !important;
+    box-shadow: 0 0 0 2px rgba(229, 9, 32, .1);
+}
+
+/* =========================
+   10. SUBMIT BUTTON
+========================= */
+
+.product-form-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 44px;
+    margin-top: 24px;
+    padding: 0 22px;
+    color: #FFFFFF;
+    background: #E50920;
+    border: 1px solid #E50920;
+    border-radius: 7px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 750;
+    cursor: pointer;
+    transition: background .2s ease, transform .2s ease;
+}
+
+    .product-form-submit:hover {
+        background: #C90019;
+        border-color: #C90019;
+    }
+
+    .product-form-submit:active {
+        transform: translateY(1px);
+    }
+
+    .product-form-submit:disabled {
+        opacity: .6;
+        cursor: wait;
+        transform: none;
+    }
+
+/* =========================
+   11. SHARED DETAIL ELEMENTS
+========================= */
+
+.product-detail-card {
+    margin-top: 20px;
+    padding: 20px;
+    color: #F5F5F5;
+    background: #151515;
+    border: 1px solid #2A2A2A;
+    border-radius: 8px;
+}
+
+    .product-detail-card h2 {
+        margin: 0 0 14px;
+        color: #F5F5F5;
+        font-size: 17px;
+        font-weight: 700;
+    }
+
+    .product-detail-card p {
+        color: #BEBEC4;
+        line-height: 1.6;
+    }
+
+.product-detail-text {
+    min-height: 20px;
+    margin-bottom: 18px;
+    color: #BEBEC4;
+    white-space: pre-wrap;
+    line-height: 1.65;
+}
+
+.product-detail-card b,
+.product-detail-card strong {
+    color: #F5F5F5;
+}
+
+/* =========================
+   12. PRODUCT HISTORY TABLE
+========================= */
+
+.product-history {
+    width: 100%;
+    border-collapse: collapse;
+    color: #C8C8CC;
+    font-size: 12px;
+}
+
+    .product-history th,
+    .product-history td {
+        padding: 11px 10px;
+        border-bottom: 1px solid #2A2A2A;
+        text-align: left;
+        vertical-align: top;
+    }
+
+    .product-history th {
+        color: #999999;
+        background: #111111;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: .5px;
+        text-transform: uppercase;
+    }
+
+    .product-history tbody tr:hover {
+        background: rgba(255, 255, 255, .025);
+    }
+
+/* =========================
+   13. RESPONSIVE
+========================= */
+
+@media (max-width: 900px) {
+    .admin-product-form {
+        max-width: 100%;
+    }
+
+    .product-form-card {
+        padding: 20px;
+    }
+
+    .product-form-heading h1 {
+        font-size: 25px;
+    }
+}
+
+@media (max-width: 720px) {
+    .product-form-heading {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .product-form-heading-actions {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .product-form-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    .product-form-card {
+        padding: 16px;
+    }
+
+    .product-form-card-heading {
+        align-items: flex-start;
+    }
+
+    .product-form-heading h1 {
+        font-size: 23px;
+    }
+
+    .product-images,
+    .product-detail-card {
+        padding: 16px;
+    }
+
+    .product-history {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+
+    .product-form-submit {
+        width: 100%;
+    }
+}
+
+@media (max-width: 420px) {
+    .product-form-heading-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .product-form-back {
+        width: 100%;
+    }
+
+    .product-form-card-heading h2 {
+        font-size: 16px;
+    }
+
+    .existing-image img {
+        width: 115px;
+        height: 90px;
+    }
+}
+```css
+/* =========================================================
+   PRODUCT FORM PARTIAL - ADDITIONAL STYLES
+========================================================= */
+.admin-product-form-fields {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* SECTION */
+
+.product-form-section {
+    padding-bottom: 23px;
+    border-bottom: 1px solid #292929;
+}
+
+    .product-form-section:last-child {
+        padding-bottom: 0;
+        border-bottom: none;
+    }
+
+.product-form-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+    .product-form-section-heading h3 {
+        display: inline-block;
+        margin: 0 0 0 9px;
+        color: #F5F5F5;
+        font-size: 15px;
+        font-weight: 750;
+    }
+
+    .product-form-section-heading p {
+        margin: 7px 0 0;
+        color: #909098;
+        font-size: 11px;
+        line-height: 1.6;
+    }
+
+    .product-form-section-heading > .material-symbols-outlined {
+        color: #FF6575;
+        font-size: 24px;
+    }
+
+.product-form-section-number {
+    color: #E50920;
+    font-family: "Roboto Mono", monospace;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+/* FIELD */
+
+.product-form-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+}
+
+    .product-form-field > label {
+        color: #C7C7CC;
+        font-size: 12px;
+        font-weight: 650;
+    }
+
+.product-form-control {
+    width: 100%;
+    min-height: 42px;
+    padding: 11px 12px;
+    color: #F5F5F5;
+    background: #101010;
+    border: 1px solid #353535;
+    border-radius: 6px;
+    outline: none;
+    font-family: inherit;
+    font-size: 13px;
+    transition: .2s ease;
+}
+
+    .product-form-control::placeholder {
+        color: #696970;
+    }
+
+    .product-form-control:focus {
+        border-color: #E50920;
+        box-shadow: 0 0 0 3px rgba(229, 9, 32, .12);
+    }
+
+.product-form-field small {
+    color: #777780;
+    font-size: 10px;
+    line-height: 1.5;
+}
+
+.product-form-field textarea {
+    min-height: 100px;
+    resize: vertical;
+    line-height: 1.7;
+}
+
+.product-technical-input {
+    font-family: "Roboto Mono", monospace;
+    font-size: 12px;
+}
+
+/* STATUS SWITCH */
+
+.product-form-status {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 16px;
+    background: #101010;
+    border: 1px solid #303030;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.product-form-status-control {
+    position: relative;
+    display: inline-flex;
+    width: 43px;
+    height: 23px;
+    flex-shrink: 0;
+}
+
+    .product-form-status-control input {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        opacity: 0;
+        cursor: pointer;
+        z-index: 2;
+    }
+
+.product-form-status-slider {
+    position: absolute;
+    inset: 0;
+    background: #414141;
+    border-radius: 20px;
+    transition: .2s ease;
+}
+
+    .product-form-status-slider::before {
+        position: absolute;
+        top: 3px;
+        left: 3px;
+        width: 17px;
+        height: 17px;
+        content: "";
+        background: #FFFFFF;
+        border-radius: 50%;
+        transition: .2s ease;
+    }
+
+.product-form-status-control input:checked + .product-form-status-slider {
+    background: #E50920;
+}
+
+    .product-form-status-control input:checked + .product-form-status-slider::before {
+        transform: translateX(20px);
+    }
+
+.product-form-status-control input:focus-visible + .product-form-status-slider {
+    outline: 2px solid #FFFFFF;
+    outline-offset: 3px;
+}
+
+.product-form-status-text {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+    .product-form-status-text strong {
+        color: #EEEEEE;
+        font-size: 12px;
+    }
+
+    .product-form-status-text small {
+        color: #888890;
+        font-size: 10px;
+        line-height: 1.5;
+    }
+
+/* DESCRIPTION */
+
+.product-form-description {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* IMAGE UPLOAD */
+
+.product-image-upload {
+    position: relative;
+}
+
+.product-image-upload-area {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    min-height: 175px;
+    padding: 22px;
+    text-align: center;
+    background: #101010;
+    border: 1px dashed #555555;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+    .product-image-upload-area:hover {
+        background: #171111;
+        border-color: #E50920;
+    }
+
+    .product-image-upload-area > .material-symbols-outlined {
+        color: #FF6575;
+        font-size: 38px;
+    }
+
+    .product-image-upload-area strong {
+        color: #F5F5F5;
+        font-size: 13px;
+    }
+
+    .product-image-upload-area span {
+        color: #999999;
+        font-size: 11px;
+    }
+
+    .product-image-upload-area small {
+        color: #777780;
+        font-size: 10px;
+    }
+
+.product-image-upload input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+}
+
+/* NEW IMAGE PREVIEW */
+
+.product-image-preview {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(125px, 1fr));
+    gap: 12px;
+    margin-top: 14px;
+}
+
+    .product-image-preview:empty {
+        display: none;
+    }
+
+.product-image-preview-item {
+    min-width: 0;
+    overflow: hidden;
+    background: #101010;
+    border: 1px solid #333333;
+    border-radius: 6px;
+}
+
+    .product-image-preview-item img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
+    .product-image-preview-item span

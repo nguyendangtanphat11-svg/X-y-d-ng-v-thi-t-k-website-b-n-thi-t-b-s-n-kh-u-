@@ -1,0 +1,114 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminProductFormViewModel
+
+@{
+    ViewBag.Title = "Thêm sản phẩm";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-product-form.css")" />
+}
+
+<div class="admin-product-form">
+
+    <!-- PAGE HEADER -->
+    <div class="product-form-heading">
+
+        <div class="product-form-heading-content">
+
+            <span class="admin-eyebrow">
+                PRODUCT MANAGEMENT / CREATE
+            </span>
+
+            <h1>Thêm sản phẩm</h1>
+
+            <p>
+                Tạo sản phẩm mới và bổ sung vào danh mục kinh doanh của STAGEFX PRO.
+            </p>
+
+        </div>
+
+        <div class="product-form-heading-actions">
+
+            <a class="product-form-back"
+               href="@Url.Action("Products", "AdminProduct")">
+
+                <span class="material-symbols-outlined">
+                    arrow_back
+                </span>
+
+                Quay lại danh sách
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- PRODUCT FORM -->
+    <div class="product-form-container">
+
+        <div class="product-form-card">
+
+            <!-- CARD HEADER -->
+            <div class="product-form-card-heading">
+
+                <div>
+                    <h2>Thông tin sản phẩm mới</h2>
+
+                    <p>
+                        Nhập đầy đủ thông tin sản phẩm trước khi lưu vào hệ thống.
+                    </p>
+                </div>
+
+                <span class="product-form-create-icon material-symbols-outlined">
+                    add_box
+                </span>
+
+            </div>
+
+            <!-- CREATE FORM -->
+            @using (Html.BeginForm(
+                "CreateProduct",
+                "AdminProduct",
+                FormMethod.Post,
+                new
+                {
+                    enctype = "multipart/form-data",
+                    @class = "product-create-form",
+                    id = "productCreateForm"
+                }))
+            {
+                @Html.AntiForgeryToken()
+
+                <!-- VALIDATION SUMMARY -->
+                @Html.ValidationSummary(
+                         true,
+                         "Vui lòng kiểm tra lại thông tin sản phẩm.",
+                         new
+                         {
+                             @class = "product-form-errors"
+                         }
+                     )
+
+                <!-- SHARED FORM -->
+                @Html.Partial(
+                         "~/Views/Admin/_AdminProductForm.cshtml",
+                         Model
+                     )
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts {
+
+    <script src="@Url.Content("~/Scripts/admin/admin-product-form.js")"></script>
+
+}

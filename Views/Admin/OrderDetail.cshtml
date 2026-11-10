@@ -1,0 +1,373 @@
+﻿@model Wedside_TVS_SFX.ViewModels.Admin.AdminOrderDetailViewModel
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-order-detail.css")" />
+}
+
+<div class="admin-order-detail">
+
+    <!-- PAGE HEADER -->
+    <div class="order-detail-header">
+
+        <div>
+            <div class="order-detail-eyebrow">
+                ORDER MANAGEMENT
+            </div>
+
+            <h1>Chi tiết đơn hàng</h1>
+
+            <p>
+                Theo dõi thông tin, sản phẩm và thanh toán của đơn hàng.
+            </p>
+        </div>
+
+        <a href="@Url.Action("Orders", "AdminOrder")"
+           class="order-back-button">
+
+            <span class="material-symbols-outlined">
+                arrow_back
+            </span>
+
+            Quay lại danh sách
+        </a>
+
+    </div>
+
+    <!-- ORDER SUMMARY -->
+    <section class="order-detail-card">
+
+        <div class="order-card-heading">
+            <div>
+                <span class="order-section-label">MÃ ĐƠN HÀNG</span>
+                <h2>@Model.MaSoDonHang</h2>
+            </div>
+
+            <span class="order-status @Model.OrderStatusClass">
+                @Model.OrderStatusText
+            </span>
+        </div>
+
+        <div class="order-summary-grid">
+
+            <div>
+                <span>Mã đơn nội bộ</span>
+                <strong>#@Model.MaDonHang</strong>
+            </div>
+
+            <div>
+                <span>Ngày đặt hàng</span>
+                <strong>@Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</strong>
+            </div>
+
+            <div>
+                <span>Trạng thái thanh toán</span>
+                <strong class="order-status-text @Model.PaymentStatusClass">
+                    @Model.PaymentStatusText
+                </strong>
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- CUSTOMER INFORMATION -->
+    <div class="order-detail-two-columns">
+
+        <section class="order-detail-card">
+
+            <div class="order-section-heading">
+                <span class="material-symbols-outlined">business</span>
+                <h3>Thông tin khách hàng</h3>
+            </div>
+
+            <div class="order-info-list">
+
+                <div>
+                    <span>Khách hàng</span>
+                    <strong>@Model.CustomerName</strong>
+                </div>
+
+                <div>
+                    <span>Email</span>
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.CustomerEmail)
+                        ? "Chưa cập nhật"
+                        : Model.CustomerEmail)
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Số điện thoại</span>
+                    <strong>
+                        @(string.IsNullOrWhiteSpace(Model.CustomerPhone)
+                        ? "Chưa cập nhật"
+                        : Model.CustomerPhone)
+                    </strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="order-detail-card">
+
+            <div class="order-section-heading">
+                <span class="material-symbols-outlined">local_shipping</span>
+                <h3>Thông tin nhận hàng</h3>
+            </div>
+
+            <div class="order-info-list">
+
+                <div>
+                    <span>Người nhận</span>
+                    <strong>@Model.RecipientName</strong>
+                </div>
+
+                <div>
+                    <span>Số điện thoại nhận</span>
+                    <strong>@Model.RecipientPhone</strong>
+                </div>
+
+                <div>
+                    <span>Địa chỉ giao hàng</span>
+                    <strong>@Model.ShippingAddress</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- PRODUCT LIST -->
+    <section class="order-detail-card">
+
+        <div class="order-section-heading">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <h3>Sản phẩm trong đơn hàng</h3>
+
+            <span class="order-count">
+                @Model.Products.Count sản phẩm
+            </span>
+        </div>
+
+        @if (Model.Products.Count > 0)
+        {
+            <div class="order-table-wrapper">
+
+                <table class="order-detail-table">
+
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>Hình thức</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Flightcase</th>
+                            <th>Thành tiền</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Products)
+                        {
+                            <tr>
+                                <td>
+                                    <strong>@item.TenSanPham</strong>
+                                    <small>SKU: @item.SKU</small>
+                                </td>
+
+                                <td>
+                                    @(string.IsNullOrWhiteSpace(item.HinhThucDat)
+                                        ? "Chưa xác định"
+                                        : item.HinhThucDat)
+                                    @if (item.SoNgayThue.HasValue)
+                                    {
+                                        <small>@item.SoNgayThue ngày thuê</small>
+                                    }
+                                </td>
+
+                                <td>
+                                    @item.DonGia.ToString("N0") ₫
+                                </td>
+
+                                <td>@item.SoLuong</td>
+
+                                <td>
+                                    @if (item.CoFlightcase)
+                                    {
+                                        <strong>Có</strong>
+                                        <small>@item.PhiFlightcase.ToString("N0") ₫</small>
+                                    }
+                                    else
+                                    {
+                                        <span>Không</span>
+                                    }
+                                </td>
+
+                                <td class="order-money">
+                                    @if (item.ThanhTien.HasValue)
+                                    {
+                                        @item.ThanhTien.Value.ToString("N0") @:₫
+                                    }
+                                    else
+                                    {
+                                        <span>Chưa có dữ liệu</span>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+
+                </table>
+
+            </div>
+        }
+        else
+        {
+            <div class="order-empty-state">
+                Chưa có sản phẩm trong đơn hàng này.
+            </div>
+        }
+
+    </section>
+
+    <!-- PAYMENT SUMMARY -->
+    <div class="order-detail-two-columns">
+
+        <section class="order-detail-card">
+
+            <div class="order-section-heading">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <h3>Tổng kết đơn hàng</h3>
+            </div>
+
+            <div class="order-price-list">
+
+                <div>
+                    <span>Tiền hàng</span>
+                    <strong>@Model.TienHang.ToString("N0") ₫</strong>
+                </div>
+
+                <div>
+                    <span>Giảm giá</span>
+                    <strong>-@Model.TienGiamGia.ToString("N0") ₫</strong>
+                </div>
+
+                <div>
+                    <span>Phí vận chuyển</span>
+                    <strong>@Model.PhiVanChuyen.ToString("N0") ₫</strong>
+                </div>
+
+                <div class="order-price-total">
+                    <span>Tổng tiền</span>
+                    <strong>@Model.TongTien.ToString("N0") ₫</strong>
+                </div>
+
+                <div class="order-deposit">
+                    <span>Tiền cọc</span>
+                    <strong>@Model.TienCoc.ToString("N0") ₫</strong>
+                </div>
+
+            </div>
+
+        </section>
+
+        <section class="order-detail-card">
+
+            <div class="order-section-heading">
+                <span class="material-symbols-outlined">payments</span>
+                <h3>Lịch sử thanh toán</h3>
+            </div>
+
+            @if (Model.Payments.Count > 0)
+            {
+                <div class="order-payment-list">
+
+                    @foreach (var payment in Model.Payments)
+                    {
+                        <div class="order-payment-item">
+
+                            <div class="payment-item-heading">
+                                <strong>
+                                    Giao dịch #@payment.MaThanhToan
+                                </strong>
+
+                                <span class="order-status @payment.PaymentStatusClass">
+                                    @payment.PaymentStatusText
+                                </span>
+                            </div>
+
+                            <div class="payment-item-amount">
+                                @payment.SoTien.ToString("N0") ₫
+                            </div>
+
+                            <div class="payment-item-info">
+                                <span>Phương thức</span>
+                                <strong>@(payment.PhuongThuc ?? "Chưa xác định")</strong>
+                            </div>
+
+                            <div class="payment-item-info">
+                                <span>Đơn vị thanh toán</span>
+                                <strong>@(payment.DonViThanhToan ?? "Không có")</strong>
+                            </div>
+
+                            <div class="payment-item-info">
+                                <span>Mã giao dịch</span>
+                                <strong>@(payment.MaGiaoDich ?? "Chưa có")</strong>
+                            </div>
+
+                            <div class="payment-item-info">
+                                <span>Ngày tạo</span>
+                                <strong>@payment.NgayTao.ToString("dd/MM/yyyy HH:mm")</strong>
+                            </div>
+
+                            <div class="payment-item-info">
+                                <span>Ngày thanh toán</span>
+                                <strong>
+                                    @(payment.NgayThanhToan.HasValue
+                                        ? payment.NgayThanhToan.Value.ToString("dd/MM/yyyy HH:mm")
+                                        : "Chưa thanh toán")
+                                </strong>
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="order-empty-state">
+                    Chưa có giao dịch thanh toán.
+                </div>
+            }
+
+        </section>
+
+    </div>
+
+    <!-- NOTE -->
+    <section class="order-detail-card">
+
+        <div class="order-section-heading">
+            <span class="material-symbols-outlined">description</span>
+            <h3>Ghi chú đơn hàng</h3>
+        </div>
+
+        <div class="order-note">
+            @(string.IsNullOrWhiteSpace(Model.GhiChu)
+                ? "Khách hàng không để lại ghi chú."
+                : Model.GhiChu)
+        </div>
+
+    </section>
+
+</div>

@@ -1,0 +1,313 @@
+﻿
+@using System
+@using System.Collections.Generic
+@using System.Globalization
+@using Wedside_TVS_SFX.ViewModels.Admin
+@model AdminDashboardViewModel
+
+@{
+    ViewBag.Title = "Tổng quan hệ thống";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+
+    var dashboard = Model ?? new AdminDashboardViewModel();
+    var statuses = dashboard.OrderStatusStatistics ?? new AdminOrderStatusStatistics();
+    var recentOrders = dashboard.RecentOrders ?? new List<AdminRecentOrderViewModel>();
+    var topProducts = dashboard.TopProducts ?? new List<AdminTopProductViewModel>();
+    var viCulture = CultureInfo.GetCultureInfo("vi-VN");
+
+    Func<decimal, string> formatMoney = value => value.ToString("N0", viCulture) + " ₫";
+
+    Func<string, string> orderStatusLabel = status =>
+    {
+        switch (status)
+        {
+            case "ChoXacNhan": return "Chờ xác nhận";
+            case "DaXacNhan": return "Đã xác nhận";
+            case "DangChuanBi": return "Đang chuẩn bị";
+            case "DangGiao": return "Đang giao";
+            case "HoanThanh": return "Hoàn thành";
+            case "DaHuy": return "Đã hủy";
+            case "ChoHuy": return "Chờ hủy";
+            case "TuChoi": return "Từ chối";
+            default: return string.IsNullOrWhiteSpace(status) ? "Không xác định" : status;
+        }
+    };
+
+    Func<string, string> paymentStatusLabel = status =>
+    {
+        switch (status)
+        {
+            case "DaThanhToan": return "Đã thanh toán";
+            case "ChoThanhToan": return "Chờ thanh toán";
+            case "ChuaThanhToan": return "Chưa thanh toán";
+            case "ChoXuLy": return "Chờ xử lý";
+            case "ThatBai": return "Thất bại";
+            case "DaHoanTien": return "Đã hoàn tiền";
+            default: return string.IsNullOrWhiteSpace(status) ? "Không xác định" : status;
+        }
+    };
+
+    Func<string, string> statusClass = status =>
+    {
+        switch (status)
+        {
+            case "HoanThanh": return "is-success";
+            case "DaHuy":
+            case "TuChoi": return "is-danger";
+            case "ChoHuy": return "is-warning";
+            case "DaXacNhan":
+            case "DangChuanBi":
+            case "DangGiao": return "is-info";
+            default: return "is-pending";
+        }
+    };
+}
+
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/admin/admin-dashboard.css")" />
+}
+
+<div class="admin-dashboard" data-admin-dashboard>
+    <section class="admin-dashboard-intro" aria-labelledby="admin-dashboard-title">
+        <div>
+            <span class="admin-eyebrow">STAGEFX PRO / ADMINISTRATOR PANEL</span>
+            <h1 id="admin-dashboard-title">Tổng quan hệ thống</h1>
+            <p>Thông tin vận hành được tổng hợp trực tiếp từ dữ liệu hiện có.</p>
+        </div>
+
+        <div class="admin-dashboard-date">
+            <span class="material-symbols-outlined" aria-hidden="true">calendar_today</span>
+            <span>@DateTime.Now.ToString("dd/MM/yyyy", viCulture)</span>
+        </div>
+    </section>
+
+    <section class="admin-kpi-grid" aria-label="Chỉ số tổng quan">
+        <article class="admin-kpi-card">
+            <div class="admin-kpi-icon is-red">
+                <span class="material-symbols-outlined" aria-hidden="true">receipt_long</span>
+            </div>
+            <div class="admin-kpi-copy">
+                <span>TỔNG ĐƠN HÀNG</span>
+                <strong>@dashboard.TotalOrders.ToString("N0", viCulture)</strong>
+            </div>
+        </article>
+
+        <article class="admin-kpi-card">
+            <div class="admin-kpi-icon is-amber">
+                <span class="material-symbols-outlined" aria-hidden="true">pending_actions</span>
+            </div>
+            <div class="admin-kpi-copy">
+                <span>CHỜ XÁC NHẬN</span>
+                <strong>@dashboard.PendingOrders.ToString("N0", viCulture)</strong>
+            </div>
+        </article>
+
+        <article class="admin-kpi-card">
+            <div class="admin-kpi-icon is-blue">
+                <span class="material-symbols-outlined" aria-hidden="true">business</span>
+            </div>
+            <div class="admin-kpi-copy">
+                <span>KHÁCH HÀNG</span>
+                <strong>@dashboard.TotalCustomers.ToString("N0", viCulture)</strong>
+            </div>
+        </article>
+
+        <article class="admin-kpi-card">
+            <div class="admin-kpi-icon is-green">
+                <span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>
+            </div>
+            <div class="admin-kpi-copy">
+                <span>SẢN PHẨM</span>
+                <strong>@dashboard.TotalProducts.ToString("N0", viCulture)</strong>
+            </div>
+        </article>
+    </section>
+
+    <div class="admin-dashboard-grid">
+        <section class="admin-panel admin-status-panel" aria-labelledby="admin-status-title">
+            <div class="admin-panel-heading">
+                <div>
+                    <span class="admin-eyebrow">ORDER PIPELINE</span>
+                    <h2 id="admin-status-title">Trạng thái đơn hàng</h2>
+                </div>
+                <span class="admin-panel-total">@dashboard.TotalOrders.ToString("N0", viCulture) đơn</span>
+            </div>
+
+            <div class="admin-status-list">
+                <div class="admin-status-row" data-status-count="@statuses.ChoXacNhan">
+                    <span class="admin-status-name"><i class="admin-status-marker is-pending"></i>Chờ xác nhận</span>
+                    <strong>@statuses.ChoXacNhan.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+
+                <div class="admin-status-row" data-status-count="@statuses.DaXacNhan">
+                    <span class="admin-status-name"><i class="admin-status-marker is-info"></i>Đã xác nhận</span>
+                    <strong>@statuses.DaXacNhan.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+
+                <div class="admin-status-row" data-status-count="@statuses.DangChuanBi">
+                    <span class="admin-status-name"><i class="admin-status-marker is-info"></i>Đang chuẩn bị</span>
+                    <strong>@statuses.DangChuanBi.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+
+                <div class="admin-status-row" data-status-count="@statuses.DangGiao">
+                    <span class="admin-status-name"><i class="admin-status-marker is-info"></i>Đang giao</span>
+                    <strong>@statuses.DangGiao.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+
+                <div class="admin-status-row" data-status-count="@statuses.HoanThanh">
+                    <span class="admin-status-name"><i class="admin-status-marker is-success"></i>Hoàn thành</span>
+                    <strong>@statuses.HoanThanh.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+
+                <div class="admin-status-row" data-status-count="@statuses.DaHuy">
+                    <span class="admin-status-name"><i class="admin-status-marker is-danger"></i>Đã hủy</span>
+                    <strong>@statuses.DaHuy.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+
+                <div class="admin-status-row" data-status-count="@statuses.ChoHuy">
+                    <span class="admin-status-name"><i class="admin-status-marker is-warning"></i>Chờ hủy</span>
+                    <strong>@statuses.ChoHuy.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+
+                <div class="admin-status-row" data-status-count="@statuses.TuChoi">
+                    <span class="admin-status-name"><i class="admin-status-marker is-danger"></i>Từ chối</span>
+                    <strong>@statuses.TuChoi.ToString("N0", viCulture)</strong>
+                    <div class="admin-status-track"><span></span></div>
+                </div>
+            </div>
+        </section>
+
+        <section class="admin-panel admin-note-panel" aria-labelledby="admin-note-title">
+            <div class="admin-panel-heading">
+                <div>
+                    <span class="admin-eyebrow">DATA SCOPE</span>
+                    <h2 id="admin-note-title">Phạm vi dữ liệu</h2>
+                </div>
+                <span class="material-symbols-outlined admin-panel-heading-icon" aria-hidden="true">verified</span>
+            </div>
+
+            <div class="admin-data-note">
+                <span class="material-symbols-outlined" aria-hidden="true">info</span>
+                <p>Doanh thu đã thu và cảnh báo tồn kho chưa được hiển thị vì hệ thống chưa có quy tắc dữ liệu đủ tin cậy cho hai chỉ số này.</p>
+            </div>
+
+            <div class="admin-data-note-list">
+                <span><i></i> Dữ liệu đơn hàng thực tế</span>
+                <span><i></i> Không sử dụng dữ liệu mẫu</span>
+                <span><i></i> Khách hàng tính theo tài khoản đang hoạt động</span>
+            </div>
+        </section>
+    </div>
+
+    <section class="admin-panel admin-table-panel" aria-labelledby="admin-recent-orders-title">
+        <div class="admin-panel-heading">
+            <div>
+                <span class="admin-eyebrow">LATEST ACTIVITY</span>
+                <h2 id="admin-recent-orders-title">Đơn hàng gần đây</h2>
+            </div>
+            <span class="admin-panel-caption">10 đơn mới nhất</span>
+        </div>
+
+        @if (recentOrders.Any())
+        {
+            <div class="admin-table-scroll">
+                <table class="admin-data-table">
+                    <thead>
+                        <tr>
+                            <th>Mã đơn hàng</th>
+                            <th>Người nhận</th>
+                            <th>Ngày đặt</th>
+                            <th>Tổng tiền</th>
+                            <th>Trạng thái đơn hàng</th>
+                            <th>Thanh toán</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in recentOrders)
+                        {
+                            <tr>
+                                <td><span class="admin-order-code">@(string.IsNullOrWhiteSpace(order.MaSoDonHang) ? "—" : order.MaSoDonHang)</span></td>
+                                <td>@(string.IsNullOrWhiteSpace(order.TenNguoiNhan) ? "Chưa cập nhật" : order.TenNguoiNhan)</td>
+                                <td>@order.NgayDat.ToString("dd/MM/yyyy HH:mm", viCulture)</td>
+                                <td class="admin-money">@formatMoney(order.TongTien)</td>
+                                <td><span class="admin-badge @statusClass(order.TrangThai)">@orderStatusLabel(order.TrangThai)</span></td>
+                                <td><span class="admin-payment-status">@paymentStatusLabel(order.TrangThaiThanhToan)</span></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="admin-empty-state">
+                <span class="material-symbols-outlined" aria-hidden="true">receipt_long</span>
+                <strong>Chưa có đơn hàng</strong>
+                <p>Chưa có dữ liệu đơn hàng để hiển thị.</p>
+            </div>
+        }
+    </section>
+
+    <section class="admin-panel admin-table-panel" aria-labelledby="admin-top-products-title">
+        <div class="admin-panel-heading">
+            <div>
+                <span class="admin-eyebrow">PRODUCT PERFORMANCE</span>
+                <h2 id="admin-top-products-title">Sản phẩm nổi bật</h2>
+            </div>
+            <span class="admin-panel-caption">Top 5 theo số lượng</span>
+        </div>
+
+        @if (topProducts.Any())
+        {
+            <div class="admin-table-scroll">
+                <table class="admin-data-table">
+                    <thead>
+                        <tr>
+                            <th>Sản phẩm</th>
+                            <th>SKU</th>
+                            <th>Số lượng bán</th>
+                            <th>Giá trị dòng hàng</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var product in topProducts)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="admin-product-name">
+                                        <span class="admin-product-index">@((topProducts.IndexOf(product) + 1).ToString("00"))</span>
+                                        <strong>@(string.IsNullOrWhiteSpace(product.TenSanPham) ? "Chưa cập nhật" : product.TenSanPham)</strong>
+                                    </div>
+                                </td>
+                                <td><span class="admin-sku">@(string.IsNullOrWhiteSpace(product.SKU) ? "—" : product.SKU)</span></td>
+                                <td class="admin-quantity">@product.SoLuong.ToString("N0", viCulture)</td>
+                                <td class="admin-money">@formatMoney(product.GiaTriDonHang)</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+
+            <p class="admin-table-footnote">Giá trị dòng hàng không phải doanh thu đã thu.</p>
+        }
+        else
+        {
+            <div class="admin-empty-state">
+                <span class="material-symbols-outlined" aria-hidden="true">inventory_2</span>
+                <strong>Chưa có dữ liệu sản phẩm</strong>
+                <p>Chưa có chi tiết đơn hàng hợp lệ để xếp hạng.</p>
+            </div>
+        }
+    </section>
+</div>
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/admin/admin-dashboard.js")" defer></script>
+}

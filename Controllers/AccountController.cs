@@ -158,6 +158,10 @@ namespace STAGEFX_PRO.Controllers
                     ? user.VaiTro.TenVaiTro
                     : "";
 
+                if (user.MaVaiTro == 1)
+                {
+                    return RedirectToAction("Index", "Admin");
+                }
             }
 
             return RedirectToAction("Index", "Home");

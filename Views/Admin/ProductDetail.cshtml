@@ -1,0 +1,422 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminProductDetailViewModel
+
+@{
+    ViewBag.Title = "Chi tiết sản phẩm";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-product-detail.css")" />
+}
+
+<div class="admin-product-detail">
+
+    <!-- PAGE HEADER -->
+    <div class="product-detail-header">
+
+        <div class="product-detail-heading">
+            <span class="admin-eyebrow">PRODUCT MANAGEMENT / DETAIL</span>
+
+            <h1>@Model.TenSanPham</h1>
+
+            <p class="product-detail-meta">
+                <span>SKU: @(Model.SKU ?? "Chưa có SKU")</span>
+                <span class="product-detail-separator">•</span>
+                <span>@(Model.TenDanhMuc ?? "Chưa phân loại")</span>
+                <span class="product-detail-separator">•</span>
+                <span>Mã sản phẩm: #@Model.MaSanPham</span>
+            </p>
+        </div>
+
+        <div class="product-detail-actions">
+
+            <a class="product-detail-action edit"
+               href="@Url.Action("EditProduct", "AdminProduct", new { id = Model.MaSanPham })">
+                <span class="material-symbols-outlined">edit</span>
+                Chỉnh sửa
+            </a>
+
+            <a class="product-detail-action back"
+               href="@Url.Action("Products", "AdminProduct")">
+                <span class="material-symbols-outlined">arrow_back</span>
+                Danh sách
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- PRODUCT SUMMARY -->
+    <div class="product-detail-summary">
+
+        <div class="product-summary-card">
+            <div class="product-summary-icon">
+                <span class="material-symbols-outlined">payments</span>
+            </div>
+
+            <div class="product-summary-content">
+                <span>Giá bán</span>
+                <strong>@Model.GiaBan.ToString("N0") ₫</strong>
+            </div>
+        </div>
+
+        <div class="product-summary-card">
+            <div class="product-summary-icon">
+                <span class="material-symbols-outlined">calendar_month</span>
+            </div>
+
+            <div class="product-summary-content">
+                <span>Giá thuê / ngày</span>
+
+                <strong>
+                    @(Model.GiaThueNgay.HasValue
+                        ? Model.GiaThueNgay.Value.ToString("N0") + " ₫"
+                        : "Không áp dụng")
+                </strong>
+            </div>
+        </div>
+
+        <div class="product-summary-card">
+            <div class="product-summary-icon">
+                <span class="material-symbols-outlined">inventory_2</span>
+            </div>
+
+            <div class="product-summary-content">
+                <span>Số lượng tồn kho</span>
+                <strong>@Model.SoLuongTon.ToString("N0")</strong>
+            </div>
+        </div>
+
+        <div class="product-summary-card">
+            <div class="product-summary-icon">
+                <span class="material-symbols-outlined">verified</span>
+            </div>
+
+            <div class="product-summary-content">
+                <span>Trạng thái</span>
+
+                @if (Model.TrangThai)
+                {
+                    <strong class="product-status-active">
+                        Đang kinh doanh
+                    </strong>
+                }
+                else
+                {
+                    <strong class="product-status-inactive">
+                        Ngừng kinh doanh
+                    </strong>
+                }
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PRODUCT IMAGES -->
+    <section class="product-detail-section">
+
+        <div class="product-detail-card">
+
+            <div class="product-section-heading">
+                <div>
+                    <h2>Hình ảnh sản phẩm</h2>
+                    <p>Danh sách hình ảnh được sử dụng để giới thiệu sản phẩm.</p>
+                </div>
+
+                <span class="product-section-icon material-symbols-outlined">
+                    photo_library
+                </span>
+            </div>
+
+            <div class="product-detail-gallery">
+
+                @if (Model.Images != null && Model.Images.Any())
+                {
+                    foreach (var image in Model.Images)
+                    {
+                        <div class="product-gallery-item @(image.LaAnhChinh ? "is-main" : "")">
+
+                            <div class="product-gallery-image">
+                                <img src="@Url.Content(image.DuongDanAnh)"
+                                     alt="@(image.MoTaAnh ?? Model.TenSanPham)"
+                                     loading="lazy" />
+                            </div>
+
+                            @if (image.LaAnhChinh)
+                            {
+                                <span class="product-main-image-label">
+                                    <span class="material-symbols-outlined">star</span>
+                                    Ảnh chính
+                                </span>
+                            }
+
+                            @if (!string.IsNullOrWhiteSpace(image.MoTaAnh))
+                            {
+                                <p class="product-gallery-caption">
+                                    @image.MoTaAnh
+                                </p>
+                            }
+
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="product-gallery-empty">
+                        <span class="material-symbols-outlined">image_not_supported</span>
+                        <h3>Chưa có hình ảnh</h3>
+                        <p>Sản phẩm hiện chưa được cập nhật hình ảnh.</p>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PRODUCT DESCRIPTION -->
+    <section class="product-detail-section">
+
+        <div class="product-detail-card">
+
+            <div class="product-section-heading">
+                <div>
+                    <h2>Thông tin mô tả</h2>
+                    <p>Nội dung giới thiệu và thông tin kỹ thuật của sản phẩm.</p>
+                </div>
+
+                <span class="product-section-icon material-symbols-outlined">
+                    description
+                </span>
+            </div>
+
+            <div class="product-detail-information">
+
+                <!-- SHORT DESCRIPTION -->
+                <div class="product-information-block">
+                    <h3>
+                        <span class="material-symbols-outlined">short_text</span>
+                        Mô tả ngắn
+                    </h3>
+
+                    <div class="product-detail-copy">
+                        @if (!string.IsNullOrWhiteSpace(Model.MoTaNgan))
+                        {
+                            @Model.MoTaNgan
+                        }
+                        else
+                        {
+                            <span class="product-detail-muted">
+                                Chưa có mô tả ngắn.
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <!-- FULL DESCRIPTION -->
+                <div class="product-information-block">
+                    <h3>
+                        <span class="material-symbols-outlined">article</span>
+                        Mô tả chi tiết
+                    </h3>
+
+                    <div class="product-detail-copy">
+                        @if (!string.IsNullOrWhiteSpace(Model.MoTaChiTiet))
+                        {
+                            @Model.MoTaChiTiet
+                        }
+                        else
+                        {
+                            <span class="product-detail-muted">
+                                Chưa có mô tả chi tiết.
+                            </span>
+                        }
+                    </div>
+                </div>
+
+                <!-- TECHNICAL SPECIFICATIONS -->
+                <div class="product-information-block">
+                    <h3>
+                        <span class="material-symbols-outlined">settings</span>
+                        Thông số kỹ thuật
+                    </h3>
+
+                    <div class="product-detail-copy technical-specifications">
+                        @if (!string.IsNullOrWhiteSpace(Model.ThongSoKyThuat))
+                        {
+                            @Model.ThongSoKyThuat
+                        }
+                        else
+                        {
+                            <span class="product-detail-muted">
+                                Chưa cập nhật thông số kỹ thuật.
+                            </span>
+                        }
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- PRODUCT SYSTEM INFORMATION -->
+    <section class="product-detail-section">
+
+        <div class="product-detail-card">
+
+            <div class="product-section-heading">
+                <div>
+                    <h2>Thông tin hệ thống</h2>
+                    <p>Thời gian tạo và cập nhật dữ liệu sản phẩm.</p>
+                </div>
+
+                <span class="product-section-icon material-symbols-outlined">
+                    schedule
+                </span>
+            </div>
+
+            <div class="product-system-information">
+
+                <div class="product-system-item">
+                    <span>Ngày tạo sản phẩm</span>
+                    <strong>
+                        @Model.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                    </strong>
+                </div>
+
+                <div class="product-system-item">
+                    <span>Ngày cập nhật gần nhất</span>
+                    <strong>
+                        @(Model.NgayCapNhat.HasValue
+                            ? Model.NgayCapNhat.Value.ToString("dd/MM/yyyy HH:mm")
+                            : "Chưa cập nhật")
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- INVENTORY HISTORY -->
+    <section class="product-detail-section">
+
+        <div class="product-detail-card">
+
+            <div class="product-section-heading">
+                <div>
+                    <h2>Lịch sử kho</h2>
+                    <p>Theo dõi các giao dịch thay đổi số lượng tồn kho.</p>
+                </div>
+
+                <span class="product-section-icon material-symbols-outlined">
+                    history
+                </span>
+            </div>
+
+            <div class="product-history-scroll">
+
+                <table class="product-detail-history">
+
+                    <thead>
+                        <tr>
+                            <th>THỜI GIAN</th>
+                            <th>LOẠI GIAO DỊCH</th>
+                            <th>SỐ LƯỢNG</th>
+                            <th>TỒN TRƯỚC</th>
+                            <th>TỒN SAU</th>
+                            <th>GHI CHÚ</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        @if (Model.InventoryHistory != null && Model.InventoryHistory.Any())
+                        {
+                            foreach (var item in Model.InventoryHistory)
+                            {
+                                <tr>
+                                    <td>
+                                        @item.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                                    </td>
+
+                                    <td>
+                                        @(item.LoaiGiaoDich ?? "Chưa xác định")
+                                    </td>
+
+                                    <td>
+                                        @item.SoLuong.ToString("N0")
+                                    </td>
+
+                                    <td>
+                                        @item.TonTruoc.ToString("N0")
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            @item.TonSau.ToString("N0")
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        @(string.IsNullOrWhiteSpace(item.GhiChu)
+                                            ? "Không có ghi chú"
+                                            : item.GhiChu)
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="6">
+                                    <div class="product-history-empty">
+                                        <span class="material-symbols-outlined">
+                                            history_toggle_off
+                                        </span>
+
+                                        <strong>Chưa có lịch sử kho</strong>
+
+                                        <p>
+                                            Hiện chưa có giao dịch kho nào được ghi nhận cho sản phẩm này.
+                                        </p>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+    </section>
+
+    <!-- BOTTOM ACTIONS -->
+    <div class="product-detail-footer">
+
+        <a class="product-detail-action back"
+           href="@Url.Action("Products", "AdminProduct")">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Quay lại danh sách
+        </a>
+
+        <a class="product-detail-action edit"
+           href="@Url.Action("EditProduct", "AdminProduct", new { id = Model.MaSanPham })">
+            <span class="material-symbols-outlined">edit</span>
+            Chỉnh sửa sản phẩm
+        </a>
+
+    </div>
+
+</div>
+

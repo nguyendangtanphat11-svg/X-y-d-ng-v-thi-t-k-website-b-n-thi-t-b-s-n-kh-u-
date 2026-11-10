@@ -1,0 +1,489 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminProductListViewModel
+
+@{
+    ViewBag.Title = "Quản lý sản phẩm";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+
+    var totalPages = Math.Max(1, Model.TotalPages);
+}
+
+<link rel="stylesheet"
+      href="@Url.Content("~/Content/css/admin/admin-products.css")" />
+
+<div class="admin-products">
+
+    <!-- PAGE HEADER -->
+    <div class="products-page-header">
+        <div class="products-page-heading">
+            <span class="products-eyebrow">QUẢN LÝ KINH DOANH</span>
+
+            <h1>Quản lý sản phẩm</h1>
+
+            <p>
+                Quản lý danh mục thiết bị và dịch vụ hiệu ứng sân khấu STAGEFX PRO.
+            </p>
+        </div>
+
+        <div class="products-header-icon">
+            <span class="material-symbols-outlined">inventory_2</span>
+            <span>Hệ thống sản phẩm</span>
+
+            <a class="products-add-btn"
+               href="@Url.Action("CreateProduct", "AdminProduct")">
+                <span class="material-symbols-outlined">add</span>
+                Thêm sản phẩm
+            </a>
+        </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    @if (TempData["ProductSuccess"] != null)
+    {
+        <div class="products-alert is-success" role="alert">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span>@TempData["ProductSuccess"]</span>
+        </div>
+    }
+
+    @if (TempData["ProductError"] != null)
+    {
+        <div class="products-alert is-error" role="alert">
+            <span class="material-symbols-outlined">error</span>
+            <span>@TempData["ProductError"]</span>
+        </div>
+    }
+
+    @if (TempData["ProductNotice"] != null)
+    {
+        <div class="products-alert is-notice" role="status">
+            <span class="material-symbols-outlined">info</span>
+            <span>@TempData["ProductNotice"]</span>
+        </div>
+    }
+
+    <!-- STATISTICS -->
+    <div class="products-stats">
+
+        <div class="product-stat-card">
+            <div class="product-stat-icon">
+                <span class="material-symbols-outlined">inventory_2</span>
+            </div>
+
+            <div>
+                <span>Tổng sản phẩm</span>
+                <strong>@Model.TotalProducts.ToString("N0")</strong>
+            </div>
+        </div>
+
+        <div class="product-stat-card">
+            <div class="product-stat-icon active">
+                <span class="material-symbols-outlined">check_circle</span>
+            </div>
+
+            <div>
+                <span>Đang kinh doanh</span>
+                <strong>@Model.ActiveProducts.ToString("N0")</strong>
+            </div>
+        </div>
+
+        <div class="product-stat-card">
+            <div class="product-stat-icon inactive">
+                <span class="material-symbols-outlined">visibility_off</span>
+            </div>
+
+            <div>
+                <span>Ngừng kinh doanh</span>
+                <strong>@Model.InactiveProducts.ToString("N0")</strong>
+            </div>
+        </div>
+
+        <div class="product-stat-card">
+            <div class="product-stat-icon warning">
+                <span class="material-symbols-outlined">production_quantity_limits</span>
+            </div>
+
+            <div>
+                <span>Hết hàng</span>
+                <strong>@Model.OutOfStockProducts.ToString("N0")</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- PRODUCT CONTENT -->
+    <div class="products-content-card">
+
+        <!-- CONTENT HEADER -->
+        <div class="products-content-heading">
+            <div>
+                <h2>Danh sách sản phẩm</h2>
+                <p>Tra cứu thông tin, giá bán và tình trạng tồn kho.</p>
+            </div>
+
+            <span class="products-total">
+                @Model.TotalItems.ToString("N0") sản phẩm
+            </span>
+        </div>
+
+        <!-- SEARCH AND FILTER -->
+        <form method="get"
+              action="@Url.Action("Products", "AdminProduct")"
+              class="products-filter-form"
+              id="productFilterForm">
+
+            <input type="hidden" name="page" value="1" />
+
+            <div class="products-search">
+                <span class="material-symbols-outlined">search</span>
+
+                <input type="text"
+                       name="search"
+                       id="productSearch"
+                       value="@Model.SearchTerm"
+                       placeholder="Tìm tên sản phẩm hoặc SKU..."
+                       autocomplete="off" />
+
+                <button type="button"
+                        id="clearProductSearch"
+                        title="Xóa từ khóa"
+                        aria-label="Xóa từ khóa tìm kiếm">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="products-filter">
+
+                <!-- CATEGORY FILTER -->
+                <select name="categoryId" aria-label="Lọc theo danh mục">
+                    <option value="">Tất cả danh mục</option>
+
+                    @if (Model.Categories != null)
+                    {
+                        foreach (var category in Model.Categories)
+                        {
+                            <option value="@category.Value"
+                                    @(Model.CategoryId.HasValue && Model.CategoryId.Value.ToString() == category.Value ? "selected" : "")>
+                                @category.Text
+                            </option>
+                        }
+                    }
+                </select>
+
+                <!-- STATUS FILTER -->
+                <select name="status" aria-label="Lọc theo trạng thái">
+                    <option value="">Tất cả trạng thái</option>
+
+                    <option value="active"
+                            @(Model.Status == "active" ? "selected" : "")>
+                        Đang kinh doanh
+                    </option>
+
+                    <option value="inactive"
+                            @(Model.Status == "inactive" ? "selected" : "")>
+                        Ngừng kinh doanh
+                    </option>
+                </select>
+
+                <button type="submit" class="products-filter-btn">
+                    <span class="material-symbols-outlined">filter_alt</span>
+                    Lọc
+                </button>
+
+                <a href="@Url.Action("Products", "AdminProduct")"
+                   class="products-reset-btn">
+                    <span class="material-symbols-outlined">restart_alt</span>
+                    Đặt lại
+                </a>
+
+            </div>
+        </form>
+
+        <!-- PRODUCT TABLE -->
+        <div class="products-table-wrapper">
+
+            <table class="products-table">
+
+                <thead>
+                    <tr>
+                        <th>MÃ / SKU</th>
+                        <th>TÊN SẢN PHẨM</th>
+                        <th>DANH MỤC</th>
+                        <th>GIÁ BÁN</th>
+                        <th>GIÁ THUÊ / NGÀY</th>
+                        <th>TỒN KHO</th>
+                        <th>TRẠNG THÁI</th>
+                        <th>NGÀY TẠO</th>
+                        <th>THAO TÁC</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Products != null && Model.Products.Any())
+                    {
+                        foreach (var item in Model.Products)
+                        {
+                            <tr>
+
+                                <!-- PRODUCT CODE -->
+                                <td>
+                                    <div class="product-code">
+                                        #@item.MaSanPham
+                                    </div>
+
+                                    <small class="product-sku">
+                                        @(item.SKU ?? "Chưa có SKU")
+                                    </small>
+                                </td>
+
+                                <!-- PRODUCT NAME -->
+                                <td>
+                                    <strong class="product-name">
+                                        @(item.TenSanPham ?? "Chưa đặt tên")
+                                    </strong>
+                                </td>
+
+                                <!-- CATEGORY -->
+                                <td>
+                                    <span class="product-category">
+                                        @(item.TenDanhMuc ?? "Chưa phân loại")
+                                    </span>
+                                </td>
+
+                                <!-- SALE PRICE -->
+                                <td>
+                                    <strong class="product-price">
+                                        @item.GiaBan.ToString("N0") ₫
+                                    </strong>
+                                </td>
+
+                                <!-- RENTAL PRICE -->
+                                <td>
+                                    @if (item.GiaThueNgay.HasValue)
+                                    {
+                                        <span class="product-rent-price">
+                                            @item.GiaThueNgay.Value.ToString("N0") ₫
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="product-no-rent">
+                                            Không áp dụng
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- STOCK -->
+                                <td>
+                                    @if (item.SoLuongTon <= 0)
+                                    {
+                                        <span class="product-stock empty">
+                                            Hết hàng
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="product-stock">
+                                            @item.SoLuongTon.ToString("N0")
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- STATUS -->
+                                <td>
+                                    @if (item.TrangThai)
+                                    {
+                                        <span class="product-status active">
+                                            Đang kinh doanh
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="product-status inactive">
+                                            Ngừng kinh doanh
+                                        </span>
+                                    }
+                                </td>
+
+                                <!-- CREATED DATE -->
+                                <td>
+                                    <span class="product-date">
+                                        @item.NgayTao.ToString("dd/MM/yyyy")
+                                    </span>
+                                </td>
+
+                                <!-- ACTIONS -->
+                                <td class="product-actions">
+
+                                    <!-- VIEW -->
+                                    <a class="product-action-btn view"
+                                       href="@Url.Action("ProductDetail", "AdminProduct", new { id = item.MaSanPham })"
+                                       title="Xem chi tiết">
+                                        <span class="material-symbols-outlined">visibility</span>
+                                        Xem
+                                    </a>
+
+                                    <!-- EDIT -->
+                                    <a class="product-action-btn edit"
+                                       href="@Url.Action("EditProduct", "AdminProduct", new { id = item.MaSanPham })"
+                                       title="Chỉnh sửa">
+                                        <span class="material-symbols-outlined">edit</span>
+                                        Sửa
+                                    </a>
+
+                                    <!-- TOGGLE STATUS -->
+                                    @using (Html.BeginForm(
+                                        "ToggleProductStatus",
+                                        "AdminProduct",
+                                        new { id = item.MaSanPham },
+                                        FormMethod.Post,
+                                        new { @class = "inline-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        if (item.TrangThai)
+                                        {
+                                            <button type="submit"
+                                                    class="product-action-btn disable"
+                                                    onclick="return confirm('Bạn có chắc muốn ngừng kinh doanh sản phẩm này?');">
+                                                <span class="material-symbols-outlined">visibility_off</span>
+                                                Ngừng bán
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button type="submit"
+                                                    class="product-action-btn enable"
+                                                    onclick="return confirm('Bạn có chắc muốn kích hoạt lại sản phẩm này?');">
+                                                <span class="material-symbols-outlined">check_circle</span>
+                                                Kích hoạt
+                                            </button>
+                                        }
+                                    }
+
+                                    <!-- SAFE DELETE -->
+                                    @using (Html.BeginForm(
+                                        "DeleteProduct",
+                                        "AdminProduct",
+                                        new { id = item.MaSanPham },
+                                        FormMethod.Post,
+                                        new { @class = "inline-form" }))
+                                    {
+                                        @Html.AntiForgeryToken()
+
+                                        <button type="submit"
+                                                class="product-action-btn delete"
+                                                onclick="return confirm('Xác nhận xử lý sản phẩm này? Nếu sản phẩm có dữ liệu liên quan, hệ thống sẽ chỉ ngừng kinh doanh để bảo toàn lịch sử.');">
+                                            <span class="material-symbols-outlined">delete</span>
+                                            Xử lý
+                                        </button>
+                                    }
+
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9">
+                                <div class="products-empty">
+                                    <span class="material-symbols-outlined">
+                                        inventory_2
+                                    </span>
+
+                                    <h3>Không tìm thấy sản phẩm</h3>
+
+                                    <p>
+                                        Thử thay đổi từ khóa hoặc điều kiện lọc.
+                                    </p>
+
+                                    <a href="@Url.Action("Products", "AdminProduct")"
+                                       class="products-reset-btn">
+                                        Xem tất cả sản phẩm
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- PAGINATION -->
+        @if (Model.TotalItems > 0 && Model.TotalPages > 1)
+        {
+            <div class="products-pagination">
+
+                <span class="pagination-info">
+                    Hiển thị
+
+                    @(((Model.CurrentPage - 1) * Model.PageSize) + 1)
+                    -
+
+                    @(Math.Min(
+                        Model.CurrentPage * Model.PageSize,
+                        Model.TotalItems))
+                    trên @Model.TotalItems sản phẩm
+                </span>
+
+                <div class="pagination-actions">
+
+                    <!-- PREVIOUS -->
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a class="pagination-btn"
+                           href="@Url.Action("Products", "AdminProduct", new {
+                               search = Model.SearchTerm,
+                               categoryId = Model.CategoryId,
+                               status = Model.Status,
+                               page = Model.CurrentPage - 1
+                           })"
+                           title="Trang trước">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pagination-btn disabled">
+                            <span class="material-symbols-outlined">chevron_left</span>
+                        </span>
+                    }
+
+                    <!-- CURRENT PAGE -->
+                    <span class="pagination-current">
+                        @Model.CurrentPage / @totalPages
+                    </span>
+
+                    <!-- NEXT -->
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a class="pagination-btn"
+                           href="@Url.Action("Products", "AdminProduct", new {
+                               search = Model.SearchTerm,
+                               categoryId = Model.CategoryId,
+                               status = Model.Status,
+                               page = Model.CurrentPage + 1
+                           })"
+                           title="Trang tiếp theo">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pagination-btn disabled">
+                            <span class="material-symbols-outlined">chevron_right</span>
+                        </span>
+                    }
+
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script src="@Url.Content("~/Scripts/admin/admin-products.js")"></script>

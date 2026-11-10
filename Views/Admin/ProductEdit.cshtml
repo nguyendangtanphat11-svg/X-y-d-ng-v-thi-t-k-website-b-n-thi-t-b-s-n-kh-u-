@@ -1,0 +1,127 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminProductFormViewModel
+
+@{
+    ViewBag.Title = "Chỉnh sửa sản phẩm";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-product-form.css")" />
+}
+
+<div class="admin-product-form">
+
+    <!-- PAGE HEADER -->
+    <div class="product-form-heading">
+
+        <div class="product-form-heading-content">
+
+            <span class="admin-eyebrow">
+                PRODUCT MANAGEMENT
+            </span>
+
+            <h1>Chỉnh sửa sản phẩm</h1>
+
+            <p>
+                Cập nhật thông tin, giá bán, tồn kho và hình ảnh sản phẩm.
+            </p>
+
+        </div>
+
+        <div class="product-form-heading-actions">
+
+            <a class="product-form-back"
+               href="@Url.Action("ProductDetail", "AdminProduct", new { id = Model.MaSanPham })">
+
+                <span class="material-symbols-outlined">
+                    visibility
+                </span>
+
+                Chi tiết sản phẩm
+
+            </a>
+
+            <a class="product-form-back"
+               href="@Url.Action("Products", "AdminProduct")">
+
+                <span class="material-symbols-outlined">
+                    arrow_back
+                </span>
+
+                Danh sách sản phẩm
+
+            </a>
+
+        </div>
+
+    </div>
+
+    <!-- EDIT PRODUCT FORM -->
+    <div class="product-form-container">
+
+        <div class="product-form-card">
+
+            <!-- CARD HEADER -->
+            <div class="product-form-card-heading">
+
+                <div>
+                    <h2>Thông tin sản phẩm</h2>
+
+                    <p>
+                        Chỉnh sửa thông tin sản phẩm đang được quản lý trong hệ thống.
+                    </p>
+                </div>
+
+                <span class="product-form-id">
+                    Mã sản phẩm: #@Model.MaSanPham
+                </span>
+
+            </div>
+
+            <!-- EDIT FORM -->
+            @using (Html.BeginForm(
+                "EditProduct",
+                "AdminProduct",
+                FormMethod.Post,
+                new
+                {
+                    enctype = "multipart/form-data",
+                    @class = "product-edit-form",
+                    id = "productEditForm"
+                }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(x => x.MaSanPham)
+
+                <!-- VALIDATION SUMMARY -->
+                @Html.ValidationSummary(
+                         true,
+                         "Vui lòng kiểm tra lại thông tin sản phẩm.",
+                         new
+                         {
+                             @class = "product-form-errors"
+                         }
+                     )
+
+                <!-- SHARED FORM -->
+                @Html.Partial(
+                         "~/Views/Admin/_AdminProductForm.cshtml",
+                         Model
+                     )
+
+            }
+
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts {
+
+    <script src="@Url.Content("~/Scripts/admin/admin-product-form.js")"></script>
+
+}
