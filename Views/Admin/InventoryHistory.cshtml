@@ -1,0 +1,167 @@
+﻿
+@using System
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminInventoryHistoryViewModel
+
+@{
+    ViewBag.Title = "Lịch sử kho";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet"
+      href="@Url.Content("~/Content/css/admin/admin-inventory.css")" />
+
+<div class="inventory-page">
+
+    <div class="inventory-heading">
+        <div>
+            <span class="inventory-eyebrow">STAGEFX PRO / INVENTORY HISTORY</span>
+            <h1>Lịch sử giao dịch kho</h1>
+            <p>Theo dõi toàn bộ hoạt động nhập, xuất và điều chỉnh tồn kho.</p>
+        </div>
+
+        <a href="@Url.Action("Inventory", "AdminInventory")"
+           class="inventory-btn inventory-btn-secondary">
+            Quay lại kho hàng
+        </a>
+    </div>
+
+    <div class="inventory-panel">
+
+        @using (Html.BeginForm("History", "AdminInventory", FormMethod.Get,
+            new { @class = "inventory-filter" }))
+        {
+            <input type="text"
+                   name="search"
+                   value="@Model.SearchTerm"
+                   placeholder="Tìm SKU hoặc tên sản phẩm..." />
+
+            <select name="transactionType">
+                <option value="">Tất cả giao dịch</option>
+                <option value="NHAP" @(Model.TransactionType == "NHAP" ? "selected" : "")>Nhập kho</option>
+                <option value="XUAT" @(Model.TransactionType == "XUAT" ? "selected" : "")>Xuất kho</option>
+                <option value="DIEUCHINH" @(Model.TransactionType == "DIEUCHINH" ? "selected" : "")>Điều chỉnh</option>
+                <option value="TRAHANG" @(Model.TransactionType == "TRAHANG" ? "selected" : "")>Trả hàng</option>
+            </select>
+
+            <input type="date"
+                   name="dateFrom"
+                   value="@(Model.DateFrom.HasValue ? Model.DateFrom.Value.ToString("yyyy-MM-dd") : "")" />
+
+            <input type="date"
+                   name="dateTo"
+                   value="@(Model.DateTo.HasValue ? Model.DateTo.Value.ToString("yyyy-MM-dd") : "")" />
+
+            <button type="submit" class="inventory-btn inventory-btn-primary">
+                Lọc lịch sử
+            </button>
+        }
+
+        <div class="inventory-table-wrap">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>Mã GD</th>
+                        <th>Thời gian</th>
+                        <th>Sản phẩm</th>
+                        <th>Loại giao dịch</th>
+                        <th>Số lượng</th>
+                        <th>Tồn trước</th>
+                        <th>Tồn sau</th>
+                        <th>Người thực hiện</th>
+                        <th>Ghi chú</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Transactions != null && Model.Transactions.Any())
+                    {
+                        foreach (var item in Model.Transactions)
+                        {
+                            <tr>
+                                <td>#@item.MaGiaoDichKho</td>
+
+                                <td>@item.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+
+                                <td>
+                                    <strong>@item.TenSanPham</strong>
+                                    <div class="inventory-sku">@item.SKU</div>
+                                </td>
+
+                                <td>
+                                    @switch (item.LoaiGiaoDich)
+                                    {
+                                        case "NHAP":
+                                            <span class="inventory-quantity available">Nhập kho</span>
+                                            break;
+
+                                        case "XUAT":
+                                            <span class="inventory-quantity empty">Xuất kho</span>
+                                            break;
+
+                                        case "DIEUCHINH":
+                                            <span class="inventory-quantity">Điều chỉnh</span>
+                                            break;
+
+                                        case "TRAHANG":
+                                            <span class="inventory-quantity available">Trả hàng</span>
+                                            break;
+
+                                        default:
+                                            <span>@item.LoaiGiaoDich</span>
+                                            break;
+                                    }
+                                </td>
+
+                                <td>@item.SoLuong.ToString("N0")</td>
+                                <td>@item.TonTruoc.ToString("N0")</td>
+                                <td>@item.TonSau.ToString("N0")</td>
+                                <td>@(item.NguoiThucHien ?? "Hệ thống")</td>
+                                <td>@(item.GhiChu ?? "—")</td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9" class="inventory-empty">
+                                Chưa có giao dịch kho.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.TotalPages > 1)
+        {
+            <div class="inventory-pagination">
+                <span>Trang @Model.CurrentPage / @Model.TotalPages</span>
+
+                <div>
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a href="@Url.Action("History", new {
+                            search = Model.SearchTerm,
+                            transactionType = Model.TransactionType,
+                            dateFrom = Model.DateFrom,
+                            dateTo = Model.DateTo,
+                            page = Model.CurrentPage - 1
+                        })">Trước</a>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a href="@Url.Action("History", new {
+                            search = Model.SearchTerm,
+                            transactionType = Model.TransactionType,
+                            dateFrom = Model.DateFrom,
+                            dateTo = Model.DateTo,
+                            page = Model.CurrentPage + 1
+                        })">Tiếp</a>
+                    }
+                </div>
+            </div>
+        }
+
+    </div>
+</div>

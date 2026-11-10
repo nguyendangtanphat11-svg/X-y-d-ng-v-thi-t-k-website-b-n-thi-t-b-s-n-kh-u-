@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Data;
 using System.Data.Entity;
@@ -15,6 +16,19 @@ namespace STAGEFX_PRO.Controllers
     public class AdminOrderController : Controller
     {
         private const int PAGE_SIZE = 10;
+
+        private static readonly IDictionary<string, string[]> AllowedTransitions =
+            new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "ChoXacNhan", new[] { "DaXacNhan", "TuChoi" } },
+                { "DaXacNhan", new[] { "DangChuanBi", "ChoHuy" } },
+                { "DangChuanBi", new[] { "DangGiao", "ChoHuy" } },
+                { "DangGiao", new[] { "HoanThanh", "ChoHuy" } },
+                { "ChoHuy", new string[0] },
+                { "HoanThanh", new string[0] },
+                { "DaHuy", new string[0] },
+                { "TuChoi", new string[0] }
+            };
 
         // =====================================================
         // 1. DANH SÁCH ĐƠN HÀNG
@@ -304,6 +318,43 @@ namespace STAGEFX_PRO.Controllers
                     SetPaymentRecordStatus(payment);
                 }
 
+                model.AllowedStatusTransitions = GetAllowedStatusItems(order.TrangThai);
+                model.StatusHistory = db.LichSuTrangThaiDonHang
+                    .AsNoTracking()
+                    .Where(x => x.MaDonHang == id)
+                    .OrderByDescending(x => x.NgayThayDoi)
+                    .Select(x => new AdminOrderStatusHistoryViewModel
+                    {
+                        TrangThaiCu = x.TrangThaiCu,
+                        TrangThaiMoi = x.TrangThaiMoi,
+                        NguoiThucHien = x.NguoiDung == null ? "Không xác định" : x.NguoiDung.HoTen,
+                        NgayThayDoi = x.NgayThayDoi,
+                        GhiChu = x.GhiChu
+                    })
+                    .ToList();
+
+                foreach (var history in model.StatusHistory)
+                {
+                    history.TrangThaiCuText = GetOrderStatusText(history.TrangThaiCu);
+                    history.TrangThaiMoiText = GetOrderStatusText(history.TrangThaiMoi);
+                }
+
+                var cancellation = db.YeuCauHuyDon
+                    .AsNoTracking()
+                    .Where(x => x.MaDonHang == id)
+                    .OrderByDescending(x => x.NgayYeuCau)
+                    .Select(x => new AdminOrderCancellationViewModel
+                    {
+                        MaYeuCauHuy = x.MaYeuCauHuy,
+                        LyDoHuy = x.LyDoHuy,
+                        TrangThaiYeuCau = x.TrangThaiYeuCau,
+                        GhiChuQuanTri = x.GhiChuQuanTri,
+                        NgayYeuCau = x.NgayYeuCau,
+                        NgayXuLy = x.NgayXuLy
+                    })
+                    .FirstOrDefault();
+                model.CancellationRequest = cancellation;
+
                 ViewBag.Title = "Chi tiết đơn hàng";
 
                 return View(
@@ -311,6 +362,33 @@ namespace STAGEFX_PRO.Controllers
                     model
                 );
             }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult UpdateStatus(int orderId, string newStatus, string note)
+        {
+            if (!IsKnownStatus(newStatus))
+            {
+                TempData["OrderError"] = "Trạng thái cập nhật không hợp lệ.";
+                return RedirectToAction("OrderDetail", new { id = orderId });
+            }
+
+            return UpdateOrderStatus(orderId, newStatus, note);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult ApproveCancellation(int orderId, int requestId, string note)
+        {
+            return ProcessCancellation(orderId, requestId, true, note);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult RejectCancellation(int orderId, int requestId, string note)
+        {
+            return ProcessCancellation(orderId, requestId, false, note);
         }
 
         // =====================================================
@@ -394,14 +472,14 @@ namespace STAGEFX_PRO.Controllers
                     if (order == null)
                         return HttpNotFound();
 
-                    // CHỈ CHO PHÉP XỬ LÝ ĐƠN CHỜ XÁC NHẬN
-                    if (order.TrangThai != "ChoXacNhan")
+                    string[] transitions;
+                    if (!AllowedTransitions.TryGetValue(order.TrangThai ?? "", out transitions) ||
+                        !transitions.Contains(newStatus, StringComparer.OrdinalIgnoreCase))
                     {
                         TempData["OrderError"] =
-                            "Đơn hàng không còn ở trạng thái chờ xác nhận. " +
-                            "Vui lòng tải lại danh sách.";
+                            "Không thể chuyển trạng thái theo quy trình hiện tại.";
 
-                        return RedirectToAction("Orders");
+                        return RedirectToAction("OrderDetail", new { id = orderId });
                     }
 
                     DateTime now = DateTime.Now;
@@ -432,10 +510,7 @@ namespace STAGEFX_PRO.Controllers
                     // HOÀN TẤT TRANSACTION
                     transaction.Commit();
 
-                    TempData["OrderSuccess"] =
-                        newStatus == "DaXacNhan"
-                            ? "Đã xác nhận đơn hàng thành công."
-                            : "Đã từ chối đơn hàng thành công.";
+                    TempData["OrderSuccess"] = "Đã cập nhật trạng thái đơn hàng thành công.";
                 }
             }
             catch (Exception)
@@ -445,7 +520,113 @@ namespace STAGEFX_PRO.Controllers
                     "Vui lòng kiểm tra dữ liệu và thử lại.";
             }
 
-            return RedirectToAction("Orders");
+            return RedirectToAction("OrderDetail", new { id = orderId });
+        }
+
+        private ActionResult ProcessCancellation(int orderId, int requestId, bool approve, string note)
+        {
+            int adminId;
+            if (!TryGetAdminId(out adminId))
+                return new HttpStatusCodeResult(403);
+
+            using (var db = new StageFxEntities())
+            using (var transaction = db.Database.BeginTransaction(IsolationLevel.Serializable))
+            {
+                var request = db.YeuCauHuyDon.FirstOrDefault(x =>
+                    x.MaYeuCauHuy == requestId && x.MaDonHang == orderId);
+                var order = db.DonHang.FirstOrDefault(x => x.MaDonHang == orderId);
+
+                if (request == null || order == null)
+                    return HttpNotFound();
+
+                if (!IsPendingCancellation(request.TrangThaiYeuCau))
+                {
+                    TempData["OrderError"] = "Yêu cầu hủy đơn này đã được xử lý trước đó.";
+                    return RedirectToAction("OrderDetail", new { id = orderId });
+                }
+
+                DateTime now = DateTime.Now;
+                string oldStatus = order.TrangThai;
+                string adminNote = string.IsNullOrWhiteSpace(note) ? null : note.Trim();
+
+                if (approve)
+                {
+                    if (order.TrangThai != "ChoHuy")
+                    {
+                        TempData["OrderError"] = "Chỉ yêu cầu hủy đang chờ xử lý mới được chấp nhận.";
+                        return RedirectToAction("OrderDetail", new { id = orderId });
+                    }
+                    order.TrangThai = "DaHuy";
+                    request.TrangThaiYeuCau = "DaChapNhan";
+                }
+                else
+                {
+                    request.TrangThaiYeuCau = "TuChoi";
+                }
+
+                request.GhiChuQuanTri = adminNote;
+                request.NgayXuLy = now;
+                request.MaNguoiXuLy = adminId;
+
+                if (approve)
+                {
+                    order.NgayCapNhat = now;
+                    db.LichSuTrangThaiDonHang.Add(new LichSuTrangThaiDonHang
+                    {
+                        MaDonHang = orderId,
+                        MaNguoiDungThayDoi = adminId,
+                        TrangThaiCu = oldStatus,
+                        TrangThaiMoi = "DaHuy",
+                        GhiChu = adminNote ?? "Admin chấp nhận yêu cầu hủy đơn.",
+                        NgayThayDoi = now
+                    });
+                }
+
+                db.SaveChanges();
+                transaction.Commit();
+                TempData["OrderSuccess"] = approve
+                    ? "Đã chấp nhận yêu cầu hủy và chuyển đơn sang đã hủy."
+                    : "Đã từ chối yêu cầu hủy đơn.";
+            }
+
+            return RedirectToAction("OrderDetail", new { id = orderId });
+        }
+
+        private bool TryGetAdminId(out int adminId)
+        {
+            return int.TryParse(Convert.ToString(Session["MaNguoiDung"]), out adminId) && adminId > 0;
+        }
+
+        private static bool IsPendingCancellation(string status)
+        {
+            return string.Equals(status, "ChoXuLy", StringComparison.OrdinalIgnoreCase) ||
+                   string.Equals(status, "ChoDuyet", StringComparison.OrdinalIgnoreCase);
+        }
+
+        private static bool IsKnownStatus(string status)
+        {
+            return !string.IsNullOrWhiteSpace(status) &&
+                   AllowedTransitions.ContainsKey(status);
+        }
+
+        private List<SelectListItem> GetAllowedStatusItems(string currentStatus)
+        {
+            string[] transitions;
+            if (!AllowedTransitions.TryGetValue(currentStatus ?? "", out transitions))
+                return new List<SelectListItem>();
+
+            return transitions.Select(x => new SelectListItem
+            {
+                Value = x,
+                Text = GetOrderStatusText(x)
+            }).ToList();
+        }
+
+        private string GetOrderStatusText(string status)
+        {
+            var item = new AdminOrderItemViewModel { TrangThai = status };
+            SetOrderStatus(item);
+            return item.OrderStatusText;
         }
 
         // =====================================================

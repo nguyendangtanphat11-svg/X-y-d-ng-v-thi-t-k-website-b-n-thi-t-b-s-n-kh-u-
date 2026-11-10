@@ -1,4 +1,5 @@
-﻿@model Wedside_TVS_SFX.ViewModels.Admin.AdminOrderDetailViewModel
+﻿@using System.Linq
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminOrderDetailViewModel
 
 @{
     ViewBag.Title = "Chi tiết đơn hàng";
@@ -75,6 +76,74 @@
 
         </div>
 
+    </section>
+
+    @if (TempData["OrderSuccess"] != null || TempData["OrderError"] != null)
+    {
+        <div class="order-action-message @(TempData["OrderError"] != null ? "is-error" : "is-success")">
+            @((TempData["OrderError"] ?? TempData["OrderSuccess"]))
+        </div>
+    }
+
+    <section class="order-detail-card order-status-management">
+        <div class="order-section-heading">
+            <span class="material-symbols-outlined">published_with_changes</span>
+            <h3>Cập nhật trạng thái đơn hàng</h3>
+        </div>
+        @if (Model.AllowedStatusTransitions.Any())
+        {
+            using (Html.BeginForm("UpdateStatus", "AdminOrder", FormMethod.Post, new { id = "orderStatusForm", data_status_form = "true" }))
+            {
+                @Html.AntiForgeryToken()
+                @Html.Hidden("orderId", Model.MaDonHang)
+                <div class="order-status-form-grid">
+                    <label>Trạng thái mới @Html.DropDownList("newStatus", Model.AllowedStatusTransitions, "Chọn trạng thái")</label>
+                    <label>Ghi chú <textarea name="note" rows="3" maxlength="1000" placeholder="Ghi chú khi chuyển trạng thái..."></textarea></label>
+                </div>
+                <button class="order-status-update-button" type="submit">Cập nhật trạng thái</button>
+            }
+        }
+        else
+        {
+            <div class="order-empty-state">Đơn hàng đang ở trạng thái kết thúc hoặc không có bước chuyển tiếp hợp lệ.</div>
+        }
+    </section>
+
+    @if (Model.CancellationRequest != null)
+    {
+        <section class="order-detail-card order-cancellation-card">
+            <div class="order-section-heading"><span class="material-symbols-outlined">cancel</span><h3>Yêu cầu hủy đơn</h3></div>
+            <p><strong>Lý do khách hàng:</strong> @Model.CancellationRequest.LyDoHuy</p>
+            <p><strong>Trạng thái yêu cầu:</strong> @Model.CancellationRequest.TrangThaiYeuCau</p>
+            @if (Model.CancellationRequest.TrangThaiYeuCau == "ChoXuLy" || Model.CancellationRequest.TrangThaiYeuCau == "ChoDuyet")
+            {
+                <div class="order-cancellation-actions">
+                    @using (Html.BeginForm("ApproveCancellation", "AdminOrder", FormMethod.Post, new { @class = "order-inline-form" }))
+                    { @Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Ghi chú xử lý" /><button class="order-confirm-button" type="submit" data-confirm-cancellation>Chấp nhận hủy</button> }
+                    @using (Html.BeginForm("RejectCancellation", "AdminOrder", FormMethod.Post, new { @class = "order-inline-form" }))
+                    { @Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Lý do từ chối" /><button class="order-reject-button" type="submit">Từ chối</button> }
+                </div>
+
+            }
+        </section>
+    }
+
+    <section class="order-detail-card order-history-card">
+        <div class="order-section-heading"><span class="material-symbols-outlined">history</span><h3>Lịch sử trạng thái</h3></div>
+        @if (Model.StatusHistory.Any())
+        {
+            <div class="order-status-timeline">
+                @foreach (var history in Model.StatusHistory)
+                {
+                    <article class="order-status-history-item"><div class="order-status-history-marker"></div><div><strong>@history.TrangThaiCuText → @history.TrangThaiMoiText</strong><small>@history.NguoiThucHien · @history.NgayThayDoi.ToString("dd/MM/yyyy HH:mm")</small><p>@(string.IsNullOrWhiteSpace(history.GhiChu) ? "Không có ghi chú." : history.GhiChu)</p></div></article>
+                }
+            </div>
+
+        }
+        else
+        {
+            <div class="order-empty-state">Chưa có lịch sử thay đổi trạng thái.</div>
+        }
     </section>
 
     <!-- CUSTOMER INFORMATION -->
@@ -371,3 +440,7 @@
     </section>
 
 </div>
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/admin/admin-order-detail.js")" defer></script>
+}

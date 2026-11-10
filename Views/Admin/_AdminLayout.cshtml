@@ -1,23 +1,78 @@
+
+@using System
+
 @{
-    string pageTitle = ViewBag.Title ?? "Bảng điều khiển";
-    string currentController = ViewContext.RouteData.Values["controller"] as string ?? "";
-    string currentAction = ViewContext.RouteData.Values["action"] as string ?? "";
+    string pageTitle = ViewBag.Title as string ?? "Bảng điều khiển";
 
-    string currentUserName = Session["HoTen"] as string ?? "";
-    string currentUserEmail = Session["Email"] as string ?? "";
-    string currentRole = Session["TenVaiTro"] as string ?? "ADMINISTRATOR";
+    string currentController =
+        ViewContext.RouteData.Values["controller"] as string ?? "";
 
-    Func<string, bool> isActive = controller =>
-        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase);
+    string currentAction =
+        ViewContext.RouteData.Values["action"] as string ?? "";
+
+    string currentUserName =
+        Session["HoTen"] as string ?? "Administrator";
+
+    string currentUserEmail =
+        Session["Email"] as string ?? "";
+
+    string currentRole =
+        Session["TenVaiTro"] as string ?? "ADMINISTRATOR";
+
+    Func<string, bool> isController = controller =>
+        string.Equals(
+            currentController,
+            controller,
+            StringComparison.OrdinalIgnoreCase);
+
+    Func<string, bool> isAction = action =>
+        string.Equals(
+            currentAction,
+            action,
+            StringComparison.OrdinalIgnoreCase);
 
     bool isDashboardActive =
-        isActive("Admin") &&
-        string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+        isController("Admin") && isAction("Index");
 
-    bool isOrdersActive = isActive("AdminOrder");
-    bool isProductsActive = isActive("AdminProduct");
-    bool isCustomersActive = isActive("AdminCustomer");
+    bool isOrdersActive =
+        isController("AdminOrder");
+
+    bool isProductsActive =
+        isController("AdminProduct");
+
+    bool isCustomersActive =
+        isController("AdminCustomer");
+
+    bool isInventoryActive =
+        isController("AdminInventory");
+
+    bool isInventoryListActive =
+        isInventoryActive && isAction("Inventory");
+
+    bool isInventoryHistoryActive =
+        isInventoryActive && isAction("History");
+
+    string avatarLetter =
+        string.IsNullOrWhiteSpace(currentUserName)
+            ? "A"
+            : currentUserName.Substring(0, 1).ToUpperInvariant();
+
+    // Partial View dùng chung cho các chức năng đang phát triển.
+    Func<string, string, IHtmlString> comingSoon = (icon, text) =>
+    {
+        var partialViewData =
+            new ViewDataDictionary(ViewData);
+
+        partialViewData["Icon"] = icon;
+        partialViewData["Text"] = text;
+
+        return Html.Partial(
+            "~/Views/Admin/_AdminComingSoonItem.cshtml",
+            null,
+            partialViewData);
+    };
 }
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -27,8 +82,11 @@
 
     <title>@pageTitle - STAGEFX PRO Admin</title>
 
+    <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossorigin />
 
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&display=swap"
           rel="stylesheet" />
@@ -36,6 +94,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
           rel="stylesheet" />
 
+    <!-- ADMIN STYLES -->
     <link rel="stylesheet"
           href="@Url.Content("~/Content/css/admin/admin-layout.css")" />
 
@@ -50,6 +109,7 @@
 
 <body class="admin-shell">
 
+    <!-- SIDEBAR BACKDROP -->
     <div class="admin-shell-backdrop"
          data-admin-sidebar-close
          aria-hidden="true">
@@ -60,6 +120,7 @@
            id="admin-sidebar"
            aria-label="Điều hướng quản trị">
 
+        <!-- BRAND -->
         <div class="admin-sidebar-brand">
 
             <a href="@Url.Action("Index", "Admin")"
@@ -72,6 +133,7 @@
                     <strong>STAGEFX <b>PRO</b></strong>
                     <small>ADMINISTRATOR PANEL</small>
                 </span>
+
             </a>
 
             <button type="button"
@@ -79,28 +141,39 @@
                     data-admin-sidebar-close
                     aria-label="Đóng menu">
 
-                <span class="material-symbols-outlined" aria-hidden="true">
+                <span class="material-symbols-outlined"
+                      aria-hidden="true">
                     close
                 </span>
+
             </button>
+
         </div>
 
-        <nav class="admin-navigation" aria-label="Menu quản trị">
+        <!-- NAVIGATION -->
+        <nav class="admin-navigation"
+             aria-label="Menu quản trị">
 
             <!-- OVERVIEW -->
             <div class="admin-nav-group">
 
-                <span class="admin-nav-label">OVERVIEW</span>
+                <span class="admin-nav-label">
+                    OVERVIEW
+                </span>
 
-                <a class="admin-nav-item @(isDashboardActive ? "is-active" : "")"
-                   href="@Url.Action("Index", "Admin")"
+                <a href="@Url.Action("Index", "Admin")"
+                   class="admin-nav-item @(isDashboardActive ? "is-active" : "")"
                    @(isDashboardActive ? "aria-current=page" : "")>
 
-                    <span class="material-symbols-outlined" aria-hidden="true">
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
                         dashboard
                     </span>
 
-                    <span class="admin-nav-text">Dashboard</span>
+                    <span class="admin-nav-text">
+                        Dashboard
+                    </span>
+
                 </a>
 
             </div>
@@ -108,118 +181,139 @@
             <!-- BUSINESS MANAGEMENT -->
             <div class="admin-nav-group">
 
-                <span class="admin-nav-label">BUSINESS MANAGEMENT</span>
+                <span class="admin-nav-label">
+                    BUSINESS MANAGEMENT
+                </span>
 
+                <!-- ORDERS -->
                 <a href="@Url.Action("Orders", "AdminOrder")"
                    class="admin-nav-item @(isOrdersActive ? "is-active" : "")"
                    @(isOrdersActive ? "aria-current=page" : "")>
 
-                    <span class="material-symbols-outlined" aria-hidden="true">
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
                         receipt_long
                     </span>
 
-                    <span class="admin-nav-text">Đơn hàng</span>
+                    <span class="admin-nav-text">
+                        Đơn hàng
+                    </span>
+
                 </a>
 
+                <!-- PRODUCTS -->
                 <a href="@Url.Action("Products", "AdminProduct")"
                    class="admin-nav-item @(isProductsActive ? "is-active" : "")"
                    @(isProductsActive ? "aria-current=page" : "")>
 
-                    <span class="material-symbols-outlined" aria-hidden="true">
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
                         inventory_2
                     </span>
 
-                    <span class="admin-nav-text">Sản phẩm</span>
+                    <span class="admin-nav-text">
+                        Sản phẩm
+                    </span>
+
                 </a>
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "category" },
-                        { "Text", "Danh mục" }
-                     }
-                     )
+                <!-- CATEGORIES -->
+                @comingSoon("category", "Danh mục")
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "warehouse" },
-                        { "Text", "Kho hàng" }
-                     }
-                     )
+                <!-- INVENTORY -->
+                <a href="@Url.Action("Inventory", "AdminInventory")"
+                   class="admin-nav-item @(isInventoryListActive ? "is-active" : "")"
+                   @(isInventoryListActive ? "aria-current=page" : "")>
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "local_offer" },
-                        { "Text", "Khuyến mãi" }
-                     }
-                     )
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
+                        warehouse
+                    </span>
+
+                    <span class="admin-nav-text">
+                        Kho hàng
+                    </span>
+
+                </a>
+
+                <!-- INVENTORY HISTORY -->
+                <a href="@Url.Action("History", "AdminInventory")"
+                   class="admin-nav-item @(isInventoryHistoryActive ? "is-active" : "")"
+                   @(isInventoryHistoryActive ? "aria-current=page" : "")>
+
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
+                        history
+                    </span>
+
+                    <span class="admin-nav-text">
+                        Lịch sử kho
+                    </span>
+
+                </a>
+
+                <!-- PROMOTIONS -->
+                @comingSoon("local_offer", "Khuyến mãi")
 
             </div>
 
             <!-- CUSTOMER MANAGEMENT -->
             <div class="admin-nav-group">
 
-                <span class="admin-nav-label">CUSTOMER MANAGEMENT</span>
+                <span class="admin-nav-label">
+                    CUSTOMER MANAGEMENT
+                </span>
 
+                <!-- B2B CUSTOMERS -->
                 <a href="@Url.Action("Index", "AdminCustomer")"
                    class="admin-nav-item @(isCustomersActive ? "is-active" : "")"
                    @(isCustomersActive ? "aria-current=page" : "")>
 
-                    <span class="material-symbols-outlined" aria-hidden="true">
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
                         group
                     </span>
 
-                    <span class="admin-nav-text">Khách hàng B2B</span>
+                    <span class="admin-nav-text">
+                        Khách hàng B2B
+                    </span>
+
                 </a>
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "support_agent" },
-                        { "Text", "Yêu cầu tư vấn" }
-                     }
-                     )
+                <!-- CONSULTING -->
+                @comingSoon("support_agent", "Yêu cầu tư vấn")
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "reviews" },
-                        { "Text", "Đánh giá sản phẩm" }
-                     }
-                     )
+                <!-- REVIEWS -->
+                @comingSoon("reviews", "Đánh giá sản phẩm")
 
             </div>
 
             <!-- REPORTS & SYSTEM -->
             <div class="admin-nav-group">
 
-                <span class="admin-nav-label">REPORTS &amp; SYSTEM</span>
+                <span class="admin-nav-label">
+                    REPORTS &amp; SYSTEM
+                </span>
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "bar_chart" },
-                        { "Text", "Báo cáo" }
-                     }
-                     )
+                @comingSoon("bar_chart", "Báo cáo")
 
-                @Html.Partial(
-                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
-                         new ViewDataDictionary {
-                        { "Icon", "settings" },
-                        { "Text", "Cài đặt" }
-                     }
-                     )
+                @comingSoon("settings", "Cài đặt")
 
             </div>
 
         </nav>
 
+        <!-- SIDEBAR FOOTER -->
         <div class="admin-sidebar-footer">
-            <span class="admin-status-dot" aria-hidden="true"></span>
-            <span>Hệ thống hoạt động</span>
+
+            <span class="admin-status-dot"
+                  aria-hidden="true">
+            </span>
+
+            <span>
+                Hệ thống hoạt động
+            </span>
+
         </div>
 
     </aside>
@@ -232,6 +326,7 @@
 
             <div class="admin-header-left">
 
+                <!-- SIDEBAR TOGGLE -->
                 <button type="button"
                         class="admin-sidebar-toggle"
                         data-admin-sidebar-toggle
@@ -239,16 +334,21 @@
                         aria-controls="admin-sidebar"
                         aria-label="Thu gọn menu">
 
-                    <span class="material-symbols-outlined" aria-hidden="true">
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
                         menu
                     </span>
+
                 </button>
 
-                <div class="admin-breadcrumb" aria-label="Breadcrumb">
+                <!-- BREADCRUMB -->
+                <div class="admin-breadcrumb"
+                     aria-label="Breadcrumb">
 
                     <span>Admin</span>
 
-                    <span class="material-symbols-outlined" aria-hidden="true">
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
                         chevron_right
                     </span>
 
@@ -260,18 +360,22 @@
 
             <div class="admin-header-right">
 
+                <!-- CURRENT PAGE -->
                 <div class="admin-current-page">
 
                     <span class="admin-current-page-label">
                         TRANG HIỆN TẠI
                     </span>
 
-                    <strong>@pageTitle</strong>
+                    <strong>
+                        @pageTitle
+                    </strong>
 
                 </div>
 
                 <!-- ACCOUNT MENU -->
-                <div class="admin-account" data-admin-account>
+                <div class="admin-account"
+                     data-admin-account>
 
                     <button type="button"
                             class="admin-account-toggle"
@@ -279,15 +383,21 @@
                             aria-expanded="false"
                             aria-controls="admin-account-menu">
 
-                        <span class="admin-account-avatar" aria-hidden="true">
-                            @(string.IsNullOrWhiteSpace(currentUserName)
-                                ? "A"
-                                : currentUserName.Substring(0, 1).ToUpperInvariant())
+                        <span class="admin-account-avatar"
+                              aria-hidden="true">
+                            @avatarLetter
                         </span>
 
                         <span class="admin-account-details">
-                            <strong>@currentUserName</strong>
-                            <small>@currentRole</small>
+
+                            <strong>
+                                @currentUserName
+                            </strong>
+
+                            <small>
+                                @currentRole
+                            </small>
+
                         </span>
 
                         <span class="material-symbols-outlined admin-account-chevron"
@@ -297,38 +407,58 @@
 
                     </button>
 
+                    <!-- ACCOUNT DROPDOWN -->
                     <div class="admin-account-menu"
                          id="admin-account-menu"
                          hidden>
 
                         <div class="admin-account-menu-user">
 
-                            <strong>@currentUserName</strong>
-                            <span>@currentUserEmail</span>
-                            <small>@currentRole</small>
+                            <strong>
+                                @currentUserName
+                            </strong>
+
+                            <span>
+                                @currentUserEmail
+                            </span>
+
+                            <small>
+                                @currentRole
+                            </small>
 
                         </div>
 
-                        <div class="admin-account-divider"></div>
+                        <div class="admin-account-divider">
+                        </div>
 
+                        <!-- PROFILE -->
                         <a href="@Url.Action("Profile", "Account")"
                            class="admin-account-menu-item">
 
-                            <span class="material-symbols-outlined" aria-hidden="true">
+                            <span class="material-symbols-outlined"
+                                  aria-hidden="true">
                                 person
                             </span>
 
-                            <span>Thông tin tài khoản</span>
+                            <span>
+                                Thông tin tài khoản
+                            </span>
+
                         </a>
 
+                        <!-- LOGOUT -->
                         <a href="@Url.Action("Logout", "Account")"
                            class="admin-account-menu-item admin-logout-link">
 
-                            <span class="material-symbols-outlined" aria-hidden="true">
+                            <span class="material-symbols-outlined"
+                                  aria-hidden="true">
                                 logout
                             </span>
 
-                            <span>Đăng xuất</span>
+                            <span>
+                                Đăng xuất
+                            </span>
+
                         </a>
 
                     </div>
@@ -339,24 +469,36 @@
 
         </header>
 
-        <!-- PAGE BODY -->
-        <main class="admin-main" id="admin-main-content">
+        <!-- PAGE CONTENT -->
+        <main class="admin-main"
+              id="admin-main-content">
+
             @RenderBody()
+
         </main>
 
         <!-- FOOTER -->
         <footer class="admin-footer">
 
-            <span>STAGEFX PRO</span>
-            <span>Admin panel v1.0</span>
-            <span>&copy; @DateTime.Now.Year</span>
+            <span>
+                STAGEFX PRO
+            </span>
+
+            <span>
+                Admin panel v1.0
+            </span>
+
+            <span>
+                &copy; @DateTime.Now.Year
+            </span>
 
         </footer>
 
     </div>
 
     <!-- JAVASCRIPT -->
-    <script src="@Url.Content("~/Scripts/admin/admin-layout.js")" defer></script>
+    <script src="@Url.Content("~/Scripts/admin/admin-layout.js")"
+            defer></script>
 
     @RenderSection("scripts", required: false)
 

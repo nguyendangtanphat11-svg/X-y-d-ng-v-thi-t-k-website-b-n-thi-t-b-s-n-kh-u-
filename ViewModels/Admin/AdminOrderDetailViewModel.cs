@@ -35,11 +35,40 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
 
         public string GhiChu { get; set; }
 
+        public List<System.Web.Mvc.SelectListItem> AllowedStatusTransitions { get; set; }
+            = new List<System.Web.Mvc.SelectListItem>();
+
+        public List<AdminOrderStatusHistoryViewModel> StatusHistory { get; set; }
+            = new List<AdminOrderStatusHistoryViewModel>();
+
+        public AdminOrderCancellationViewModel CancellationRequest { get; set; }
+
         public List<AdminOrderDetailProductViewModel> Products { get; set; }
             = new List<AdminOrderDetailProductViewModel>();
 
         public List<AdminOrderPaymentViewModel> Payments { get; set; }
             = new List<AdminOrderPaymentViewModel>();
+    }
+
+    public class AdminOrderStatusHistoryViewModel
+    {
+        public string TrangThaiCu { get; set; }
+        public string TrangThaiMoi { get; set; }
+        public string NguoiThucHien { get; set; }
+        public DateTime NgayThayDoi { get; set; }
+        public string GhiChu { get; set; }
+        public string TrangThaiCuText { get; set; }
+        public string TrangThaiMoiText { get; set; }
+    }
+
+    public class AdminOrderCancellationViewModel
+    {
+        public int MaYeuCauHuy { get; set; }
+        public string LyDoHuy { get; set; }
+        public string TrangThaiYeuCau { get; set; }
+        public string GhiChuQuanTri { get; set; }
+        public DateTime NgayYeuCau { get; set; }
+        public DateTime? NgayXuLy { get; set; }
     }
 
     public class AdminOrderDetailProductViewModel

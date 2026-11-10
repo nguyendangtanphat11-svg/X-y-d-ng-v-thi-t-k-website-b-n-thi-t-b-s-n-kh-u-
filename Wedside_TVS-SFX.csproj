@@ -195,7 +195,11 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
+<<<<<<< HEAD
     <Compile Include="Controllers\AdminCustomerController.cs" />
+=======
+    <Compile Include="Controllers\AdminInventoryController.cs" />
+>>>>>>> 659f152 (Update latest STAGEFX PRO)
     <Compile Include="Controllers\AdminOrderController.cs" />
     <Compile Include="Controllers\AdminProductController.cs" />
     <Compile Include="Controllers\Base\AdminAuthorizeAttribute.cs" />
@@ -276,6 +280,7 @@
     </Compile>
     <Compile Include="ViewModels\Admin\AdminCustomerViewModels.cs" />
     <Compile Include="ViewModels\Admin\AdminDashboardViewModel.cs" />
+    <Compile Include="ViewModels\Admin\AdminInventoryViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminOrderDetailViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminOrderListViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminProductDetailViewModel.cs" />
@@ -342,6 +347,7 @@
       <DependentUpon>StageFxModel.edmx</DependentUpon>
     </Content>
     <Content Include="Scripts\admin\admin-dashboard.js" />
+    <Content Include="Scripts\admin\admin-inventory.js" />
     <Content Include="Scripts\admin\admin-layout.js" />
     <Content Include="Scripts\admin\admin-order-detail.js" />
     <Content Include="Scripts\admin\admin-orders.js" />
@@ -355,6 +361,7 @@
     <Content Include="Scripts\header.js" />
     <Content Include="Scripts\home.js" />
     <Content Include="Scripts\product-detail.js" />
+    <Content Include="Content\css\admin\admin-inventory.css" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -397,7 +404,12 @@
     <Content Include="Views\Admin\ProductEdit.cshtml" />
     <Content Include="Views\Admin\_AdminProductForm.cshtml" />
     <Content Include="Views\Admin\ProductDetail.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\Admin\Customers.cshtml" />
+=======
+    <Content Include="Views\Admin\Inventory.cshtml" />
+    <Content Include="Views\Admin\InventoryHistory.cshtml" />
+>>>>>>> 659f152 (Update latest STAGEFX PRO)
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

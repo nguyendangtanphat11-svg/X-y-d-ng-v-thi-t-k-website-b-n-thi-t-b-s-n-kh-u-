@@ -1,0 +1,344 @@
+﻿
+@using System
+@using System.Web.Mvc
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminInventoryViewModel
+
+@{
+    ViewBag.Title = "Quản lý kho hàng";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+
+    int totalPages = Math.Max(1, Model.TotalPages);
+}
+
+<link rel="stylesheet"
+      href="@Url.Content("~/Content/css/admin/admin-inventory.css")" />
+
+<div class="inventory-page">
+
+    <div class="inventory-heading">
+        <div>
+            <span class="inventory-eyebrow">STAGEFX PRO / INVENTORY</span>
+            <h1>Quản lý kho hàng</h1>
+            <p>Theo dõi số lượng tồn và thực hiện các giao dịch kho.</p>
+        </div>
+
+        <a href="@Url.Action("History", "AdminInventory")"
+           class="inventory-btn inventory-btn-secondary">
+            Lịch sử kho
+        </a>
+    </div>
+
+    @if (TempData["InventorySuccess"] != null)
+    {
+        <div class="inventory-alert success">
+            @TempData["InventorySuccess"]
+        </div>
+    }
+
+    @if (TempData["InventoryError"] != null)
+    {
+        <div class="inventory-alert error">
+            @TempData["InventoryError"]
+        </div>
+    }
+
+    @if (TempData["InventoryNotice"] != null)
+    {
+        <div class="inventory-alert notice">
+            @TempData["InventoryNotice"]
+        </div>
+    }
+
+    <div class="inventory-stats">
+
+        <div class="inventory-stat">
+            <span>Tổng sản phẩm</span>
+            <strong>@Model.TotalProducts</strong>
+        </div>
+
+        <div class="inventory-stat">
+            <span>Còn hàng</span>
+            <strong>@Model.AvailableProducts</strong>
+        </div>
+
+        <div class="inventory-stat">
+            <span>Hết hàng</span>
+            <strong>@Model.OutOfStockProducts</strong>
+        </div>
+
+        <div class="inventory-stat">
+            <span>Tổng tồn kho</span>
+            <strong>@Model.TotalStockQuantity.ToString("N0")</strong>
+        </div>
+
+    </div>
+
+    <div class="inventory-panel">
+
+        @using (Html.BeginForm(
+            "Inventory",
+            "AdminInventory",
+            FormMethod.Get,
+            new { @class = "inventory-filter" }))
+        {
+            <input type="text"
+                   name="search"
+                   value="@Model.SearchTerm"
+                   placeholder="Tìm SKU hoặc tên sản phẩm..." />
+
+            @Html.DropDownList(
+                     "categoryId",
+                     new SelectList(
+                         Model.Categories,
+                         "Value",
+                         "Text",
+                         Model.CategoryId),
+                     "Tất cả danh mục")
+
+            <select name="stockStatus">
+                <option value="">Tất cả tồn kho</option>
+                <option value="available"
+                        @(Model.StockStatus == "available" ? "selected" : "")>
+                    Còn hàng
+                </option>
+                <option value="out"
+                        @(Model.StockStatus == "out" ? "selected" : "")>
+                    Hết hàng
+                </option>
+            </select>
+
+            <select name="sortBy">
+                <option value="newest"
+                        @(Model.SortBy == "newest" ? "selected" : "")>
+                    Mới cập nhật
+                </option>
+                <option value="name"
+                        @(Model.SortBy == "name" ? "selected" : "")>
+                    Tên sản phẩm
+                </option>
+                <option value="quantity"
+                        @(Model.SortBy == "quantity" ? "selected" : "")>
+                    Số lượng tồn
+                </option>
+            </select>
+
+            <button type="submit" class="inventory-btn inventory-btn-primary">
+                Tìm kiếm
+            </button>
+
+            <a href="@Url.Action("Inventory")"
+               class="inventory-btn inventory-btn-secondary">
+                Đặt lại
+            </a>
+        }
+
+        <div class="inventory-table-wrap">
+            <table class="inventory-table">
+                <thead>
+                    <tr>
+                        <th>SKU</th>
+                        <th>Sản phẩm</th>
+                        <th>Danh mục</th>
+                        <th>Giá bán</th>
+                        <th>Giá thuê/ngày</th>
+                        <th>Tồn kho</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Products != null && Model.Products.Any())
+                    {
+                        foreach (var item in Model.Products)
+                        {
+                            <tr>
+                                <td class="inventory-sku">@item.SKU</td>
+
+                                <td class="inventory-product-name">
+                                    @item.TenSanPham
+                                </td>
+
+                                <td>@item.TenDanhMuc</td>
+
+                                <td>@item.GiaBan.ToString("N0") ₫</td>
+
+                                <td>
+                                    @(item.GiaThueNgay.HasValue
+                                        ? item.GiaThueNgay.Value.ToString("N0") + " ₫"
+                                        : "—")
+                                </td>
+
+                                <td>
+                                    <span class="inventory-quantity @(item.SoLuongTon <= 0 ? "empty" : "available")">
+                                        @item.SoLuongTon
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="inventory-status @(item.TrangThai ? "active" : "inactive")">
+                                        @(item.TrangThai ? "Đang kinh doanh" : "Ngừng kinh doanh")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="inventory-actions">
+
+                                        <button type="button"
+                                                class="inventory-action-btn import"
+                                                data-action="import"
+                                                data-id="@item.MaSanPham"
+                                                data-name="@item.TenSanPham"
+                                                data-stock="@item.SoLuongTon">
+                                            Nhập
+                                        </button>
+
+                                        <button type="button"
+                                                class="inventory-action-btn export"
+                                                data-action="export"
+                                                data-id="@item.MaSanPham"
+                                                data-name="@item.TenSanPham"
+                                                data-stock="@item.SoLuongTon">
+                                            Xuất
+                                        </button>
+
+                                        <button type="button"
+                                                class="inventory-action-btn adjust"
+                                                data-action="adjust"
+                                                data-id="@item.MaSanPham"
+                                                data-name="@item.TenSanPham"
+                                                data-stock="@item.SoLuongTon">
+                                            Điều chỉnh
+                                        </button>
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="inventory-empty">
+                                Không tìm thấy sản phẩm trong kho.
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        @if (Model.TotalItems > 0 && Model.TotalPages > 1)
+        {
+            <div class="inventory-pagination">
+
+                <span>
+                    Trang @Model.CurrentPage / @totalPages
+                    — @Model.TotalItems sản phẩm
+                </span>
+
+                <div>
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Inventory", new {
+                            search = Model.SearchTerm,
+                            categoryId = Model.CategoryId,
+                            stockStatus = Model.StockStatus,
+                            sortBy = Model.SortBy,
+                            page = Model.CurrentPage - 1
+                        })">Trước</a>
+                    }
+
+                    @if (Model.CurrentPage < totalPages)
+                    {
+                        <a href="@Url.Action("Inventory", new {
+                            search = Model.SearchTerm,
+                            categoryId = Model.CategoryId,
+                            stockStatus = Model.StockStatus,
+                            sortBy = Model.SortBy,
+                            page = Model.CurrentPage + 1
+                        })">Tiếp</a>
+                    }
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<!-- MODAL GIAO DỊCH KHO -->
+<div class="inventory-modal" id="inventoryModal" aria-hidden="true">
+
+    <div class="inventory-modal-backdrop" data-close-modal></div>
+
+    <div class="inventory-modal-dialog">
+
+        <div class="inventory-modal-header">
+            <div>
+                <span>STAGEFX PRO / STOCK TRANSACTION</span>
+                <h2 id="inventoryModalTitle">Giao dịch kho</h2>
+            </div>
+
+            <button type="button"
+                    class="inventory-modal-close"
+                    data-close-modal>
+                ×
+            </button>
+        </div>
+
+        <form id="inventoryTransactionForm"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden" id="inventoryProductId" name="productId" />
+
+            <div class="inventory-form-group">
+                <label>Sản phẩm</label>
+                <input type="text" id="inventoryProductName" readonly />
+            </div>
+
+            <div class="inventory-form-group">
+                <label>Tồn kho hiện tại</label>
+                <input type="text" id="inventoryCurrentStock" readonly />
+            </div>
+
+            <div class="inventory-form-group">
+                <label id="inventoryQuantityLabel">Số lượng</label>
+                <input type="number"
+                       id="inventoryQuantity"
+                       min="1"
+                       step="1"
+                       required />
+            </div>
+
+            <div class="inventory-form-group">
+                <label>Ghi chú / Lý do</label>
+                <textarea name="note"
+                          id="inventoryNote"
+                          maxlength="500"
+                          rows="3"
+                          placeholder="Nhập lý do giao dịch..."></textarea>
+            </div>
+
+            <div class="inventory-modal-footer">
+                <button type="button"
+                        class="inventory-btn inventory-btn-secondary"
+                        data-close-modal>
+                    Hủy
+                </button>
+
+                <button type="submit"
+                        class="inventory-btn inventory-btn-primary"
+                        id="inventorySubmit">
+                    Xác nhận
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/admin/admin-inventory.js")"></script>
+}

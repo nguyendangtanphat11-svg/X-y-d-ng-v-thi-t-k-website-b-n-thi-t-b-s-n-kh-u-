@@ -305,19 +305,19 @@ namespace STAGEFX_PRO.Controllers
                     .ToList();
 
                 var inventoryHistory = db.LichSuKho
-                    .AsNoTracking()
-                    .Where(x => x.MaSanPham == id)
-                    .OrderByDescending(x => x.NgayTao)
-                    .Select(x => new AdminInventoryHistoryViewModel
-                    {
-                        NgayTao = x.NgayTao,
-                        LoaiGiaoDich = x.LoaiGiaoDich,
-                        SoLuong = x.SoLuong,
-                        TonTruoc = x.TonTruoc,
-                        TonSau = x.TonSau,
-                        GhiChu = x.GhiChu
-                    })
-                    .ToList();
+    .AsNoTracking()
+    .Where(x => x.MaSanPham == id)
+    .OrderByDescending(x => x.NgayTao)
+    .Select(x => new AdminProductInventoryHistoryViewModel
+    {
+        NgayTao = x.NgayTao,
+        LoaiGiaoDich = x.LoaiGiaoDich,
+        SoLuong = x.SoLuong,
+        TonTruoc = x.TonTruoc,
+        TonSau = x.TonSau,
+        GhiChu = x.GhiChu
+    })
+    .ToList();
 
                 var model = new AdminProductDetailViewModel
                 {
