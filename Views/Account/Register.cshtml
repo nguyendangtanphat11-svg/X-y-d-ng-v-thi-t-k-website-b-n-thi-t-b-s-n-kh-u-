@@ -1,0 +1,166 @@
+﻿
+@{
+    ViewBag.Title = "Tạo tài khoản";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main class="auth-page">
+    <section class="auth-panel auth-panel-register"
+             aria-labelledby="auth-title">
+
+        <div class="auth-intro">
+            <span class="auth-kicker">
+                <span class="material-symbols-outlined"
+                      aria-hidden="true">business</span>
+                KẾT NỐI CÙNG STAGEFX PRO
+            </span>
+
+            <a class="auth-brand"
+               href="@Url.Action("Index", "Home")"
+               aria-label="STAGEFX PRO - Trang chủ">
+                <span class="auth-brand-mark" aria-hidden="true">S</span>
+                <span>
+                    STAGEFX <b>PRO</b>
+                    <small>STAGE EFFECTS • B2B SOLUTIONS</small>
+                </span>
+            </a>
+
+            <h1>
+                Tạo không gian<br />
+                <span>cho dự án của bạn.</span>
+            </h1>
+
+            <p>
+                Tạo hồ sơ doanh nghiệp để thuận tiện chuẩn bị nhu cầu
+                thiết bị và trao đổi với đội ngũ tư vấn.
+            </p>
+
+            <div class="auth-promise">
+                <span class="material-symbols-outlined"
+                      aria-hidden="true">handshake</span>
+                <p>
+                    <strong>Dành cho khách hàng và đối tác B2B</strong><br />
+                    Thông tin tài khoản được xử lý theo cơ chế xác thực
+                    của hệ thống.
+                </p>
+            </div>
+        </div>
+
+        <div class="auth-form-wrap">
+            <div class="auth-form-heading">
+                <span class="auth-eyebrow">BẮT ĐẦU KẾT NỐI</span>
+                <h2>Tạo tài khoản</h2>
+                <p>Điền thông tin để hoàn tất hồ sơ của bạn.</p>
+            </div>
+
+            @using (Html.BeginForm(
+                "Register",
+                "Account",
+                FormMethod.Post,
+                new { @class = "auth-form", id = "registerForm" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.ValidationSummary(
+                    false, "", new { @class = "auth-message" })
+
+                <label for="register-name">Họ và tên</label>
+                <input id="register-name"
+                       name="name"
+                       type="text"
+                       autocomplete="name"
+                       placeholder="Tên người liên hệ"
+                       required />
+
+                <label for="register-company">
+                    Tên công ty / đơn vị
+                    <span class="auth-optional">(không bắt buộc)</span>
+                </label>
+                <input id="register-company"
+                       name="company"
+                       type="text"
+                       autocomplete="organization"
+                       placeholder="Tên doanh nghiệp hoặc đơn vị" />
+
+                <label for="register-email">Email công việc</label>
+                <input id="register-email"
+                       name="email"
+                       type="email"
+                       autocomplete="email"
+                       placeholder="ten@congty.vn"
+                       required />
+
+                <label for="register-password">
+                    Mật khẩu
+                    <span class="auth-optional">(ít nhất 8 ký tự)</span>
+                </label>
+                <div class="auth-password-field">
+                    <input id="register-password"
+                           name="password"
+                           type="password"
+                           autocomplete="new-password"
+                           minlength="8"
+                           placeholder="Tạo mật khẩu"
+                           required />
+
+                    <button type="button"
+                            class="password-toggle"
+                            data-password-toggle="register-password"
+                            aria-label="Hiện mật khẩu"
+                            aria-pressed="false">
+                        <span class="material-symbols-outlined"
+                              aria-hidden="true">visibility</span>
+                    </button>
+                </div>
+
+                <label for="register-confirm-password">
+                    Xác nhận mật khẩu
+                </label>
+                <input id="register-confirm-password"
+                       name="confirmPassword"
+                       type="password"
+                       autocomplete="new-password"
+                       minlength="8"
+                       placeholder="Nhập lại mật khẩu"
+                       required />
+
+                <label class="auth-checkbox auth-terms">
+                    <input type="checkbox"
+                           name="terms"
+                           value="true"
+                           required />
+                    Tôi đồng ý để STAGEFX PRO liên hệ về yêu cầu
+                    tài khoản và dự án.
+                </label>
+
+                <button class="auth-submit" type="submit">
+                    Tạo tài khoản
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">arrow_forward</span>
+                </button>
+            }
+
+            <p class="auth-switch">
+                Đã có tài khoản?
+                <a href="@Url.Action("Login", "Account")">
+                    Đăng nhập
+                </a>
+            </p>
+
+            <p class="auth-demo-note">
+                <span class="material-symbols-outlined"
+                      aria-hidden="true">info</span>
+                Vui lòng cung cấp thông tin chính xác để tạo tài khoản.
+            </p>
+        </div>
+    </section>
+</main>
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/auth.css")" />
+}
+
+@section scripts {
+    <script src="@Url.Content("~/Scripts/auth.js")" defer></script>
+}

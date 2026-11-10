@@ -1,0 +1,377 @@
+
+@{
+    string pageTitle = ViewBag.Title ?? "Bảng điều khiển";
+    string currentController = ViewContext.RouteData.Values["controller"] as string ?? "";
+    string currentAction = ViewContext.RouteData.Values["action"] as string ?? "";
+
+    string currentUserName = Session["HoTen"] as string ?? "";
+    string currentUserEmail = Session["Email"] as string ?? "";
+    string currentRole = Session["TenVaiTro"] as string ?? "ADMINISTRATOR";
+
+    Func<string, bool> isActive = controller =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase);
+
+    bool isDashboardActive =
+        isActive("Admin") &&
+        string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+
+    bool isOrdersActive = isActive("AdminOrder");
+}
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#090909" />
+
+    <title>@pageTitle - STAGEFX PRO Admin</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&display=swap"
+          rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet" />
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-layout.css")" />
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-sidebar.css")" />
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-header.css")" />
+
+    @RenderSection("styles", required: false)
+</head>
+
+<body class="admin-shell">
+
+    <div class="admin-shell-backdrop"
+         data-admin-sidebar-close
+         aria-hidden="true">
+    </div>
+
+    <!-- SIDEBAR -->
+    <aside class="admin-sidebar"
+           id="admin-sidebar"
+           aria-label="Điều hướng quản trị">
+
+        <div class="admin-sidebar-brand">
+
+            <a href="@Url.Action("Index", "Admin")"
+               class="admin-brand-link"
+               aria-label="STAGEFX PRO - Bảng điều khiển">
+
+                <span class="admin-brand-mark">S</span>
+
+                <span class="admin-brand-copy">
+                    <strong>STAGEFX <b>PRO</b></strong>
+                    <small>ADMINISTRATOR PANEL</small>
+                </span>
+            </a>
+
+            <button type="button"
+                    class="admin-mobile-close"
+                    data-admin-sidebar-close
+                    aria-label="Đóng menu">
+
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    close
+                </span>
+            </button>
+        </div>
+
+        <nav class="admin-navigation" aria-label="Menu quản trị">
+
+            <!-- OVERVIEW -->
+            <div class="admin-nav-group">
+
+                <span class="admin-nav-label">OVERVIEW</span>
+
+                <a class="admin-nav-item @(isDashboardActive ? "is-active" : "")"
+                   href="@Url.Action("Index", "Admin")"
+                   @(isDashboardActive ? "aria-current=page" : "")>
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        dashboard
+                    </span>
+
+                    <span class="admin-nav-text">Dashboard</span>
+                </a>
+
+            </div>
+
+            <!-- BUSINESS MANAGEMENT -->
+            <div class="admin-nav-group">
+
+                <span class="admin-nav-label">BUSINESS MANAGEMENT</span>
+
+                <a href="@Url.Action("Orders", "AdminOrder")"
+                   class="admin-nav-item @(isOrdersActive ? "is-active" : "")"
+                   @(isOrdersActive ? "aria-current=page" : "")>
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        receipt_long
+                    </span>
+
+                    <span class="admin-nav-text">Đơn hàng</span>
+                </a>
+                <a href="@Url.Action("Consultations", "AdminConsultation")"
+                   class="admin-nav-item @(isActive("AdminConsultation") ? "is-active" : "")">
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        support_agent
+                    </span>
+
+                    <span class="admin-nav-text">
+                        Yêu cầu tư vấn
+                    </span>
+
+                </a>
+                <a href="@Url.Action("Reviews", "AdminReview")"
+                   class="admin-nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "AdminReview" ? "is-active" : "")">
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        rate_review
+                    </span>
+                    <span class="admin-nav-text">
+                        Đánh giá sản phẩm
+                    </span>
+                </a>
+                <a href="@Url.Action("Products", "AdminProduct")"
+                   class="admin-nav-item">
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        inventory_2
+                    </span>
+                    <span class="admin-nav-text">Sản phẩm</span>
+                </a>
+
+                @Html.Partial(
+                                   "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                                   new ViewDataDictionary {
+                        { "Icon", "category" },
+                        { "Text", "Danh mục" }
+                       }
+                               )
+
+                @Html.Partial(
+                                   "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                                   new ViewDataDictionary {
+                        { "Icon", "warehouse" },
+                        { "Text", "Kho hàng" }
+                       }
+                               )
+
+                @Html.Partial(
+                                   "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                                   new ViewDataDictionary {
+                        { "Icon", "local_offer" },
+                        { "Text", "Khuyến mãi" }
+                       }
+                               )
+
+            </div>
+
+            <!-- CUSTOMER MANAGEMENT -->
+            <div class="admin-nav-group">
+
+                <span class="admin-nav-label">CUSTOMER MANAGEMENT</span>
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "business" },
+                        { "Text", "Khách hàng B2B" }
+                     }
+                     )
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "support_agent" },
+                        { "Text", "Yêu cầu tư vấn" }
+                     }
+                     )
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "reviews" },
+                        { "Text", "Đánh giá sản phẩm" }
+                     }
+                     )
+
+            </div>
+
+            <!-- REPORTS & SYSTEM -->
+            <div class="admin-nav-group">
+
+                <span class="admin-nav-label">REPORTS &amp; SYSTEM</span>
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "bar_chart" },
+                        { "Text", "Báo cáo" }
+                     }
+                     )
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "settings" },
+                        { "Text", "Cài đặt" }
+                     }
+                     )
+
+            </div>
+
+        </nav>
+
+        <div class="admin-sidebar-footer">
+            <span class="admin-status-dot" aria-hidden="true"></span>
+            <span>Hệ thống hoạt động</span>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-shell-content">
+
+        <!-- HEADER -->
+        <header class="admin-header">
+
+            <div class="admin-header-left">
+
+                <button type="button"
+                        class="admin-sidebar-toggle"
+                        data-admin-sidebar-toggle
+                        aria-expanded="true"
+                        aria-controls="admin-sidebar"
+                        aria-label="Thu gọn menu">
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        menu
+                    </span>
+                </button>
+
+                <div class="admin-breadcrumb" aria-label="Breadcrumb">
+
+                    <span>Admin</span>
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        chevron_right
+                    </span>
+
+                    <strong>@pageTitle</strong>
+
+                </div>
+
+            </div>
+
+            <div class="admin-header-right">
+
+                <div class="admin-current-page">
+
+                    <span class="admin-current-page-label">
+                        TRANG HIỆN TẠI
+                    </span>
+
+                    <strong>@pageTitle</strong>
+
+                </div>
+
+                <!-- ACCOUNT MENU -->
+                <div class="admin-account" data-admin-account>
+
+                    <button type="button"
+                            class="admin-account-toggle"
+                            data-admin-account-toggle
+                            aria-expanded="false"
+                            aria-controls="admin-account-menu">
+
+                        <span class="admin-account-avatar" aria-hidden="true">
+                            @(string.IsNullOrWhiteSpace(currentUserName)
+                                ? "A"
+                                : currentUserName.Substring(0, 1).ToUpperInvariant())
+                        </span>
+
+                        <span class="admin-account-details">
+                            <strong>@currentUserName</strong>
+                            <small>@currentRole</small>
+                        </span>
+
+                        <span class="material-symbols-outlined admin-account-chevron"
+                              aria-hidden="true">
+                            expand_more
+                        </span>
+
+                    </button>
+
+                    <div class="admin-account-menu"
+                         id="admin-account-menu"
+                         hidden>
+
+                        <div class="admin-account-menu-user">
+
+                            <strong>@currentUserName</strong>
+                            <span>@currentUserEmail</span>
+                            <small>@currentRole</small>
+
+                        </div>
+
+                        <div class="admin-account-divider"></div>
+
+                        <a href="@Url.Action("Profile", "Account")"
+                           class="admin-account-menu-item">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                person
+                            </span>
+
+                            <span>Thông tin tài khoản</span>
+                        </a>
+
+                        <a href="@Url.Action("Logout", "Account")"
+                           class="admin-account-menu-item admin-logout-link">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                logout
+                            </span>
+
+                            <span>Đăng xuất</span>
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </header>
+
+        <!-- PAGE BODY -->
+        <main class="admin-main" id="admin-main-content">
+            @RenderBody()
+        </main>
+
+        <!-- FOOTER -->
+        <footer class="admin-footer">
+
+            <span>STAGEFX PRO</span>
+            <span>Admin panel v1.0</span>
+            <span>&copy; @DateTime.Now.Year</span>
+
+        </footer>
+
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script src="@Url.Content("~/Scripts/admin/admin-layout.js")" defer></script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>

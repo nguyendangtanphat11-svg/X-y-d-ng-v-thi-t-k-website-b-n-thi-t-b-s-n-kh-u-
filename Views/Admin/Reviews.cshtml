@@ -1,0 +1,288 @@
+﻿@model IEnumerable<Wedside_TVS_SFX.Models.DanhGiaSanPham>
+
+@{
+    ViewBag.Title = "Quản lý đánh giá sản phẩm";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet" href="@Url.Content("~/Content/css/admin/admin-reviews.css")" />
+
+<div class="admin-reviews">
+
+    <!-- HEADER -->
+    <div class="reviews-page-header">
+        <div>
+            <span class="reviews-eyebrow">QUẢN LÝ KHÁCH HÀNG</span>
+            <h1>Đánh giá sản phẩm</h1>
+            <p>Theo dõi, duyệt và phản hồi đánh giá từ người mua hàng STAGEFX PRO.</p>
+        </div>
+
+        <div class="reviews-header-meta">
+            <span class="material-symbols-outlined">rate_review</span>
+            <span>Hệ thống quản lý phản hồi</span>
+        </div>
+    </div>
+
+    <!-- THỐNG KÊ -->
+    <div class="reviews-stats">
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon">
+                <span class="material-symbols-outlined">reviews</span>
+            </div>
+            <div>
+                <span>Tổng đánh giá</span>
+                <strong>@ViewBag.TotalReviews</strong>
+            </div>
+        </div>
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon warning">
+                <span class="material-symbols-outlined">mark_email_unread</span>
+            </div>
+            <div>
+                <span>Chờ kiểm duyệt</span>
+                <strong>@ViewBag.PendingReviews</strong>
+            </div>
+        </div>
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon success">
+                <span class="material-symbols-outlined">verified</span>
+            </div>
+            <div>
+                <span>Đã hiển thị</span>
+                <strong>@ViewBag.ApprovedReviews</strong>
+            </div>
+        </div>
+
+        <div class="review-stat-card">
+            <div class="review-stat-icon star">
+                <span class="material-symbols-outlined">star</span>
+            </div>
+            <div>
+                <span>Điểm trung bình</span>
+                <strong>@ViewBag.AvgRating <small style="font-size:14px; color:#888;">/ 5</small></strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DANH SÁCH & LỌC -->
+    <div class="reviews-content-card">
+
+        <div class="reviews-content-heading">
+            <div>
+                <h2>Danh sách đánh giá</h2>
+                <p>Kiểm duyệt nội dung đánh giá của khách hàng trước khi hiển thị lên website.</p>
+            </div>
+            <span class="reviews-total">@ViewBag.TotalItems đánh giá</span>
+        </div>
+
+        <!-- FORM LỌC -->
+        <form method="get" action="@Url.Action("Reviews", "AdminReview")" class="reviews-filter-form">
+
+            <div class="reviews-search">
+                <span class="material-symbols-outlined">search</span>
+                <input type="text" name="search" value="@ViewBag.SearchTerm" placeholder="Tìm tên sản phẩm, khách hàng, nội dung nhận xét..." />
+            </div>
+
+            <div class="reviews-filter">
+
+                <select name="status">
+                    <option value="">Tất cả trạng thái</option>
+                    <option value="Pending" @(ViewBag.StatusFilter == "Pending" ? "selected" : "")>Chờ duyệt</option>
+                    <option value="Approved" @(ViewBag.StatusFilter == "Approved" ? "selected" : "")>Đã duyệt</option>
+                </select>
+
+                <select name="rating">
+                    <option value="">Tất cả số sao</option>
+                    <option value="5" @(ViewBag.RatingFilter == 5 ? "selected" : "")>5 Sao ★★★★★</option>
+                    <option value="4" @(ViewBag.RatingFilter == 4 ? "selected" : "")>4 Sao ★★★★☆</option>
+                    <option value="3" @(ViewBag.RatingFilter == 3 ? "selected" : "")>3 Sao ★★★☆☆</option>
+                    <option value="2" @(ViewBag.RatingFilter == 2 ? "selected" : "")>2 Sao ★★☆☆☆</option>
+                    <option value="1" @(ViewBag.RatingFilter == 1 ? "selected" : "")>1 Sao ★☆☆☆☆</option>
+                </select>
+
+                <button type="submit" class="reviews-filter-btn">
+                    <span class="material-symbols-outlined">filter_list</span> Lọc
+                </button>
+
+                <a href="@Url.Action("Reviews", "AdminReview")" class="reviews-reset-btn">Đặt lại</a>
+
+            </div>
+        </form>
+
+        <!-- TABLE -->
+        <div class="reviews-table-wrapper">
+            <table class="reviews-table">
+                <thead>
+                    <tr>
+                        <th>MÃ ĐG</th>
+                        <th>SẢN PHẨM</th>
+                        <th>NGLI ĐÁNH GIÁ</th>
+                        <th>ĐÁNH GIÁ</th>
+                        <th style="width: 30%;">NỘI DUNG NHẬN XÉT</th>
+                        <th>NGÀY GỬI</th>
+                        <th>TRẠNG THÁI</th>
+                        <th style="text-align: right;">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr id="review-row-@item.MaDanhGia">
+                                <td>
+                                    <span class="review-code">#DG-@item.MaDanhGia</span>
+                                </td>
+
+                                <td>
+                                    <span class="review-product" title="@(item.SanPham != null ? item.SanPham.TenSanPham : "N/A")">
+                                        @(item.SanPham != null ? item.SanPham.TenSanPham : "Sản phẩm đã bị xóa")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="review-user">
+                                        @(item.NguoiDung != null ? item.NguoiDung.HoTen : "N/A")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="star-rating">
+                                        @for (int i = 1; i <= 5; i++)
+                                        {
+                                            if (i <= item.SoSao)
+                                            {
+                                                <span class="star filled">★</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="star empty">☆</span>
+                                            }
+                                        }
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <p class="review-comment">
+                                        @(string.IsNullOrWhiteSpace(item.NhanXet) ? "(Không có nội dung nhận xét)" : item.NhanXet)
+                                    </p>
+                                </td>
+
+                                <td>
+                                    <span class="review-date">@item.NgayTao.ToString("dd/MM/yyyy")</span>
+                                    <span class="review-time">@item.NgayTao.ToString("HH:mm")</span>
+                                </td>
+
+                                <td>
+                                    <span id="status-badge-@item.MaDanhGia" class="review-status @(item.DaDuyet ? "approved" : "pending")">
+                                        @(item.DaDuyet ? "Đã duyệt" : "Chờ duyệt")
+                                    </span>
+                                </td>
+
+                                <td style="text-align: right;">
+                                    <div class="review-actions">
+                                        <button type="button"
+                                                class="btn-toggle-approve @(item.DaDuyet ? "is-approved" : "")"
+                                                data-id="@item.MaDanhGia"
+                                                title="@(item.DaDuyet ? "Ẩn đánh giá này" : "Duyệt đánh giá này")">
+                                            <span class="material-symbols-outlined">
+                                                @(item.DaDuyet ? "visibility_off" : "check_circle")
+                                            </span>
+                                        </button>
+
+                                        <button type="button" class="btn-delete-review" data-id="@item.MaDanhGia" title="Xóa đánh giá">
+                                            <span class="material-symbols-outlined">delete</span>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="reviews-empty">
+                                <span class="material-symbols-outlined">rate_review</span>
+                                <p>Không tìm thấy đánh giá sản phẩm nào.</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            // 1. CHUYỂN TRẠNG THÁI DUYỆT / ẨN ĐÁNH GIÁ (AJAX)
+            document.querySelectorAll(".btn-toggle-approve").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const id = this.getAttribute("data-id");
+
+                    fetch('@Url.Action("ToggleApprove", "AdminReview")', {
+                        method: "POST",
+                        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                        body: "id=" + id
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            const badge = document.getElementById(`status-badge-${id}`);
+                            if (data.isApproved) {
+                                badge.className = "review-status approved";
+                                badge.innerText = "Đã duyệt";
+                                this.classList.add("is-approved");
+                                this.title = "Ẩn đánh giá này";
+                                this.querySelector(".material-symbols-outlined").innerText = "visibility_off";
+                            } else {
+                                badge.className = "review-status pending";
+                                badge.innerText = "Chờ duyệt";
+                                this.classList.remove("is-approved");
+                                this.title = "Duyệt đánh giá này";
+                                this.querySelector(".material-symbols-outlined").innerText = "check_circle";
+                            }
+                        } else {
+                            alert(data.message || "Có lỗi xảy ra!");
+                        }
+                    })
+                    .catch(err => alert("Lỗi kết nối máy chủ!"));
+                });
+            });
+
+            // 2. XÓA ĐÁNH GIÁ (AJAX)
+            document.querySelectorAll(".btn-delete-review").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    const id = this.getAttribute("data-id");
+
+                    if (confirm(`Bạn có chắc chắn muốn xóa đánh giá #DG-${id} này không?`)) {
+                        fetch('@Url.Action("DeleteReview", "AdminReview")', {
+                            method: "POST",
+                            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                            body: "id=" + id
+                        })
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data.success) {
+                                const row = document.getElementById(`review-row-${id}`);
+                                if (row) row.remove();
+                            } else {
+                                alert(data.message || "Không thể xóa đánh giá!");
+                            }
+                        })
+                        .catch(err => alert("Lỗi kết nối máy chủ!"));
+                    }
+                });
+            });
+
+        });
+    </script>
+}

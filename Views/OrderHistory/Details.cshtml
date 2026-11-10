@@ -1,0 +1,449 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.OrderDetailViewModel
+
+@{
+    ViewBag.Title = "Chi tiết đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    string OrderStatus(string status)
+    {
+        switch (status)
+        {
+            case "ChoXacNhan": return "Chờ xác nhận";
+            case "DaXacNhan": return "Đã xác nhận";
+            case "DangChuanBi": return "Đang chuẩn bị";
+            case "DangGiao": return "Đang giao hàng";
+            case "HoanThanh": return "Hoàn thành";
+            case "DaHuy": return "Đã hủy";
+            case "ChoHuy": return "Chờ duyệt hủy";
+            case "TuChoi": return "Từ chối";
+            default: return status ?? "Không xác định";
+        }
+    }
+
+    string PaymentStatus(string status)
+    {
+        switch (status)
+        {
+            case "DaThanhToan": return "Đã thanh toán";
+            case "ChoThanhToan": return "Chờ thanh toán";
+            case "ChuaThanhToan": return "Chưa thanh toán";
+            case "ChoXuLy": return "Chờ xử lý";
+            case "ThatBai": return "Thất bại";
+            case "DaHoanTien": return "Đã hoàn tiền";
+            default: return status ?? "Không xác định";
+        }
+    }
+
+    bool canCancel = Model != null &&
+        (Model.TrangThai == "ChoXacNhan" ||
+         Model.TrangThai == "DaXacNhan" ||
+         Model.TrangThai == "DangChuanBi");
+
+    var pendingCancel = Model?.YeuCauHuy != null &&
+        Model.YeuCauHuy.Any(x => x.TrangThaiYeuCau == "ChoXuLy");
+}
+
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/order-detail.css")" />
+}
+
+<main class="order-detail-page">
+    <div class="order-detail-container">
+
+        <div class="detail-breadcrumb">
+            <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+            <span>/</span>
+            <a href="@Url.Action("Index", "OrderHistory")">Lịch sử mua hàng</a>
+            <span>/</span>
+            <span>Chi tiết đơn hàng</span>
+        </div>
+
+        <div class="detail-page-heading">
+            <div>
+                <span class="detail-eyebrow">STAGEFX PRO / ORDER MANAGEMENT</span>
+                <h1>CHI TIẾT ĐƠN HÀNG</h1>
+                <p>Thông tin chi tiết về đơn hàng và giao dịch của bạn.</p>
+            </div>
+
+            <div class="detail-heading-icon">
+                <span class="material-symbols-outlined">receipt_long</span>
+            </div>
+        </div>
+
+        @if (Model == null)
+        {
+            <div class="detail-empty">
+                Không tìm thấy thông tin đơn hàng.
+            </div>
+        }
+        else
+        {
+            <!-- ORDER OVERVIEW -->
+            <section class="detail-panel">
+
+                <div class="detail-panel-heading">
+                    <div>
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        <h2>THÔNG TIN ĐƠN HÀNG</h2>
+                    </div>
+
+                    <span class="detail-status">
+                        @OrderStatus(Model.TrangThai)
+                    </span>
+                </div>
+
+                <div class="detail-overview-grid">
+
+                    <div class="detail-overview-item">
+                        <span>Mã đơn hàng</span>
+                        <strong>@Model.MaSoDonHang</strong>
+                    </div>
+
+                    <div class="detail-overview-item">
+                        <span>Ngày đặt hàng</span>
+                        <strong>@Model.NgayDat.ToString("dd/MM/yyyy HH:mm")</strong>
+                    </div>
+
+                    <div class="detail-overview-item">
+                        <span>Trạng thái đơn hàng</span>
+                        <strong>@OrderStatus(Model.TrangThai)</strong>
+                    </div>
+
+                    <div class="detail-overview-item">
+                        <span>Thanh toán</span>
+                        <strong>@PaymentStatus(Model.TrangThaiThanhToan)</strong>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- CUSTOMER INFORMATION -->
+            <section class="detail-panel">
+
+                <div class="detail-panel-heading">
+                    <div>
+                        <span class="material-symbols-outlined">local_shipping</span>
+                        <h2>THÔNG TIN NHẬN HÀNG</h2>
+                    </div>
+                </div>
+
+                <div class="detail-recipient-grid">
+
+                    <div class="detail-overview-item">
+                        <span>Người nhận</span>
+                        <strong>@Model.TenNguoiNhan</strong>
+                    </div>
+
+                    <div class="detail-overview-item">
+                        <span>Số điện thoại</span>
+                        <strong>@Model.SoDienThoaiNhan</strong>
+                    </div>
+
+                    <div class="detail-overview-item full">
+                        <span>Địa chỉ nhận hàng</span>
+                        <strong>@Model.DiaChiNhanHang</strong>
+                    </div>
+
+                    @if (!String.IsNullOrWhiteSpace(Model.GhiChu))
+                    {
+                        <div class="detail-overview-item full">
+                            <span>Ghi chú đơn hàng</span>
+                            <strong>@Model.GhiChu</strong>
+                        </div>
+                    }
+
+                </div>
+            </section>
+
+            <!-- PRODUCTS -->
+            <section class="detail-panel">
+
+                <div class="detail-panel-heading">
+                    <div>
+                        <span class="material-symbols-outlined">package_2</span>
+                        <h2>SẢN PHẨM ĐÃ ĐẶT</h2>
+                    </div>
+
+                    <span class="detail-count">
+                        @(Model.ChiTiet?.Count ?? 0) sản phẩm
+                    </span>
+                </div>
+
+                @if (Model.ChiTiet == null || !Model.ChiTiet.Any())
+                {
+                    <div class="detail-empty">Đơn hàng chưa có sản phẩm.</div>
+                }
+                else
+                {
+                    <div class="detail-table-wrapper">
+                        <table class="detail-product-table">
+                            <thead>
+                                <tr>
+                                    <th>SẢN PHẨM</th>
+                                    <th>HÌNH THỨC</th>
+                                    <th>ĐƠN GIÁ</th>
+                                    <th>SỐ LƯỢNG</th>
+                                    <th>THÀNH TIỀN</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @foreach (var item in Model.ChiTiet)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="detail-product-name">
+                                                <strong>@item.TenSanPham</strong>
+                                                <small>SKU: @item.SKU</small>
+
+                                                @if (item.CoFlightcase)
+                                                {
+                                                    <small class="detail-flightcase">
+                                                        Có kèm Flightcase:
+                                                        @String.Format("{0:N0} ₫", item.PhiFlightcase)
+                                                    </small>
+                                                }
+                                            </div>
+                                        </td>
+
+                                        <td>
+                                            <span class="detail-type">
+                                                @(item.HinhThucDat == "Thue" ? "Thuê" : "Mua")
+                                            </span>
+
+                                            @if (item.SoNgayThue.HasValue)
+                                            {
+                                                <small class="detail-days">
+                                                    @item.SoNgayThue ngày
+                                                </small>
+                                            }
+                                        </td>
+
+                                        <td>
+                                            @String.Format("{0:N0} ₫", item.DonGia)
+                                        </td>
+
+                                        <td>@item.SoLuong</td>
+
+                                        <td class="detail-line-total">
+                                            @String.Format("{0:N0} ₫", item.ThanhTien)
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </section>
+
+            <!-- TOTAL -->
+            <section class="detail-panel">
+
+                <div class="detail-panel-heading">
+                    <div>
+                        <span class="material-symbols-outlined">payments</span>
+                        <h2>TỔNG KẾT THANH TOÁN</h2>
+                    </div>
+                </div>
+
+                <div class="detail-total-box">
+
+                    <div class="detail-total-row">
+                        <span>Tiền hàng</span>
+                        <strong>@String.Format("{0:N0} ₫", Model.TienHang)</strong>
+                    </div>
+
+                    <div class="detail-total-row">
+                        <span>Giảm giá</span>
+                        <strong class="detail-discount">
+                            - @String.Format("{0:N0} ₫", Model.TienGiamGia)
+                        </strong>
+                    </div>
+
+                    <div class="detail-total-row">
+                        <span>Phí vận chuyển</span>
+                        <strong>@String.Format("{0:N0} ₫", Model.PhiVanChuyen)</strong>
+                    </div>
+
+                    <div class="detail-total-divider"></div>
+
+                    <div class="detail-total-row grand-total">
+                        <span>TỔNG GIÁ TRỊ ĐƠN HÀNG</span>
+                        <strong>@String.Format("{0:N0} ₫", Model.TongTien)</strong>
+                    </div>
+
+                    <div class="detail-total-row deposit-total">
+                        <span>
+                            Tiền đặt cọc
+                            (@Model.TyLeDatCoc.ToString("0.##")%)
+                        </span>
+                        <strong>@String.Format("{0:N0} ₫", Model.TienCoc)</strong>
+                    </div>
+
+                </div>
+            </section>
+
+            <!-- PAYMENT HISTORY -->
+            <section class="detail-panel">
+
+                <div class="detail-panel-heading">
+                    <div>
+                        <span class="material-symbols-outlined">credit_card</span>
+                        <h2>LỊCH SỬ THANH TOÁN</h2>
+                    </div>
+                </div>
+
+                @if (Model.ThanhToans == null || !Model.ThanhToans.Any())
+                {
+                    <div class="detail-empty">
+                        Chưa có giao dịch thanh toán.
+                    </div>
+                }
+                else
+                {
+                    <div class="detail-payment-list">
+                        @foreach (var payment in Model.ThanhToans)
+                        {
+                            <div class="detail-payment-item">
+
+                                <div class="payment-icon">
+                                    <span class="material-symbols-outlined">account_balance_wallet</span>
+                                </div>
+
+                                <div class="payment-content">
+                                    <strong>
+                                        @(payment.PhuongThuc == "TRUCTUYEN"
+                                            ? "Chuyển khoản"
+                                            : payment.PhuongThuc == "COD"
+                                                ? "Thanh toán khi nhận hàng"
+                                                : payment.PhuongThuc)
+                                    </strong>
+
+                                    <span>
+                                        @PaymentStatus(payment.TrangThaiThanhToan)
+                                    </span>
+
+                                    <small>
+                                        Mã giao dịch:
+                                        @(String.IsNullOrWhiteSpace(payment.MaGiaoDich)
+                                            ? "Chưa có"
+                                            : payment.MaGiaoDich)
+                                    </small>
+
+                                    @if (!String.IsNullOrWhiteSpace(payment.DonViThanhToan))
+                                    {
+                                        <small>Đơn vị: @payment.DonViThanhToan</small>
+                                    }
+
+                                    <small>
+                                        Tạo lúc: @payment.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                                    </small>
+
+                                    @if (payment.NgayThanhToan.HasValue)
+                                    {
+                                        <small>
+                                            Thanh toán lúc:
+                                            @payment.NgayThanhToan.Value.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    }
+                                </div>
+
+                                <strong class="payment-amount">
+                                    @String.Format("{0:N0} ₫", payment.SoTien)
+                                </strong>
+
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+
+            <!-- CANCELLATION HISTORY -->
+            <section class="detail-panel">
+
+                <div class="detail-panel-heading">
+                    <div>
+                        <span class="material-symbols-outlined">history</span>
+                        <h2>LỊCH SỬ YÊU CẦU HỦY</h2>
+                    </div>
+                </div>
+
+                @if (Model.YeuCauHuy == null || !Model.YeuCauHuy.Any())
+                {
+                    <div class="detail-empty">
+                        Đơn hàng chưa có yêu cầu hủy.
+                    </div>
+                }
+                else
+                {
+                    <div class="detail-cancel-list">
+                        @foreach (var request in Model.YeuCauHuy.OrderByDescending(x => x.NgayYeuCau))
+                        {
+                            <div class="detail-cancel-item">
+
+                                <div class="cancel-timeline-dot"></div>
+
+                                <div class="cancel-content">
+                                    <div class="cancel-content-heading">
+                                        <strong>
+                                            @(
+                                                request.TrangThaiYeuCau == "ChoXuLy"
+                                                    ? "Đang chờ xử lý"
+                                                    : request.TrangThaiYeuCau == "DaChapNhan"
+                                                        ? "Đã chấp nhận hủy"
+                                                        : request.TrangThaiYeuCau == "TuChoi"
+                                                            ? "Yêu cầu bị từ chối"
+                                                            : request.TrangThaiYeuCau
+                                            )
+                                        </strong>
+
+                                        <small>
+                                            @request.NgayYeuCau.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    </div>
+
+                                    <p><b>Lý do:</b> @request.LyDoHuy</p>
+
+                                    @if (!String.IsNullOrWhiteSpace(request.GhiChuQuanTri))
+                                    {
+                                        <p><b>Phản hồi:</b> @request.GhiChuQuanTri</p>
+                                    }
+
+                                    @if (request.NgayXuLy.HasValue)
+                                    {
+                                        <small>
+                                            Xử lý lúc:
+                                            @request.NgayXuLy.Value.ToString("dd/MM/yyyy HH:mm")
+                                        </small>
+                                    }
+                                </div>
+
+                            </div>
+                        }
+                    </div>
+                }
+            </section>
+
+            <!-- ACTIONS -->
+            <div class="detail-actions">
+
+                <a href="@Url.Action("Index", "OrderHistory")"
+                   class="detail-back-button">
+                    <span class="material-symbols-outlined">arrow_back</span>
+                    Quay lại lịch sử
+                </a>
+
+                @if (canCancel && !pendingCancel)
+                {
+                    <a href="@Url.Action("RequestCancel", "OrderHistory", new { id = Model.MaDonHang })"
+                       class="detail-cancel-button">
+                        <span class="material-symbols-outlined">cancel</span>
+                        Yêu cầu hủy đơn
+                    </a>
+                }
+
+            </div>
+        }
+    </div>
+</main>

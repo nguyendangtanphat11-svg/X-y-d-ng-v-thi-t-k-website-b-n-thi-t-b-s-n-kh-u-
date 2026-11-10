@@ -1,0 +1,264 @@
+﻿@{
+    ViewBag.Title = "Đặt hàng thành công";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var orderCode = ViewBag.MaSoDonHang as string ?? "";
+
+    var totalAmount = ViewBag.TongTien != null
+        ? Convert.ToDecimal(ViewBag.TongTien)
+        : 0m;
+
+    var depositAmount = ViewBag.TienCoc != null
+        ? Convert.ToDecimal(ViewBag.TienCoc)
+        : 0m;
+
+    var money = System.Globalization.CultureInfo.GetCultureInfo("vi-VN");
+}
+
+@section styles {
+    <style>
+        .confirmation-page {
+            min-height: 75vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 20px;
+            background: #090909;
+            color: #fff;
+        }
+
+        .confirmation-card {
+            width: 100%;
+            max-width: 680px;
+            padding: 48px;
+            text-align: center;
+            background: #151515;
+            border: 1px solid #2A2A2A;
+            border-radius: 18px;
+        }
+
+        .confirmation-icon {
+            width: 76px;
+            height: 76px;
+            margin: 0 auto 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(229, 9, 32, .12);
+            border: 1px solid rgba(229, 9, 32, .4);
+            color: #E50920;
+            font-size: 38px;
+        }
+
+        .confirmation-card h1 {
+            margin-bottom: 12px;
+            font-size: 30px;
+            font-weight: 800;
+        }
+
+        .confirmation-description {
+            color: #aaa;
+            line-height: 1.7;
+            margin-bottom: 30px;
+        }
+
+        .order-code-box {
+            padding: 20px;
+            margin-bottom: 24px;
+            background: #101010;
+            border: 1px dashed #E50920;
+            border-radius: 12px;
+        }
+
+        .order-code-label {
+            display: block;
+            margin-bottom: 8px;
+            color: #999;
+            font-size: 13px;
+        }
+
+        .order-code {
+            color: #E50920;
+            font-size: 23px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            overflow-wrap: anywhere;
+        }
+
+        .confirmation-details {
+            margin-bottom: 28px;
+            padding: 20px;
+            background: #101010;
+            border-radius: 12px;
+            text-align: left;
+        }
+
+        .confirmation-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 0;
+            border-bottom: 1px solid #292929;
+        }
+
+            .confirmation-row:last-child {
+                border-bottom: none;
+            }
+
+            .confirmation-row span {
+                color: #aaa;
+            }
+
+            .confirmation-row strong {
+                text-align: right;
+                color: #fff;
+            }
+
+            .confirmation-row .highlight {
+                color: #E50920;
+            }
+
+        .payment-notice {
+            margin-bottom: 28px;
+            padding: 14px;
+            background: rgba(229, 9, 32, .08);
+            border: 1px solid rgba(229, 9, 32, .2);
+            border-radius: 10px;
+            color: #ddd;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .confirmation-actions {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .confirmation-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 46px;
+            padding: 0 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: .2s;
+        }
+
+        .confirmation-btn-primary {
+            color: #fff;
+            background: #E50920;
+        }
+
+            .confirmation-btn-primary:hover {
+                color: #fff;
+                background: #bd071a;
+            }
+
+        .confirmation-btn-secondary {
+            color: #fff;
+            background: #252525;
+            border: 1px solid #383838;
+        }
+
+            .confirmation-btn-secondary:hover {
+                color: #fff;
+                background: #333;
+            }
+
+        @@media (max-width: 576px) {
+            .confirmation-card {
+                padding: 28px 18px;
+            }
+
+                .confirmation-card h1 {
+                    font-size: 24px;
+                }
+
+            .confirmation-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+                .confirmation-row strong {
+                    text-align: left;
+                }
+        }
+    </style>
+}
+
+<main class="confirmation-page">
+    <section class="confirmation-card">
+
+        <div class="confirmation-icon">
+            &#10003;
+        </div>
+
+        <h1>Đặt hàng thành công!</h1>
+
+        <p class="confirmation-description">
+            Yêu cầu đặt hàng của bạn đã được ghi nhận.
+            Đội ngũ STAGEFX PRO sẽ tiếp nhận và liên hệ để xác nhận
+            thông tin đơn hàng, lịch giao thiết bị và các yêu cầu kỹ thuật.
+        </p>
+
+        <div class="order-code-box">
+            <span class="order-code-label">MÃ ĐƠN HÀNG CỦA BẠN</span>
+            <div class="order-code">
+                @(string.IsNullOrWhiteSpace(orderCode)
+                    ? "Đang cập nhật"
+                    : orderCode)
+            </div>
+        </div>
+
+        <div class="confirmation-details">
+
+            <div class="confirmation-row">
+                <span>Tổng giá trị đơn hàng</span>
+                <strong>@totalAmount.ToString("N0", money) ₫</strong>
+            </div>
+
+            <div class="confirmation-row">
+                <span>Số tiền đặt cọc dự kiến</span>
+                <strong class="highlight">
+                    @depositAmount.ToString("N0", money) ₫
+                </strong>
+            </div>
+
+            <div class="confirmation-row">
+                <span>Trạng thái đơn hàng</span>
+                <strong>Chờ xác nhận</strong>
+            </div>
+
+            <div class="confirmation-row">
+                <span>Trạng thái thanh toán</span>
+                <strong>Chưa thanh toán</strong>
+            </div>
+
+        </div>
+
+        <div class="payment-notice">
+            <strong>Lưu ý:</strong>
+            Số tiền đặt cọc là khoản dự kiến đối với đơn hàng thuê thiết bị.
+            Nhân viên STAGEFX PRO sẽ xác nhận phương thức và thông tin thanh toán.
+            VAT được xác nhận riêng theo hồ sơ đơn hàng.
+        </div>
+
+        <div class="confirmation-actions">
+            <a href="@Url.Action("Index", "Home")"
+               class="confirmation-btn confirmation-btn-primary">
+                Về trang chủ
+            </a>
+
+            <a href="@Url.Action("Index", "Cart")"
+               class="confirmation-btn confirmation-btn-secondary">
+                Tiếp tục mua sắm
+            </a>
+        </div>
+
+    </section>
+</main>

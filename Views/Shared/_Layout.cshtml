@@ -1,0 +1,63 @@
+﻿
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0e0e0e" />
+
+    <title>@(ViewBag.Title ?? "STAGEFX PRO")</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&display=swap"
+          rel="stylesheet" />
+
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet" />
+
+    @Styles.Render("~/Content/css")
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/site-theme.css")" />
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/header.css")" />
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/footer.css")" />
+
+    @RenderSection("styles", required: false)
+</head>
+
+<body>
+
+    @* HEADER *@
+    @Html.Partial("_Header")
+
+    @* NỘI DUNG TRANG *@
+    <main id="main-content">
+        @RenderBody()
+    </main>
+
+    @* FOOTER *@
+    @Html.Partial("_Footer")
+
+    @* JAVASCRIPT *@
+    <script src="@Url.Content("~/Scripts/header.js")" defer></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const yearElement = document.getElementById('site-shell-year');
+
+            if (yearElement) {
+                yearElement.textContent = new Date().getFullYear();
+            }
+        });
+    </script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>

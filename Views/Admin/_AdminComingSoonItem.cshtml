@@ -1,0 +1,13 @@
+﻿
+@{
+    string icon = ViewData["Icon"] as string ?? "circle";
+    string text = ViewData["Text"] as string ?? "Sắp ra mắt";
+}
+
+<span class="admin-nav-item admin-nav-item-disabled"
+      aria-disabled="true"
+      title="Tính năng sắp ra mắt">
+    <span class="material-symbols-outlined" aria-hidden="true">@icon</span>
+    <span class="admin-nav-text">@text</span>
+    <small>Sắp ra mắt</small>
+</span>

@@ -1,0 +1,145 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.OrderCancelRequestViewModel
+
+@{
+    ViewBag.Title = "Yêu cầu hủy đơn hàng";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet" href="@Url.Content("~/Content/css/order-cancel.css")" />
+}
+
+<main class="order-cancel-page">
+    <div class="order-cancel-container">
+
+        <div class="cancel-breadcrumb">
+            <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+            <span>/</span>
+            <a href="@Url.Action("Index", "OrderHistory")">Lịch sử mua hàng</a>
+            <span>/</span>
+            <span>Yêu cầu hủy đơn</span>
+        </div>
+
+        <div class="cancel-heading">
+            <div class="cancel-heading-icon">
+                <span class="material-symbols-outlined">assignment_return</span>
+            </div>
+
+            <div>
+                <span class="cancel-eyebrow">STAGEFX PRO / ORDER SUPPORT</span>
+                <h1>YÊU CẦU HỦY ĐƠN HÀNG</h1>
+                <p>
+                    Vui lòng cung cấp lý do để chúng tôi tiếp nhận
+                    và xử lý yêu cầu của bạn.
+                </p>
+            </div>
+        </div>
+
+        <div class="cancel-warning">
+            <span class="material-symbols-outlined">info</span>
+
+            <div>
+                <strong>LƯU Ý QUAN TRỌNG</strong>
+                <p>
+                    Yêu cầu hủy đơn cần được quản trị viên xem xét.
+                    Việc gửi yêu cầu không đồng nghĩa đơn hàng đã được hủy.
+                </p>
+            </div>
+        </div>
+
+        <section class="cancel-panel">
+
+            <div class="cancel-panel-heading">
+                <span class="material-symbols-outlined">receipt_long</span>
+                <h2>THÔNG TIN ĐƠN HÀNG</h2>
+            </div>
+
+            <div class="cancel-order-info">
+                <div>
+                    <span>Mã đơn hàng</span>
+                    <strong>@Model.MaSoDonHang</strong>
+                </div>
+
+                <div>
+                    <span>Mã hệ thống</span>
+                    <strong>#@Model.MaDonHang</strong>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="cancel-panel">
+
+            <div class="cancel-panel-heading">
+                <span class="material-symbols-outlined">edit_note</span>
+                <h2>THÔNG TIN YÊU CẦU</h2>
+            </div>
+
+            @using (Html.BeginForm(
+                "RequestCancel",
+                "OrderHistory",
+                new { id = Model.MaDonHang },
+                FormMethod.Post,
+                new { @class = "cancel-form" }))
+            {
+                @Html.AntiForgeryToken()
+
+                @Html.HiddenFor(m => m.MaDonHang)
+                @Html.HiddenFor(m => m.MaSoDonHang)
+
+                @Html.ValidationSummary(
+                    false,
+                    "",
+                    new { @class = "cancel-validation-summary" })
+
+                <div class="cancel-form-group">
+
+                    @Html.LabelFor(m => m.LyDoHuy, "Lý do hủy đơn hàng")
+
+                    <p class="cancel-field-description">
+                        Hãy mô tả rõ lý do bạn muốn hủy đơn hàng.
+                    </p>
+
+                    @Html.TextAreaFor(
+                        m => m.LyDoHuy,
+                        new
+                        {
+                            @class = "cancel-reason-input",
+                            rows = "6",
+                            maxlength = "2000",
+                            placeholder = "Nhập lý do hủy đơn hàng của bạn (tối thiểu 5 ký tự)..."
+                        })
+
+                    @Html.ValidationMessageFor(
+                        m => m.LyDoHuy,
+                        "",
+                        new { @class = "cancel-field-error" })
+
+                    <div class="cancel-character-note">
+                        Tối thiểu 5 ký tự, tối đa 2000 ký tự.
+                    </div>
+
+                </div>
+
+                <div class="cancel-form-actions">
+
+                    <a href="@Url.Action("Details", "OrderHistory", new { id = Model.MaDonHang })"
+                       class="cancel-back-button">
+                        <span class="material-symbols-outlined">arrow_back</span>
+                        Quay lại
+                    </a>
+
+                    <button type="submit" class="cancel-submit-button"
+                            onclick="return confirm('Bạn có chắc chắn muốn gửi yêu cầu hủy đơn hàng này?');">
+                        <span class="material-symbols-outlined">send</span>
+                        Gửi yêu cầu hủy
+                    </button>
+
+                </div>
+            }
+
+        </section>
+
+    </div>
+</main>

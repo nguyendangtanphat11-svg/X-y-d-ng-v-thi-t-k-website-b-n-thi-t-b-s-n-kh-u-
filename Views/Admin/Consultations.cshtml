@@ -1,0 +1,397 @@
+﻿@model IEnumerable<Wedside_TVS_SFX.Models.YeuCauTuVan>
+
+@{
+    ViewBag.Title = "Quản lý yêu cầu tư vấn";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet"
+      href="@Url.Content("~/Content/css/admin/admin-consultations.css")" />
+
+<div class="admin-consultations">
+
+    <!-- HEADER -->
+    <div class="consultations-page-header">
+        <div>
+            <span class="consultations-eyebrow">
+                QUẢN LÝ KHÁCH HÀNG
+            </span>
+
+            <h1>Yêu cầu tư vấn</h1>
+
+            <p>
+                Theo dõi và xử lý yêu cầu tư vấn từ khách hàng STAGEFX PRO.
+            </p>
+        </div>
+
+        <div class="consultations-header-meta">
+            <span class="material-symbols-outlined">
+                support_agent
+            </span>
+            <span>Hệ thống tư vấn khách hàng</span>
+        </div>
+    </div>
+
+    <!-- THỐNG KÊ -->
+    <div class="consultations-stats">
+
+        <div class="consultation-stat-card">
+            <div class="consultation-stat-icon">
+                <span class="material-symbols-outlined">
+                    support_agent
+                </span>
+            </div>
+
+            <div>
+                <span>Tổng yêu cầu</span>
+                <strong>@ViewBag.TotalRequests</strong>
+            </div>
+        </div>
+
+        <div class="consultation-stat-card">
+            <div class="consultation-stat-icon warning">
+                <span class="material-symbols-outlined">
+                    notifications_active
+                </span>
+            </div>
+
+            <div>
+                <span>Yêu cầu mới</span>
+                <strong>@ViewBag.NewRequests</strong>
+            </div>
+        </div>
+
+        <div class="consultation-stat-card">
+            <div class="consultation-stat-icon processing">
+                <span class="material-symbols-outlined">
+                    pending_actions
+                </span>
+            </div>
+
+            <div>
+                <span>Đang xử lý</span>
+                <strong>@ViewBag.ProcessingRequests</strong>
+            </div>
+        </div>
+
+        <div class="consultation-stat-card">
+            <div class="consultation-stat-icon success">
+                <span class="material-symbols-outlined">
+                    task_alt
+                </span>
+            </div>
+
+            <div>
+                <span>Đã hoàn tất</span>
+                <strong>@ViewBag.CompletedRequests</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- DANH SÁCH -->
+    <div class="consultations-content-card">
+
+        <div class="consultations-content-heading">
+            <div>
+                <h2>Danh sách yêu cầu tư vấn</h2>
+                <p>Tra cứu và theo dõi yêu cầu từ khách hàng.</p>
+            </div>
+
+            <span class="consultations-total">
+                @ViewBag.TotalItems yêu cầu
+            </span>
+        </div>
+
+        <!-- TÌM KIẾM VÀ LỌC -->
+        <form method="get"
+              action="@Url.Action("Consultations", "AdminConsultation")"
+              class="consultations-filter-form">
+
+            <div class="consultations-search">
+                <span class="material-symbols-outlined">
+                    search
+                </span>
+
+                <input type="text"
+                       name="search"
+                       value="@ViewBag.SearchTerm"
+                       placeholder="Tìm tên khách hàng, email, số điện thoại..." />
+            </div>
+
+            <div class="consultations-filter">
+
+                <select name="status">
+                    <option value="">Tất cả trạng thái</option>
+
+                    <option value="Moi"
+                            @(ViewBag.StatusFilter == "Moi" ? "selected" : "")>
+                        Mới
+                    </option>
+
+                    <option value="DangXuLy"
+                            @(ViewBag.StatusFilter == "DangXuLy" ? "selected" : "")>
+                        Đang xử lý
+                    </option>
+
+                    <option value="HoanTat"
+                            @(ViewBag.StatusFilter == "HoanTat" || ViewBag.StatusFilter == "DaHoanTat" ? "selected" : "")>
+                        Đã hoàn tất
+                    </option>
+                </select>
+
+                <button type="submit"
+                        class="consultations-filter-btn">
+                    <span class="material-symbols-outlined">
+                        filter_list
+                    </span>
+                    Lọc
+                </button>
+
+                <a href="@Url.Action("Consultations", "AdminConsultation")"
+                   class="consultations-reset-btn">
+                    Đặt lại
+                </a>
+
+            </div>
+        </form>
+
+        <!-- TABLE -->
+        <div class="consultations-table-wrapper">
+
+            <table class="consultations-table">
+
+                <thead>
+                    <tr>
+                        <th>MÃ YÊU CẦU</th>
+                        <th>KHÁCH HÀNG</th>
+                        <th>EMAIL</th>
+                        <th>SỐ ĐIỆN THOẠI</th>
+                        <th>CHỦ ĐỀ</th>
+                        <th>NGÀY GỬI</th>
+                        <th>TRẠNG THÁI</th>
+                        <th style="text-align: right;">THAO TÁC</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="consultation-code">
+                                        TV-@item.MaYeuCauTuVan
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="consultation-customer">
+                                        @item.HoTen
+                                    </span>
+                                </td>
+
+                                <td>@item.Email</td>
+
+                                <td>@item.SoDienThoai</td>
+
+                                <td>
+                                    <span class="consultation-subject">
+                                        @item.ChuDe
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="consultation-date">
+                                        @item.NgayTao.ToString("dd/MM/yyyy")
+                                    </span>
+
+                                    <span class="consultation-time">
+                                        @item.NgayTao.ToString("HH:mm")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (item.TrangThai == "Moi")
+                                    {
+                                        <span class="consultation-status new">Mới</span>
+                                    }
+                                    else if (item.TrangThai == "DangXuLy")
+                                    {
+                                        <span class="consultation-status processing">Đang xử lý</span>
+                                    }
+                                    else if (item.TrangThai == "HoanTat" || item.TrangThai == "DaHoanTat")
+                                    {
+                                        <span class="consultation-status completed">Đã hoàn tất</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="consultation-status">@item.TrangThai</span>
+                                    }
+                                </td>
+
+                                <td style="text-align: right;">
+                                    <button type="button"
+                                            class="btn-action-view"
+                                            data-id="@item.MaYeuCauTuVan"
+                                            title="Xem chi tiết & Phản hồi">
+                                        <span class="material-symbols-outlined">
+                                            edit_note
+                                        </span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8" class="consultations-empty">
+                                <span class="material-symbols-outlined">
+                                    inbox
+                                </span>
+
+                                <p>Không tìm thấy yêu cầu tư vấn nào.</p>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</div>
+
+<!-- MODAL CHI TIẾT VÀ PHẢN HỒI -->
+<div id="consultationModal" class="consultation-modal">
+    <div class="consultation-modal-content">
+        <div class="consultation-modal-header">
+            <h3>Chi tiết Yêu cầu <span id="modalCode"></span></h3>
+            <button type="button" class="close-modal">&times;</button>
+        </div>
+        <div class="consultation-modal-body">
+            <div class="modal-info-grid">
+                <div><strong>Khách hàng:</strong> <span id="modalCustomer"></span></div>
+                <div><strong>Số điện thoại:</strong> <span id="modalPhone"></span></div>
+                <div><strong>Email:</strong> <span id="modalEmail"></span></div>
+                <div><strong>Ngày gửi:</strong> <span id="modalDate"></span></div>
+            </div>
+
+            <div class="modal-field">
+                <label>Chủ đề:</label>
+                <input type="text" id="modalSubject" readonly />
+            </div>
+
+            <div class="modal-field">
+                <label>Nội dung yêu cầu từ khách:</label>
+                <textarea id="modalContent" rows="4" readonly></textarea>
+            </div>
+
+            <hr class="modal-divider" />
+
+            <div class="modal-field">
+                <label>Trạng thái xử lý:</label>
+                <select id="modalStatus">
+                    <option value="Moi">Mới</option>
+                    <option value="DangXuLy">Đang xử lý</option>
+                    <option value="HoanTat">Đã hoàn tất</option>
+                </select>
+            </div>
+
+            <div class="modal-field">
+                <label>Nội dung phản hồi / Ghi chú tư vấn:</label>
+                <textarea id="modalResponse" rows="4" placeholder="Nhập thông tin phản hồi cho khách hàng..."></textarea>
+            </div>
+        </div>
+        <div class="consultation-modal-footer">
+            <button type="button" class="consultations-reset-btn close-modal">Hủy</button>
+            <button type="button" id="btnSaveConsultation" class="consultations-filter-btn">Lưu thay đổi</button>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const modal = document.getElementById("consultationModal");
+            let currentId = null;
+
+            // Mở Modal và load dữ liệu AJAX
+            document.querySelectorAll(".btn-action-view").forEach(btn => {
+                btn.addEventListener("click", function () {
+                    currentId = this.getAttribute("data-id");
+                    const getDetailUrl = '@Url.Action("GetDetail", "AdminConsultation")' + '?id=' + currentId;
+
+                    fetch(getDetailUrl)
+                        .then(res => {
+                            if (!res.ok) {
+                                throw new Error("Mã lỗi HTTP: " + res.status);
+                            }
+                            return res.json();
+                        })
+                        .then(data => {
+                            if (data.success) {
+                                document.getElementById("modalCode").innerText = `TV-${data.data.MaYeuCauTuVan}`;
+                                document.getElementById("modalCustomer").innerText = data.data.HoTen;
+                                document.getElementById("modalPhone").innerText = data.data.SoDienThoai;
+                                document.getElementById("modalEmail").innerText = data.data.Email;
+                                document.getElementById("modalDate").innerText = data.data.NgayTao;
+                                document.getElementById("modalSubject").value = data.data.ChuDe;
+                                document.getElementById("modalContent").value = data.data.NoiDung;
+
+                                // Chuẩn hóa trạng thái đưa vào select box của Modal
+                                let st = data.data.TrangThai;
+                                if (st === "DaHoanTat") st = "HoanTat";
+                                document.getElementById("modalStatus").value = st;
+
+                                document.getElementById("modalResponse").value = data.data.PhanHoi;
+
+                                modal.classList.add("is-open");
+                            } else {
+                                alert(data.message || "Không tìm thấy dữ liệu!");
+                            }
+                        })
+                        .catch(err => {
+                            console.error("Fetch error:", err);
+                            alert("Có lỗi kết nối máy chủ: " + err.message);
+                        });
+                });
+            });
+
+            // Đóng Modal
+            document.querySelectorAll(".close-modal").forEach(btn => {
+                btn.addEventListener("click", () => modal.classList.remove("is-open"));
+            });
+
+            // Lưu Cập Nhật
+            document.getElementById("btnSaveConsultation").addEventListener("click", function () {
+                const payload = {
+                    id: currentId,
+                    status: document.getElementById("modalStatus").value,
+                    response: document.getElementById("modalResponse").value
+                };
+
+                fetch('@Url.Action("UpdateStatus", "AdminConsultation")', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload)
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        location.reload();
+                    } else {
+                        alert(data.message || "Có lỗi xảy ra khi cập nhật!");
+                    }
+                })
+                .catch(err => alert("Lỗi kết nối khi gửi dữ liệu: " + err.message));
+            });
+        });
+    </script>
+}

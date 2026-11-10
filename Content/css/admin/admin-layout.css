@@ -1,0 +1,185 @@
+:root {
+    --admin-bg: #090909;
+    --admin-sidebar: #101010;
+    --admin-card: #151515;
+    --admin-border: #2A2A2A;
+    --admin-accent: #E50920;
+    --admin-text: #FFFFFF;
+    --admin-muted: #A0A0A0;
+    --admin-sidebar-width: 272px;
+    --admin-sidebar-compact-width: 84px;
+    --admin-radius: 8px;
+}
+
+* { box-sizing: border-box; }
+
+html,
+body {
+    min-height: 100%;
+    font-family: "Be Vietnam Pro", Arial, sans-serif;
+    font-weight: 400;
+}
+
+body.admin-shell {
+    margin: 0;
+    background: var(--admin-bg);
+    color: var(--admin-text);
+    overflow-x: hidden;
+}
+
+.admin-shell button,
+.admin-shell input,
+.admin-shell select,
+.admin-shell textarea {
+    font-family: inherit;
+}
+
+.admin-shell-backdrop {
+    display: none;
+}
+
+.admin-shell-content {
+    min-height: 100vh;
+    margin-left: var(--admin-sidebar-width);
+    display: flex;
+    flex-direction: column;
+    transition: margin-left .2s ease;
+}
+
+.admin-main {
+    flex: 1;
+    width: 100%;
+    padding: 32px;
+}
+
+.admin-footer {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    padding: 20px 32px;
+    border-top: 1px solid var(--admin-border);
+    color: var(--admin-muted);
+    font-size: 11px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.admin-footer span:first-child {
+    color: var(--admin-text);
+    font-weight: 700;
+}
+
+.admin-shell.is-sidebar-collapsed .admin-shell-content {
+    margin-left: var(--admin-sidebar-compact-width);
+}
+
+@media (max-width: 1024px) {
+    .admin-shell-content { margin-left: var(--admin-sidebar-compact-width); }
+    .admin-shell.is-sidebar-collapsed .admin-shell-content { margin-left: var(--admin-sidebar-compact-width); }
+    .admin-main { padding: 24px; }
+}
+
+@media (max-width: 720px) {
+    .admin-shell-content,
+    .admin-shell.is-sidebar-collapsed .admin-shell-content { margin-left: 0; }
+    .admin-main { padding: 20px 16px; }
+    .admin-footer { padding: 18px 16px; flex-wrap: wrap; }
+}
+```css
+/* =========================================================
+   STAGEFX PRO - CUSTOM DARK SCROLLBAR
+========================================================= */
+/* Firefox */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: #414141 #101010;
+}
+
+/* Chrome, Edge, Safari */
+*::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
+}
+
+*::-webkit-scrollbar-track {
+    background: #101010;
+    border-radius: 20px;
+}
+
+*::-webkit-scrollbar-thumb {
+    background: #383838;
+    border: 1px solid #101010;
+    border-radius: 20px;
+    transition: background .2s ease;
+}
+
+    *::-webkit-scrollbar-thumb:hover {
+        background: #E50920;
+    }
+
+    *::-webkit-scrollbar-thumb:active {
+        background: #B80719;
+    }
+
+*::-webkit-scrollbar-corner {
+    background: #101010;
+}
+
+/* =========================================================
+   SIDEBAR SCROLLBAR
+========================================================= */
+
+.admin-sidebar {
+    scrollbar-width: thin;
+    scrollbar-color: #393939 #101010;
+}
+
+    .admin-sidebar::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .admin-sidebar::-webkit-scrollbar-track {
+        background: #101010;
+    }
+
+    .admin-sidebar::-webkit-scrollbar-thumb {
+        background: #353535;
+        border-radius: 20px;
+    }
+
+        .admin-sidebar::-webkit-scrollbar-thumb:hover {
+            background: #E50920;
+        }
+
+/* =========================================================
+   MAIN CONTENT SCROLLBAR
+========================================================= */
+
+.admin-main,
+.admin-main-content {
+    scrollbar-width: thin;
+    scrollbar-color: #393939 #090909;
+}
+
+    .admin-main::-webkit-scrollbar,
+    .admin-main-content::-webkit-scrollbar {
+        width: 7px;
+    }
+
+    .admin-main::-webkit-scrollbar-track,
+    .admin-main-content::-webkit-scrollbar-track {
+        background: #090909;
+    }
+
+    .admin-main::-webkit-scrollbar-thumb,
+    .admin-main-content::-webkit-scrollbar-thumb {
+        background: #383838;
+        border-radius: 20px;
+    }
+
+        .admin-main::-webkit-scrollbar-thumb:hover,
+        .admin-main-content::-webkit-scrollbar-thumb:hover {
+            background: #E50920;
+        }
+
+```

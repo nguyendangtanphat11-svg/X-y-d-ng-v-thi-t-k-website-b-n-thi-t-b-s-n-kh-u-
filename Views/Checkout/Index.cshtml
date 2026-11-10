@@ -1,0 +1,1069 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.CheckoutViewModel
+
+@using System
+@using System.Linq
+
+@{
+    ViewBag.Title = "Xác nhận dự án | STAGEFX PRO";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var hasItems = Model != null
+        && Model.Items != null
+        && Model.Items.Any();
+
+    var money = new System.Globalization.CultureInfo("vi-VN");
+}
+
+<main class="page-shell">
+
+    <!-- ================================= -->
+    <!-- BREADCRUMB -->
+    <!-- ================================= -->
+
+    <nav class="breadcrumbs" aria-label="Điều hướng">
+        <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+        <span>/</span>
+        <a href="@Url.Action("Index", "Cart")">Giỏ hàng</a>
+        <span>/</span>
+        <span class="current">Thông tin dự án &amp; xác nhận</span>
+    </nav>
+
+    <!-- ================================= -->
+    <!-- PAGE HEADING -->
+    <!-- ================================= -->
+
+    <section class="page-heading">
+
+        <span class="eyebrow">
+            YÊU CẦU B2B • STAGEFX PRO
+        </span>
+
+        <h1>
+            <span class="material-symbols-outlined" aria-hidden="true">
+                fact_check
+            </span>
+
+            Thông tin dự án &amp; xác nhận an toàn
+        </h1>
+
+        <p>
+            Gửi thông tin để tạo yêu cầu đặt thiết bị.
+            Giá, tồn kho, VAT, thanh toán và yêu cầu kỹ thuật
+            sẽ được nhân viên xác nhận.
+        </p>
+
+    </section>
+
+    @if (!hasItems)
+    {
+        <!-- ================================= -->
+        <!-- EMPTY CART -->
+        <!-- ================================= -->
+
+        <section class="empty-cart">
+
+            <span class="material-symbols-outlined" aria-hidden="true">
+                production_quantity_limits
+            </span>
+
+            <h2>Chưa có thiết bị để xác nhận</h2>
+
+            <p>
+                Thêm thiết bị vào giỏ trước khi nhập thông tin dự án.
+            </p>
+
+            <a class="primary-button"
+               href="@Url.Action("Index", "Catalog")">
+
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    view_cozy
+                </span>
+
+                Mở danh mục thiết bị
+            </a>
+
+        </section>
+    }
+    else
+    {
+        <div class="checkout-layout">
+
+            <!-- ================================= -->
+            <!-- LEFT: CHECKOUT FORM -->
+            <!-- ================================= -->
+
+            <section class="form-column">
+
+                <!-- STEPPER -->
+
+                <nav class="stepper" aria-label="Các bước xác nhận">
+
+                    <button class="step-button active"
+                            type="button"
+                            data-step="1"
+                            aria-current="step">
+
+                        <span class="step-number">1</span>
+
+                        <span class="step-copy">
+                            <strong>Thông tin dự án</strong>
+                            <small>Đơn vị &amp; địa điểm</small>
+                        </span>
+
+                    </button>
+
+                    <button class="step-button"
+                            type="button"
+                            data-step="2">
+
+                        <span class="step-number">2</span>
+
+                        <span class="step-copy">
+                            <strong>An toàn &amp; vận hành</strong>
+                            <small>Đánh giá tại địa điểm</small>
+                        </span>
+
+                    </button>
+
+                    <button class="step-button"
+                            type="button"
+                            data-step="3">
+
+                        <span class="step-number">3</span>
+
+                        <span class="step-copy">
+                            <strong>Thanh toán</strong>
+                            <small>Chọn phương thức</small>
+                        </span>
+
+                    </button>
+
+                </nav>
+
+                <!-- FORM -->
+
+                @using (Html.BeginForm(
+                    "PlaceOrder",
+                    "Checkout",
+                    FormMethod.Post,
+                    new
+                    {
+                        id = "checkout-form",
+                        @class = "checkout-form",
+                        novalidate = "novalidate"
+                    }))
+                {
+                    @Html.AntiForgeryToken()
+
+                    <!-- VALIDATION SUMMARY -->
+
+                    @Html.ValidationSummary(
+                        false,
+                        "",
+                        new
+                        {
+                            id = "form-error",
+                            @class = "form-error",
+                            role = "alert"
+                        }
+                    )
+
+                    <!-- ================================= -->
+                    <!-- STEP 1: PROJECT INFORMATION -->
+                    <!-- ================================= -->
+
+                    <section class="form-step"
+                             data-step-panel="1">
+
+                        <div class="section-heading">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                badge
+                            </span>
+
+                            <div>
+                                <h2 tabindex="-1">
+                                    Thông tin đơn vị &amp; người liên hệ
+                                </h2>
+
+                                <p>
+                                    Thông tin dùng để liên hệ và lập yêu cầu dự án.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="form-grid">
+
+                            <!-- COMPANY -->
+
+                            <label class="field field-wide">
+
+                                Tên công ty / đơn vị
+                                <span class="required">*</span>
+
+                                @Html.TextBoxFor(m => m.Company, new
+                                {
+                                    autocomplete = "organization",
+                                    required = "required",
+                                    maxlength = "400",
+                                    placeholder = "Tên công ty hoặc đơn vị"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.Company)
+
+                            </label>
+
+                            <!-- TAX ID -->
+
+                            <label class="field">
+
+                                Mã số thuế
+
+                                @Html.TextBoxFor(m => m.TaxId, new
+                                {
+                                    inputmode = "numeric",
+                                    autocomplete = "off",
+                                    maxlength = "40",
+                                    placeholder = "Mã số thuế doanh nghiệp"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.TaxId)
+
+                            </label>
+
+                            <!-- CONTACT NAME -->
+
+                            <label class="field">
+
+                                Người phụ trách
+                                <span class="required">*</span>
+
+                                @Html.TextBoxFor(m => m.ContactName, new
+                                {
+                                    autocomplete = "name",
+                                    required = "required",
+                                    maxlength = "300",
+                                    placeholder = "Họ và tên"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.ContactName)
+
+                            </label>
+
+                            <!-- PHONE -->
+
+                            <label class="field">
+
+                                Điện thoại liên hệ
+                                <span class="required">*</span>
+
+                                @Html.TextBoxFor(m => m.Phone, new
+                                {
+                                    type = "tel",
+                                    autocomplete = "tel",
+                                    required = "required",
+                                    maxlength = "60",
+                                    placeholder = "Số điện thoại"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.Phone)
+
+                            </label>
+
+                            <!-- EMAIL -->
+
+                            <label class="field">
+
+                                Email nhận phản hồi
+                                <span class="required">*</span>
+
+                                @Html.TextBoxFor(m => m.Email, new
+                                {
+                                    type = "email",
+                                    autocomplete = "email",
+                                    required = "required",
+                                    maxlength = "512",
+                                    placeholder = "name@company.vn"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.Email)
+
+                            </label>
+
+                        </div>
+
+                        <!-- EVENT INFORMATION -->
+
+                        <div class="subsection-heading">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                stadium
+                            </span>
+
+                            <div>
+                                <h3>Thông tin chương trình / sự kiện</h3>
+
+                                <p>
+                                    Thông tin địa điểm giúp lên kế hoạch giao nhận
+                                    và đánh giá yêu cầu kỹ thuật.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="form-grid">
+
+                            <!-- EVENT NAME -->
+
+                            <label class="field field-wide">
+
+                                Tên chương trình / sự kiện
+                                <span class="required">*</span>
+
+                                @Html.TextBoxFor(m => m.EventName, new
+                                {
+                                    required = "required",
+                                    maxlength = "400",
+                                    placeholder = "Tên sự kiện"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.EventName)
+
+                            </label>
+
+                            <!-- EVENT DATE -->
+
+                            <label class="field">
+
+                                Ngày dự kiến
+                                <span class="required">*</span>
+
+                                @Html.TextBoxFor(
+                                    m => m.EventDate,
+                                    "{0:yyyy-MM-dd}",
+                                    new
+                                    {
+                                        type = "date",
+                                        required = "required",
+                                        min = DateTime.Today.ToString("yyyy-MM-dd")
+                                    }
+                                )
+
+                                @Html.ValidationMessageFor(m => m.EventDate)
+
+                            </label>
+
+                            <!-- VENUE TYPE -->
+
+                            <fieldset class="field venue-field">
+
+                                <legend>
+                                    Loại địa điểm
+                                    <span class="required">*</span>
+                                </legend>
+
+                                <div class="choice-row">
+
+                                    <label class="choice-card">
+
+                                        @Html.RadioButtonFor(
+                                            m => m.VenueType,
+                                            "outdoor",
+                                            new { required = "required" }
+                                        )
+
+                                        <span>Ngoài trời</span>
+
+                                    </label>
+
+                                    <label class="choice-card">
+
+                                        @Html.RadioButtonFor(
+                                            m => m.VenueType,
+                                            "indoor",
+                                            new { required = "required" }
+                                        )
+
+                                        <span>Trong nhà</span>
+
+                                    </label>
+
+                                </div>
+
+                                @Html.ValidationMessageFor(m => m.VenueType)
+
+                            </fieldset>
+
+                            <!-- EVENT LOCATION -->
+
+                            <label class="field field-wide">
+
+                                Địa chỉ giao nhận / địa điểm
+                                <span class="required">*</span>
+
+                                @Html.TextBoxFor(m => m.EventLocation, new
+                                {
+                                    autocomplete = "street-address",
+                                    required = "required",
+                                    maxlength = "1000",
+                                    placeholder = "Địa chỉ, quận/huyện, tỉnh/thành"
+                                })
+
+                                @Html.ValidationMessageFor(m => m.EventLocation)
+
+                            </label>
+
+                        </div>
+
+                        <!-- STEP ACTIONS -->
+
+                        <div class="step-actions end">
+
+                            <button class="primary-button next-button"
+                                    type="button"
+                                    data-next="2">
+
+                                Tiếp tục: an toàn &amp; vận hành
+
+                                <span class="material-symbols-outlined" aria-hidden="true">
+                                    arrow_forward
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ================================= -->
+                    <!-- STEP 2: SAFETY AND OPERATION -->
+                    <!-- ================================= -->
+
+                    <section class="form-step"
+                             data-step-panel="2"
+                             hidden>
+
+                        <div class="section-heading">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                health_and_safety
+                            </span>
+
+                            <div>
+
+                                <h2 tabindex="-1">
+                                    Thông tin chuẩn bị an toàn tại địa điểm
+                                </h2>
+
+                                <p>
+                                    Đây là thông tin sơ bộ; không thay thế đánh giá
+                                    tại hiện trường, hồ sơ được phê duyệt hoặc
+                                    hướng dẫn của nhà sản xuất.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- NOTICE -->
+
+                        <div class="notice-card">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                info
+                            </span>
+
+                            <p>
+                                Yêu cầu an toàn phụ thuộc vào thiết bị cụ thể,
+                                tài liệu nhà sản xuất, quy định hiện hành
+                                và yêu cầu của địa điểm tổ chức.
+                            </p>
+
+                        </div>
+
+                        <div class="form-grid">
+
+                            <!-- STRUCTURE INFO -->
+
+                            <label class="field">
+
+                                Chiều cao / cấu trúc khu vực lắp đặt
+
+                                @Html.TextBoxFor(m => m.StructureInfo, new
+                                {
+                                    maxlength = "4000",
+                                    placeholder = "Mô tả sơ bộ nếu đã biết"
+                                })
+
+                            </label>
+
+                            <!-- SITE TECHNICIAN -->
+
+                            <fieldset class="field">
+
+                                <legend>
+                                    Có kỹ thuật viên tại địa điểm?
+                                </legend>
+
+                                <div class="choice-row">
+
+                                    <label class="choice-card">
+
+                                        @Html.RadioButtonFor(
+                                            m => m.SiteTechnician,
+                                            true
+                                        )
+
+                                        <span>Có</span>
+
+                                    </label>
+
+                                    <label class="choice-card">
+
+                                        @Html.RadioButtonFor(
+                                            m => m.SiteTechnician,
+                                            false
+                                        )
+
+                                        <span>Không</span>
+
+                                    </label>
+
+                                </div>
+
+                            </fieldset>
+
+                            <!-- SAFETY NOTES -->
+
+                            <label class="field field-wide">
+
+                                Ghi chú, yêu cầu hoặc tài liệu đã có
+
+                                @Html.TextAreaFor(
+                                    m => m.SafetyNotes,
+                                    3,
+                                    0,
+                                    new
+                                    {
+                                        maxlength = "4000",
+                                        placeholder = "Yêu cầu của địa điểm, giấy phép hoặc tài liệu cần được rà soát"
+                                    }
+                                )
+
+                            </label>
+
+                        </div>
+
+                        <!-- SAFETY CHECKLIST -->
+
+                        <fieldset class="safety-checklist">
+
+                            <legend>
+                                Vui lòng xác nhận các nội dung phù hợp trước khi gửi
+                                <span class="required">*</span>
+                            </legend>
+
+                            <label class="check-card">
+
+                                @Html.CheckBoxFor(
+                                    m => m.SiteReview,
+                                    new { required = "required" }
+                                )
+
+                                <span>
+
+                                    <strong>
+                                        Địa điểm và các yêu cầu áp dụng sẽ được rà soát.
+                                    </strong>
+
+                                    <small>
+                                        Việc bố trí thiết bị chỉ thực hiện sau khi
+                                        người phụ trách kiểm tra điều kiện thực tế.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                            <label class="check-card">
+
+                                @Html.CheckBoxFor(
+                                    m => m.EmergencyPlan,
+                                    new { required = "required" }
+                                )
+
+                                <span>
+
+                                    <strong>
+                                        Đơn vị tổ chức sẽ phối hợp về phương án ứng phó khẩn cấp.
+                                    </strong>
+
+                                    <small>
+                                        Phương án, nhân sự và thiết bị hỗ trợ cần
+                                        được xác nhận trước sự kiện.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                            <label class="check-card">
+
+                                @Html.CheckBoxFor(
+                                    m => m.QualifiedOperator,
+                                    new { required = "required" }
+                                )
+
+                                <span>
+
+                                    <strong>
+                                        Thiết bị sẽ do người có chuyên môn phù hợp phụ trách.
+                                    </strong>
+
+                                    <small>
+                                        Không vận hành nếu chưa được đào tạo hoặc
+                                        điều kiện tại chỗ chưa được xác nhận.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                        </fieldset>
+
+                        <!-- STEP ACTIONS -->
+
+                        <div class="step-actions">
+
+                            <button class="secondary-button"
+                                    type="button"
+                                    data-previous="1">
+
+                                <span class="material-symbols-outlined" aria-hidden="true">
+                                    arrow_back
+                                </span>
+
+                                Quay lại
+
+                            </button>
+
+                            <button class="primary-button next-button"
+                                    type="button"
+                                    data-next="3">
+
+                                Tiếp tục: thanh toán
+
+                                <span class="material-symbols-outlined" aria-hidden="true">
+                                    arrow_forward
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                    <!-- ================================= -->
+                    <!-- STEP 3: PAYMENT -->
+                    <!-- ================================= -->
+
+                    <section class="form-step"
+                             data-step-panel="3"
+                             hidden>
+
+                        <div class="section-heading">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                payments
+                            </span>
+
+                            <div>
+
+                                <h2 tabindex="-1">
+                                    Hình thức thanh toán dự kiến
+                                </h2>
+
+                                <p>
+                                    Chỉ ghi nhận lựa chọn. Chưa phát sinh giao dịch
+                                    hoặc thu tiền.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- PAYMENT OPTIONS -->
+
+                        <fieldset class="payment-options">
+
+                            <legend>
+                                Chọn hình thức thanh toán
+                            </legend>
+
+                            <!-- BANK TRANSFER -->
+
+                            <label class="payment-card">
+
+                                @Html.RadioButtonFor(
+                                    m => m.PaymentMethod,
+                                    "bank_transfer",
+                                    new { required = "required" }
+                                )
+
+                                <span class="material-symbols-outlined" aria-hidden="true">
+                                    account_balance
+                                </span>
+
+                                <span>
+
+                                    <strong>
+                                        Chuyển khoản ngân hàng
+                                    </strong>
+
+                                    <small>
+                                        Thông tin tài khoản và hướng dẫn thanh toán
+                                        sẽ được xác nhận qua kênh chính thức.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                            <!-- COD -->
+
+                            <label class="payment-card">
+
+                                @Html.RadioButtonFor(
+                                    m => m.PaymentMethod,
+                                    "cod",
+                                    new { required = "required" }
+                                )
+
+                                <span class="material-symbols-outlined" aria-hidden="true">
+                                    local_shipping
+                                </span>
+
+                                <span>
+
+                                    <strong>
+                                        Thanh toán khi nhận hàng (COD)
+                                    </strong>
+
+                                    <small>
+                                        Áp dụng theo điều kiện giao nhận và xác nhận
+                                        của nhân viên STAGEFX PRO.
+                                    </small>
+
+                                </span>
+
+                            </label>
+
+                            @Html.ValidationMessageFor(m => m.PaymentMethod)
+
+                        </fieldset>
+
+                        <!-- REVIEW NOTICE -->
+
+                        <div class="review-notice">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                fact_check
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Kiểm tra trước khi xác nhận
+                                </strong>
+
+                                <p>
+                                    Khi nhấn xác nhận, yêu cầu sẽ được lưu vào
+                                    hệ thống STAGEFX PRO. Đơn hàng chưa được xác nhận
+                                    cuối cùng và chưa phát sinh thanh toán.
+                                    VAT sẽ do nhân viên xác nhận.
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                        <!-- STEP ACTIONS -->
+
+                        <div class="step-actions">
+
+                            <button class="secondary-button"
+                                    type="button"
+                                    data-previous="2">
+
+                                <span class="material-symbols-outlined" aria-hidden="true">
+                                    arrow_back
+                                </span>
+
+                                Quay lại
+
+                            </button>
+
+                            <button class="primary-button"
+                                    id="submit-order"
+                                    type="submit">
+
+                                <span class="material-symbols-outlined" aria-hidden="true">
+                                    fact_check
+                                </span>
+
+                                <span class="submit-text">
+                                    Xác nhận đặt hàng
+                                </span>
+
+                            </button>
+
+                        </div>
+
+                    </section>
+
+                }
+
+                <!-- LOCAL DATA NOTE -->
+
+                <div class="local-data-note">
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        lock
+                    </span>
+
+                    Thông tin được gửi đến máy chủ khi bạn nhấn xác nhận đặt hàng.
+
+                </div>
+
+            </section>
+
+            <!-- ================================= -->
+            <!-- RIGHT: ORDER SUMMARY -->
+            <!-- ================================= -->
+
+            <aside class="summary-column"
+                   aria-label="Tóm tắt yêu cầu">
+
+                <section class="summary-card">
+
+                    <!-- SUMMARY HEADING -->
+
+                    <div class="summary-heading">
+
+                        <h2>Thiết bị trong yêu cầu</h2>
+
+                        <span>
+                            @Model.TongSoLuong thiết bị
+                        </span>
+
+                    </div>
+
+                    <!-- PRODUCT LIST -->
+
+                    <div class="summary-items">
+
+                        @foreach (var item in Model.Items)
+                        {
+                            <div class="summary-item">
+
+                                <div class="summary-item-info">
+
+                                    <strong>
+                                        @item.TenSanPham
+                                    </strong>
+
+                                    <small>
+                                        SKU: @item.SKU |
+                                        @(item.HinhThucDat == "Thue" ? "Thuê" : "Mua")
+                                        × @item.SoLuong
+                                    </small>
+
+                                    @if (item.HinhThucDat == "Thue")
+                                    {
+                                        <small>
+                                            Số ngày thuê: @item.SoNgayThue ngày
+                                        </small>
+                                    }
+
+                                    @if (item.CoFlightcase)
+                                    {
+                                        <small>
+                                            Có Flightcase
+                                        </small>
+                                    }
+
+                                </div>
+
+                                <strong>
+                                    @item.ThanhTien.ToString("N0", money) đ
+                                </strong>
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <!-- FINANCIAL SUMMARY -->
+
+                    <div class="financial-rows">
+
+                        <div class="financial-row">
+
+                            <span>
+                                Tạm tính thiết bị
+                            </span>
+
+                            <strong>
+                                @Model.TienHang.ToString("N0", money) đ
+                            </strong>
+
+                        </div>
+
+                        <div class="financial-row">
+
+                            <span>
+                                Vận chuyển
+                            </span>
+
+                            <strong>
+                                @(Model.PhiVanChuyen == 0
+                                    ? "Miễn phí"
+                                    : Model.PhiVanChuyen.ToString("N0", money) + " đ")
+                            </strong>
+
+                        </div>
+
+                        <div class="financial-row">
+
+                            <span>
+                                VAT
+                            </span>
+
+                            <strong>
+                                Nhân viên xác nhận
+                            </strong>
+
+                        </div>
+
+                        @if (Model.TienCoc > 0)
+                        {
+                            <div class="financial-row deposit-row">
+
+                                <span>
+                                    Tiền cọc thuê dự kiến (30%)
+                                </span>
+
+                                <strong>
+                                    @Model.TienCoc.ToString("N0", money) đ
+                                </strong>
+
+                            </div>
+                        }
+
+                        <!-- GRAND TOTAL -->
+
+                        <div class="grand-total">
+
+                            <span>
+                                Tổng dự toán chưa VAT
+                            </span>
+
+                            <strong>
+                                @Model.TongTien.ToString("N0", money) đ
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                    <!-- ESTIMATE NOTE -->
+
+                    <p class="estimate-note">
+
+                        Phí vận chuyển: 350.000đ nếu tiền hàng dưới
+                        20 triệu; miễn phí từ 20 triệu.
+                        VAT do nhân viên xác nhận.
+                        Tiền cọc là khoản dự kiến, chưa thu tại bước này.
+
+                    </p>
+
+                </section>
+
+                <!-- SAFETY SUPPORT -->
+
+                <section class="safety-support-card">
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        verified_user
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            Rà soát trước sự kiện
+                        </h2>
+
+                        <p>
+                            Đơn vị cung cấp và người phụ trách tại địa điểm
+                            cần xác nhận yêu cầu, hồ sơ và điều kiện an toàn phù hợp.
+                        </p>
+
+                    </div>
+
+                </section>
+
+                <!-- CONTACT -->
+
+                <section class="contact-card">
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        support_agent
+                    </span>
+
+                    <div>
+
+                        <h2>
+                            Cần trao đổi trực tiếp?
+                        </h2>
+
+                        <p>
+                            Gọi để hỏi về danh mục và quy trình báo giá.
+                        </p>
+
+                        <a href="tel:0988683977">
+                            0988 683 977
+                        </a>
+
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+    }
+
+</main>
+
+<!-- ================================= -->
+<!-- CSS -->
+<!-- ================================= -->
+
+@section styles {
+
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/checkout.css")" />
+
+}
+
+<!-- ================================= -->
+<!-- JAVASCRIPT -->
+<!-- ================================= -->
+
+@section scripts {
+
+    <script src="@Url.Content("~/Scripts/checkout.js")?v=20261109-04"></script>
+
+}

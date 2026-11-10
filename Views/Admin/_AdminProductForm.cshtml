@@ -1,0 +1,409 @@
+﻿
+@using System.Linq
+@using System.Collections.Generic
+@using System.Web.Mvc
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminProductFormViewModel
+
+<div class="admin-product-form-fields">
+
+    <!-- ==========================================
+         01. BASIC PRODUCT INFORMATION
+    =========================================== -->
+
+    <section class="product-form-section">
+
+        <div class="product-form-section-heading">
+            <div>
+                <span class="product-form-section-number">01</span>
+                <h3>Thông tin cơ bản</h3>
+                <p>Thông tin định danh và phân loại sản phẩm.</p>
+            </div>
+
+            <span class="material-symbols-outlined">inventory_2</span>
+        </div>
+
+        <div class="product-form-grid">
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.SKU, "Mã SKU")
+
+                @Html.TextBoxFor(x => x.SKU, new
+                {
+                    @class = "product-form-control",
+                    placeholder = "Ví dụ: FX-FOG-200",
+                    required = "required",
+                    maxlength = "100",
+                    autocomplete = "off"
+                })
+
+                @Html.ValidationMessageFor(x => x.SKU)
+
+                <small>Mã định danh duy nhất của sản phẩm.</small>
+            </div>
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.TenSanPham, "Tên sản phẩm")
+
+                @Html.TextBoxFor(x => x.TenSanPham, new
+                {
+                    @class = "product-form-control",
+                    placeholder = "Nhập tên sản phẩm",
+                    required = "required",
+                    maxlength = "250"
+                })
+
+                @Html.ValidationMessageFor(x => x.TenSanPham)
+            </div>
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.MaDanhMuc, "Danh mục")
+
+                @Html.DropDownListFor(
+                         x => x.MaDanhMuc,
+                         Model.Categories ?? new List<SelectListItem>(),
+                         "Chọn danh mục",
+                         new
+                         {
+                             @class = "product-form-control",
+                             required = "required"
+                         }
+                     )
+
+                @Html.ValidationMessageFor(x => x.MaDanhMuc)
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         02. PRICING AND INVENTORY
+    =========================================== -->
+
+    <section class="product-form-section">
+
+        <div class="product-form-section-heading">
+            <div>
+                <span class="product-form-section-number">02</span>
+                <h3>Giá bán và tồn kho</h3>
+                <p>Thiết lập giá bán, giá thuê và số lượng sản phẩm.</p>
+            </div>
+
+            <span class="material-symbols-outlined">payments</span>
+        </div>
+
+        <div class="product-form-grid">
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.GiaBan, "Giá bán (VNĐ)")
+
+                @Html.TextBoxFor(x => x.GiaBan, new
+                {
+                    @class = "product-form-control",
+                    type = "number",
+                    min = "0",
+                    step = "0.01",
+                    required = "required",
+                    placeholder = "Nhập giá bán"
+                })
+
+                @Html.ValidationMessageFor(x => x.GiaBan)
+            </div>
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.GiaThueNgay, "Giá thuê / ngày (VNĐ)")
+
+                @Html.TextBoxFor(x => x.GiaThueNgay, new
+                {
+                    @class = "product-form-control",
+                    type = "number",
+                    min = "0",
+                    step = "0.01",
+                    placeholder = "Có thể để trống"
+                })
+
+                @Html.ValidationMessageFor(x => x.GiaThueNgay)
+            </div>
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.SoLuongTon, "Số lượng tồn kho")
+
+                @Html.TextBoxFor(x => x.SoLuongTon, new
+                {
+                    @class = "product-form-control",
+                    type = "number",
+                    min = "0",
+                    step = "1",
+                    required = "required",
+                    placeholder = "Nhập số lượng"
+                })
+
+                @Html.ValidationMessageFor(x => x.SoLuongTon)
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         03. PRODUCT STATUS
+    =========================================== -->
+
+    <section class="product-form-section">
+
+        <div class="product-form-section-heading">
+            <div>
+                <span class="product-form-section-number">03</span>
+                <h3>Trạng thái kinh doanh</h3>
+                <p>Kiểm soát khả năng kinh doanh sản phẩm.</p>
+            </div>
+
+            <span class="material-symbols-outlined">toggle_on</span>
+        </div>
+
+        <label class="product-form-status">
+
+            <span class="product-form-status-control">
+                @Html.CheckBoxFor(x => x.TrangThai)
+                <span class="product-form-status-slider"></span>
+            </span>
+
+            <span class="product-form-status-text">
+                <strong>Đang kinh doanh</strong>
+                <small>
+                    Cho phép sản phẩm hoạt động trong hệ thống.
+                </small>
+            </span>
+
+        </label>
+
+    </section>
+
+
+    <!-- ==========================================
+         04. PRODUCT DESCRIPTION
+    =========================================== -->
+
+    <section class="product-form-section">
+
+        <div class="product-form-section-heading">
+            <div>
+                <span class="product-form-section-number">04</span>
+                <h3>Mô tả và thông số kỹ thuật</h3>
+                <p>Cung cấp thông tin chi tiết về sản phẩm.</p>
+            </div>
+
+            <span class="material-symbols-outlined">description</span>
+        </div>
+
+        <div class="product-form-description">
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.MoTaNgan, "Mô tả ngắn")
+
+                @Html.TextAreaFor(x => x.MoTaNgan, new
+                {
+                    @class = "product-form-control",
+                    rows = "3",
+                    placeholder = "Nhập mô tả ngắn về sản phẩm..."
+                })
+
+                @Html.ValidationMessageFor(x => x.MoTaNgan)
+            </div>
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.MoTaChiTiet, "Mô tả chi tiết")
+
+                @Html.TextAreaFor(x => x.MoTaChiTiet, new
+                {
+                    @class = "product-form-control",
+                    rows = "6",
+                    placeholder = "Nhập nội dung mô tả chi tiết..."
+                })
+
+                @Html.ValidationMessageFor(x => x.MoTaChiTiet)
+            </div>
+
+            <div class="product-form-field">
+                @Html.LabelFor(x => x.ThongSoKyThuat, "Thông số kỹ thuật")
+
+                @Html.TextAreaFor(x => x.ThongSoKyThuat, new
+                {
+                    @class = "product-form-control product-technical-input",
+                    rows = "6",
+                    placeholder = "Ví dụ:\n- Công suất:\n- Điện áp:\n- Chuẩn điều khiển:\n- Kích thước:"
+                })
+
+                @Html.ValidationMessageFor(x => x.ThongSoKyThuat)
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         05. PRODUCT IMAGES
+    =========================================== -->
+
+    <section class="product-form-section">
+
+        <div class="product-form-section-heading">
+            <div>
+                <span class="product-form-section-number">05</span>
+                <h3>Hình ảnh sản phẩm</h3>
+                <p>Quản lý ảnh đại diện và hình ảnh minh họa.</p>
+            </div>
+
+            <span class="material-symbols-outlined">photo_library</span>
+        </div>
+
+        <div class="product-images">
+
+            <!-- IMAGE UPLOAD -->
+
+            <div class="product-image-upload">
+
+                <label for="NewImages" class="product-image-upload-area">
+
+                    <span class="material-symbols-outlined">
+                        cloud_upload
+                    </span>
+
+                    <strong>Chọn hình ảnh sản phẩm</strong>
+
+                    <span>
+                        Nhấn vào đây để chọn một hoặc nhiều ảnh.
+                    </span>
+
+                    <small>
+                        JPG, JPEG, PNG, WEBP · Tối đa 5 MB mỗi ảnh · Tối đa 10 ảnh.
+                    </small>
+
+                </label>
+
+                <input type="file"
+                       id="NewImages"
+                       name="NewImages"
+                       multiple
+                       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+
+                <!-- NEW MAIN IMAGE INDEX -->
+
+                <input type="hidden"
+                       id="MainImageNewIndex"
+                       name="MainImageNewIndex"
+                       value="" />
+
+                <!-- NEW IMAGE PREVIEW -->
+
+                <div id="productImagePreview"
+                     class="product-image-preview">
+                </div>
+
+            </div>
+
+
+            <!-- EXISTING IMAGES -->
+
+            @if (Model.ExistingImages != null && Model.ExistingImages.Any())
+            {
+                <div class="product-existing-images">
+
+                    <div class="product-existing-images-heading">
+                        <div>
+                            <h4>Hình ảnh hiện tại</h4>
+                            <small>Quản lý ảnh đã được lưu trước đó.</small>
+                        </div>
+
+                        <span class="existing-image-count">
+                            @Model.ExistingImages.Count() ảnh
+                        </span>
+                    </div>
+
+                    <div class="product-existing-images-grid">
+
+                        @foreach (var image in Model.ExistingImages)
+                        {
+                            <div class="existing-image"
+                                 data-image-id="@image.MaHinhAnh">
+
+                                <div class="existing-image-preview">
+
+                                    <img src="@Url.Content(image.DuongDanAnh)"
+                                         alt="@(image.MoTaAnh ?? "Hình ảnh sản phẩm")"
+                                         loading="lazy" />
+
+                                    @if (image.LaAnhChinh)
+                                    {
+                                        <span class="existing-image-main-label">
+                                            <span class="material-symbols-outlined">
+                                                star
+                                            </span>
+                                            Ảnh chính
+                                        </span>
+                                    }
+
+                                </div>
+
+                                <div class="existing-image-controls">
+
+                                    <label class="existing-image-main-option">
+                                        <input type="radio"
+                                               name="MainImageId"
+                                               value="@image.MaHinhAnh"
+                                               @(image.LaAnhChinh ? "checked" : "") />
+
+                                        <span>Chọn ảnh chính</span>
+                                    </label>
+
+                                    <label class="existing-image-remove">
+                                        <input type="checkbox"
+                                               name="RemoveImageIds"
+                                               value="@image.MaHinhAnh" />
+
+                                        <span>Đánh dấu xóa ảnh</span>
+                                    </label>
+
+                                </div>
+
+                            </div>
+                        }
+
+                    </div>
+
+                    <small class="product-existing-images-note">
+                        Ảnh cũ được giữ nguyên nếu không đánh dấu xóa.
+                        Bạn có thể chọn ảnh cũ hoặc ảnh mới làm ảnh chính.
+                    </small>
+
+                </div>
+            }
+
+        </div>
+
+    </section>
+
+
+    <!-- ==========================================
+         06. FORM ACTIONS
+    =========================================== -->
+
+    <div class="product-form-actions">
+
+        <button class="product-form-submit"
+                type="submit">
+
+            <span class="material-symbols-outlined">
+                save
+            </span>
+
+            Lưu sản phẩm
+
+        </button>
+
+    </div>
+
+</div>

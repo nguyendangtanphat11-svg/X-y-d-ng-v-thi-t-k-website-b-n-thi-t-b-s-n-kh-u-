@@ -1,0 +1,428 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminOrderListViewModel
+
+@{
+    ViewBag.Title = "Quản lý đơn hàng";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+<link rel="stylesheet"
+      href="@Url.Content("~/Content/css/admin/admin-orders.css")" />
+
+<div class="admin-orders">
+
+    <!-- PAGE HEADER -->
+    <div class="orders-page-header">
+        <div>
+            <span class="orders-eyebrow">QUẢN LÝ KINH DOANH</span>
+            <h1>Quản lý đơn hàng</h1>
+            <p>Theo dõi và quản lý các đơn hàng của STAGEFX PRO.</p>
+        </div>
+
+        <div class="orders-header-meta">
+            <span class="material-symbols-outlined">receipt_long</span>
+            <span>Hệ thống đơn hàng</span>
+        </div>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    @if (TempData["OrderSuccess"] != null)
+    {
+        <div class="orders-alert orders-alert-success" role="alert">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span>@TempData["OrderSuccess"]</span>
+        </div>
+    }
+
+    @if (TempData["OrderError"] != null)
+    {
+        <div class="orders-alert orders-alert-error" role="alert">
+            <span class="material-symbols-outlined">error</span>
+            <span>@TempData["OrderError"]</span>
+        </div>
+    }
+
+    <!-- STATISTICS -->
+    <div class="orders-stats">
+
+        <div class="order-stat-card">
+            <div class="order-stat-icon">
+                <span class="material-symbols-outlined">receipt_long</span>
+            </div>
+            <div>
+                <span class="order-stat-label">Tổng đơn hàng</span>
+                <strong>@Model.TotalOrders.ToString("N0")</strong>
+            </div>
+        </div>
+
+        <div class="order-stat-card">
+            <div class="order-stat-icon warning">
+                <span class="material-symbols-outlined">pending_actions</span>
+            </div>
+            <div>
+                <span class="order-stat-label">Chờ xác nhận</span>
+                <strong>@Model.PendingOrders.ToString("N0")</strong>
+            </div>
+        </div>
+
+        <div class="order-stat-card">
+            <div class="order-stat-icon processing">
+                <span class="material-symbols-outlined">local_shipping</span>
+            </div>
+            <div>
+                <span class="order-stat-label">Đang xử lý</span>
+                <strong>@Model.ProcessingOrders.ToString("N0")</strong>
+            </div>
+        </div>
+
+        <div class="order-stat-card">
+            <div class="order-stat-icon success">
+                <span class="material-symbols-outlined">task_alt</span>
+            </div>
+            <div>
+                <span class="order-stat-label">Hoàn thành</span>
+                <strong>@Model.CompletedOrders.ToString("N0")</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ORDER CONTENT -->
+    <div class="orders-content-card">
+
+        <div class="orders-content-heading">
+            <div>
+                <h2>Danh sách đơn hàng</h2>
+                <p>Tra cứu và theo dõi thông tin đơn hàng.</p>
+            </div>
+
+            <span class="orders-total">
+                @Model.TotalItems đơn hàng
+            </span>
+        </div>
+
+        <!-- SEARCH AND FILTER -->
+        <form method="get"
+              action="@Url.Action("Orders", "AdminOrder")"
+              class="orders-filter-form"
+              id="orderFilterForm">
+
+            <input type="hidden" name="page" value="1" />
+
+            <div class="orders-search">
+                <span class="material-symbols-outlined">search</span>
+
+                <input type="text"
+                       name="search"
+                       id="orderSearch"
+                       value="@Model.SearchTerm"
+                       placeholder="Tìm mã đơn, khách hàng, người nhận..." />
+
+                <button type="button"
+                        id="clearOrderSearch"
+                        class="clear-search-btn"
+                        title="Xóa từ khóa">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <div class="orders-filter">
+
+                <select name="orderStatus">
+                    <option value="">Tất cả trạng thái đơn</option>
+                    <option value="ChoXacNhan" @(Model.OrderStatus == "ChoXacNhan" ? "selected" : "")>Chờ xác nhận</option>
+                    <option value="DaXacNhan" @(Model.OrderStatus == "DaXacNhan" ? "selected" : "")>Đã xác nhận</option>
+                    <option value="DangChuanBi" @(Model.OrderStatus == "DangChuanBi" ? "selected" : "")>Đang chuẩn bị</option>
+                    <option value="DangGiao" @(Model.OrderStatus == "DangGiao" ? "selected" : "")>Đang giao</option>
+                    <option value="HoanThanh" @(Model.OrderStatus == "HoanThanh" ? "selected" : "")>Hoàn thành</option>
+                    <option value="DaHuy" @(Model.OrderStatus == "DaHuy" ? "selected" : "")>Đã hủy</option>
+                    <option value="ChoHuy" @(Model.OrderStatus == "ChoHuy" ? "selected" : "")>Chờ hủy</option>
+                    <option value="TuChoi" @(Model.OrderStatus == "TuChoi" ? "selected" : "")>Từ chối</option>
+                </select>
+
+                <select name="paymentStatus">
+                    <option value="">Tất cả thanh toán</option>
+                    <option value="DaThanhToan" @(Model.PaymentStatus == "DaThanhToan" ? "selected" : "")>Đã thanh toán</option>
+                    <option value="ChoThanhToan" @(Model.PaymentStatus == "ChoThanhToan" ? "selected" : "")>Chờ thanh toán</option>
+                    <option value="ChuaThanhToan" @(Model.PaymentStatus == "ChuaThanhToan" ? "selected" : "")>Chưa thanh toán</option>
+                    <option value="ChoXuLy" @(Model.PaymentStatus == "ChoXuLy" ? "selected" : "")>Chờ xử lý</option>
+                    <option value="ThatBai" @(Model.PaymentStatus == "ThatBai" ? "selected" : "")>Thất bại</option>
+                    <option value="DaHoanTien" @(Model.PaymentStatus == "DaHoanTien" ? "selected" : "")>Đã hoàn tiền</option>
+                </select>
+
+                <input type="date"
+                       name="dateFrom"
+                       value="@(Model.DateFrom.HasValue ? Model.DateFrom.Value.ToString("yyyy-MM-dd") : "")"
+                       title="Từ ngày" />
+
+                <input type="date"
+                       name="dateTo"
+                       value="@(Model.DateTo.HasValue ? Model.DateTo.Value.ToString("yyyy-MM-dd") : "")"
+                       title="Đến ngày" />
+
+                <button type="submit" class="orders-filter-btn">
+                    <span class="material-symbols-outlined">filter_alt</span>
+                    Lọc
+                </button>
+
+                <a href="@Url.Action("Orders", "AdminOrder")"
+                   class="orders-reset-btn">
+                    Đặt lại
+                </a>
+
+            </div>
+        </form>
+
+        <!-- ORDER TABLE -->
+        <div class="orders-table-wrapper">
+
+            <table class="orders-table">
+                <thead>
+                    <tr>
+                        <th>MÃ ĐƠN</th>
+                        <th>KHÁCH HÀNG</th>
+                        <th>NGƯỜI NHẬN</th>
+                        <th>NGÀY ĐẶT</th>
+                        <th>TỔNG TIỀN</th>
+                        <th>TIỀN CỌC</th>
+                        <th>TRẠNG THÁI</th>
+                        <th>THANH TOÁN</th>
+                        <th>THAO TÁC</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Orders != null && Model.Orders.Any())
+                    {
+                        foreach (var item in Model.Orders)
+                        {
+                            <tr>
+                                <!-- ORDER CODE -->
+                                <td>
+                                    <span class="order-code">
+                                        @(string.IsNullOrWhiteSpace(item.MaSoDonHang)
+                                            ? "#" + item.MaDonHang
+                                            : item.MaSoDonHang)
+                                    </span>
+                                </td>
+
+                                <!-- CUSTOMER -->
+                                <td>
+                                    <span class="order-customer">
+                                        @(item.CustomerName ?? "Không xác định")
+                                    </span>
+                                </td>
+
+                                <!-- RECIPIENT -->
+                                <td>
+                                    @(item.RecipientName ?? "—")
+                                </td>
+
+                                <!-- ORDER DATE -->
+                                <td>
+                                    <span class="order-date">
+                                        @item.NgayDat.ToString("dd/MM/yyyy")
+                                    </span>
+                                    <small class="order-time">
+                                        @item.NgayDat.ToString("HH:mm")
+                                    </small>
+                                </td>
+
+                                <!-- TOTAL -->
+                                <td>
+                                    <strong class="order-money">
+                                        @item.TongTien.ToString("N0") ₫
+                                    </strong>
+                                </td>
+
+                                <!-- DEPOSIT -->
+                                <td>
+                                    <span class="order-deposit">
+                                        @item.TienCoc.ToString("N0") ₫
+                                    </span>
+                                </td>
+
+                                <!-- ORDER STATUS -->
+                                <td>
+                                    <span class="order-status @item.OrderStatusClass">
+                                        @item.OrderStatusText
+                                    </span>
+                                </td>
+
+                                <!-- PAYMENT STATUS -->
+                                <td>
+                                    <span class="payment-status @item.PaymentStatusClass">
+                                        @item.PaymentStatusText
+                                    </span>
+                                </td>
+
+                                <!-- ACTIONS -->
+                                <td>
+                                    <div class="order-actions">
+
+                                        <!-- VIEW DETAIL -->
+                                        <a href="@Url.Action(
+                                            "OrderDetail",
+                                            "AdminOrder",
+                                            new { id = item.MaDonHang })"
+                                           class="order-action-button"
+                                           title="Xem chi tiết">
+                                            <span class="material-symbols-outlined">
+                                                visibility
+                                            </span>
+                                        </a>
+
+                                        @if (item.TrangThai == "ChoXacNhan")
+                                        {
+                                            <!-- CONFIRM ORDER -->
+                                            <form method="post"
+                                                  action="@Url.Action("ConfirmOrder", "AdminOrder")"
+                                                  class="order-inline-form"
+                                                  data-confirm-order-form>
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="orderId"
+                                                       value="@item.MaDonHang" />
+
+                                                <button type="submit"
+                                                        class="order-confirm-button"
+                                                        title="Xác nhận đơn hàng">
+                                                    <span class="material-symbols-outlined">
+                                                        check
+                                                    </span>
+                                                </button>
+                                            </form>
+
+                                            <!-- REJECT ORDER -->
+                                            <form method="post"
+                                                  action="@Url.Action("RejectOrder", "AdminOrder")"
+                                                  class="order-inline-form"
+                                                  data-reject-order-form>
+
+                                                @Html.AntiForgeryToken()
+
+                                                <input type="hidden"
+                                                       name="orderId"
+                                                       value="@item.MaDonHang" />
+
+                                                <input type="hidden"
+                                                       name="reason"
+                                                       value="" />
+
+                                                <button type="submit"
+                                                        class="order-reject-button"
+                                                        title="Từ chối đơn hàng">
+                                                    <span class="material-symbols-outlined">
+                                                        close
+                                                    </span>
+                                                </button>
+                                            </form>
+                                        }
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="9">
+                                <div class="orders-empty">
+                                    <span class="material-symbols-outlined">
+                                        inventory_2
+                                    </span>
+                                    <h3>Không tìm thấy đơn hàng</h3>
+                                    <p>Thử thay đổi từ khóa hoặc điều kiện lọc.</p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+            </table>
+
+        </div>
+
+        <!-- PAGINATION -->
+        @if (Model.TotalItems > 0)
+        {
+            <div class="orders-pagination">
+
+                <span class="pagination-info">
+                    Hiển thị
+                    @(((Model.CurrentPage - 1) * Model.PageSize) + 1)
+                    -
+                    @(Math.Min(
+                        Model.CurrentPage * Model.PageSize,
+                        Model.TotalItems))
+                    trên @Model.TotalItems đơn hàng
+                </span>
+
+                <div class="pagination-actions">
+
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a class="pagination-btn"
+                           href="@Url.Action("Orders", "AdminOrder", new {
+                               search = Model.SearchTerm,
+                               orderStatus = Model.OrderStatus,
+                               paymentStatus = Model.PaymentStatus,
+                               dateFrom = Model.DateFrom,
+                               dateTo = Model.DateTo,
+                               page = Model.CurrentPage - 1
+                           })">
+                            <span class="material-symbols-outlined">
+                                chevron_left
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pagination-btn disabled">
+                            <span class="material-symbols-outlined">
+                                chevron_left
+                            </span>
+                        </span>
+                    }
+
+                    <span class="pagination-current">
+                        @Model.CurrentPage / @Model.TotalPages
+                    </span>
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a class="pagination-btn"
+                           href="@Url.Action("Orders", "AdminOrder", new {
+                               search = Model.SearchTerm,
+                               orderStatus = Model.OrderStatus,
+                               paymentStatus = Model.PaymentStatus,
+                               dateFrom = Model.DateFrom,
+                               dateTo = Model.DateTo,
+                               page = Model.CurrentPage + 1
+                           })">
+                            <span class="material-symbols-outlined">
+                                chevron_right
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="pagination-btn disabled">
+                            <span class="material-symbols-outlined">
+                                chevron_right
+                            </span>
+                        </span>
+                    }
+
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+<script src="@Url.Content("~/Scripts/admin/admin-orders.js")"></script>

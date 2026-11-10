@@ -1,0 +1,423 @@
+﻿
+@model Wedside_TVS_SFX.Models.CartIndexViewModel
+
+@{
+    ViewBag.Title = "Giỏ thiết bị dự án";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var hasItems = Model != null
+        && Model.Items != null
+        && Model.Items.Count > 0;
+
+    var totalQuantity = Model != null ? Model.TongSoLuong : 0;
+    var totalAmount = Model != null ? Model.TienHang : 0m;
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/cart.css")" />
+}
+
+<main class="page-shell">
+
+    @* BREADCRUMB *@
+    <nav class="breadcrumbs" aria-label="Điều hướng">
+        <a href="@Url.Action("Index", "Home")">Trang chủ</a>
+        <span>/</span>
+        <a href="@Url.Action("Index", "Catalog")">Thiết bị</a>
+        <span>/</span>
+        <span class="current">Giỏ hàng</span>
+    </nav>
+
+    @* TIÊU ĐỀ *@
+    <section class="page-heading">
+        <div>
+            <span class="eyebrow">ĐƠN HÀNG B2B</span>
+
+            <h1>
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    shopping_cart
+                </span>
+                Giỏ thiết bị dự án
+            </h1>
+
+            <p>
+                Quản lý thiết bị mua hoặc thuê cho dự án của bạn.
+            </p>
+        </div>
+    </section>
+
+    @* THÔNG BÁO *@
+    @if (TempData["CartSuccess"] != null)
+    {
+        <div class="cart-alert cart-alert-success" role="status">
+            <span class="material-symbols-outlined">check_circle</span>
+            @TempData["CartSuccess"]
+        </div>
+    }
+
+    @if (TempData["CartError"] != null)
+    {
+        <div class="cart-alert cart-alert-error" role="alert">
+            <span class="material-symbols-outlined">error</span>
+            @TempData["CartError"]
+        </div>
+    }
+
+    @* GIỎ HÀNG TRỐNG *@
+    @if (!hasItems)
+    {
+        <section class="empty-cart">
+
+            <div class="empty-icon">
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    production_quantity_limits
+                </span>
+            </div>
+
+            <div>
+                <h2>Giỏ thiết bị đang trống</h2>
+
+                <p>
+                    Chọn sản phẩm trong danh mục để bắt đầu
+                    tạo danh sách thiết bị cho dự án.
+                </p>
+            </div>
+
+            <a class="primary-button"
+               href="@Url.Action("Index", "Catalog")">
+
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    view_cozy
+                </span>
+
+                Khám phá kho thiết bị
+            </a>
+
+        </section>
+    }
+    else
+    {
+        @* GIỎ HÀNG CÓ SẢN PHẨM *@
+        <div class="cart-layout">
+
+            @* DANH SÁCH THIẾT BỊ *@
+            <section class="items-column"
+                     aria-label="Thiết bị trong giỏ">
+
+                <div class="cart-list-heading">
+                    <h2>Thiết bị đã chọn</h2>
+
+                    <span>
+                        @totalQuantity sản phẩm
+                    </span>
+                </div>
+
+                <div class="cart-items">
+
+                    @foreach (var item in Model.Items)
+                    {
+                        <article class="cart-item">
+
+                            @* ẢNH / BIỂU TƯỢNG *@
+                            <div class="item-image-wrap">
+
+                                <span class="material-symbols-outlined item-placeholder-icon">
+                                    precision_manufacturing
+                                </span>
+
+                                <span class="item-sku">
+                                    @item.SKU
+                                </span>
+
+                            </div>
+
+                            @* THÔNG TIN SẢN PHẨM *@
+                            <div class="item-details">
+
+                                <div class="item-badges">
+
+                                    @if (item.HinhThucDat == "Thue")
+                                    {
+                                        <span class="item-type rental">
+                                            Thuê thiết bị
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="item-type">
+                                            Mua thiết bị
+                                        </span>
+                                    }
+
+                                    @if (item.CoFlightcase)
+                                    {
+                                        <span class="flightcase-badge">
+                                            Flightcase
+                                        </span>
+                                    }
+
+                                </div>
+
+                                <h3 class="item-name">
+                                    @item.TenSanPham
+                                </h3>
+
+                                <p class="item-unit-price">
+                                    Đơn giá:
+
+                                    <strong>
+                                        @item.GiaCoBan.ToString("N0") đ
+                                    </strong>
+
+                                    @if (item.HinhThucDat == "Thue")
+                                    {
+                                        <span class="item-price-note">
+                                            / ngày
+                                        </span>
+                                    }
+                                </p>
+
+                                @if (item.HinhThucDat == "Thue")
+                                {
+                                    <p class="item-price-note">
+                                        Thời gian thuê:
+                                        @(item.SoNgayThue ?? 1) ngày
+                                    </p>
+                                }
+
+                                @if (item.CoFlightcase)
+                                {
+                                    <p class="item-price-note">
+                                        Phí Flightcase:
+                                        @item.PhiFlightcaseDonVi.ToString("N0") đ
+                                        / sản phẩm
+                                    </p>
+                                }
+
+                            </div>
+
+                            @* THAO TÁC SẢN PHẨM *@
+                            <div class="item-controls">
+
+                                @* THÀNH TIỀN *@
+                                <div class="item-total">
+                                    <span>Thành tiền</span>
+
+                                    <strong>
+                                        @item.ThanhTien.ToString("N0") đ
+                                    </strong>
+                                </div>
+
+                                @* FORM CẬP NHẬT *@
+                                @using (Html.BeginForm(
+                                    "Update",
+                                    "Cart",
+                                    FormMethod.Post,
+                                    new { @class = "cart-update-form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    @Html.Hidden(
+                                        "id",
+                                        item.MaChiTietGioHang
+                                    )
+
+                                    <label class="cart-field">
+                                        <span>Số lượng</span>
+
+                                        <input type="number"
+                                               name="quantity"
+                                               value="@item.SoLuong"
+                                               min="1"
+                                               required />
+                                    </label>
+
+                                    if (item.HinhThucDat == "Thue")
+                                    {
+                                        <label class="cart-field">
+                                            <span>Số ngày thuê</span>
+
+                                            <input type="number"
+                                                   name="soNgayThue"
+                                                   value="@(item.SoNgayThue ?? 1)"
+                                                   min="1"
+                                                   max="30"
+                                                   required />
+                                        </label>
+                                    }
+
+                                    <label class="flightcase-option">
+
+                                        <input type="checkbox"
+                                               name="coFlightcase"
+                                               value="true"
+                                               @(item.CoFlightcase ? "checked=\"checked\"" : "") />
+
+                                        <span>
+                                            Có Flightcase
+                                        </span>
+
+                                    </label>
+
+                                    <button type="submit"
+                                            class="update-cart-button">
+                                        Cập nhật
+                                    </button>
+                                }
+
+                                @* FORM XÓA *@
+                                @using (Html.BeginForm(
+                                    "Remove",
+                                    "Cart",
+                                    FormMethod.Post,
+                                    new { @class = "cart-remove-form" }))
+                                {
+                                    @Html.AntiForgeryToken()
+
+                                    @Html.Hidden(
+                                        "id",
+                                        item.MaChiTietGioHang
+                                    )
+
+                                    <button type="submit"
+                                            class="remove-item"
+                                            title="Xóa sản phẩm"
+                                            aria-label="Xóa @item.TenSanPham"
+                                            onclick="return confirm('Bạn có chắc muốn xóa sản phẩm này khỏi giỏ hàng?');">
+
+                                        <span class="material-symbols-outlined"
+                                              aria-hidden="true">
+                                            delete
+                                        </span>
+
+                                    </button>
+                                }
+
+                            </div>
+
+                        </article>
+                    }
+
+                </div>
+
+                @* CHÂN DANH SÁCH *@
+                <div class="cart-footer">
+
+                    <a class="continue-button"
+                       href="@Url.Action("Index", "Catalog")">
+
+                        <span class="material-symbols-outlined">
+                            arrow_back
+                        </span>
+
+                        Tiếp tục chọn thiết bị
+                    </a>
+
+                    <p class="shipping-note">
+
+                        <span class="material-symbols-outlined">
+                            local_shipping
+                        </span>
+
+                        Phí vận chuyển sẽ được xác nhận theo
+                        địa điểm và lịch giao hàng.
+
+                    </p>
+
+                </div>
+
+            </section>
+
+            @* TÓM TẮT ĐƠN HÀNG *@
+            <aside class="summary-column"
+                   aria-label="Tóm tắt đơn hàng">
+
+                <section class="summary-card">
+
+                    <div class="summary-title">
+                        <h2>Tóm tắt chi phí</h2>
+
+                        <span>
+                            @totalQuantity sản phẩm
+                        </span>
+                    </div>
+
+                    <div class="financial-rows">
+
+                        <div class="financial-row">
+                            <span>Tạm tính thiết bị</span>
+
+                            <strong>
+                                @totalAmount.ToString("N0") đ
+                            </strong>
+                        </div>
+
+                        <div class="financial-row">
+                            <span>Vận chuyển &amp; bốc xếp</span>
+
+                            <strong>
+                                Chưa xác định
+                            </strong>
+                        </div>
+
+                        <div class="total-row">
+                            <span>Tổng tạm tính</span>
+
+                            <strong>
+                                @totalAmount.ToString("N0") đ
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <p class="estimate-note">
+                        Chi phí vận chuyển, thuế và tiền cọc thuê
+                        sẽ được xác nhận trong bước Checkout.
+                    </p>
+
+                    <a href="@Url.Action("Index", "Checkout")"
+                       class="checkout-button">
+
+                        <span class="material-symbols-outlined">
+                            verified
+                        </span>
+
+                        Tiến hành Checkout
+                    </a>
+
+                    <p class="checkout-note">
+                        Đơn hàng chỉ được xác nhận sau khi nhân viên
+                        kiểm tra tồn kho và thống nhất yêu cầu dự án.
+                    </p>
+
+                </section>
+
+                @* HỖ TRỢ KHÁCH HÀNG *@
+                <section class="trust-card">
+
+                    <span class="material-symbols-outlined">
+                        support_agent
+                    </span>
+
+                    <div>
+                        <h2>Cần hỗ trợ cho dự án?</h2>
+
+                        <p>
+                            Liên hệ để xác nhận giá, vận chuyển
+                            và hồ sơ kỹ thuật.
+                        </p>
+
+                        <a href="tel:0988683977">
+                            0988 683 977
+                        </a>
+                    </div>
+
+                </section>
+
+            </aside>
+
+        </div>
+    }
+
+</main>

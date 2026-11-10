@@ -1,0 +1,219 @@
+﻿.site-shell-footer {
+    width: 100%;
+    border-top: 1px solid #262626;
+    background: #080808;
+    color: #a3a3a3;
+    font-family: "Be Vietnam Pro", Arial, sans-serif;
+    font-size: 10px;
+}
+
+    .site-shell-footer *,
+    .site-shell-footer *::before,
+    .site-shell-footer *::after {
+        box-sizing: border-box;
+    }
+
+.site-shell-footer-inner {
+    width: min(1440px, calc(100% - 64px));
+    margin: 0 auto;
+    padding: 44px 0 20px;
+}
+
+.site-shell-footer-grid {
+    display: grid;
+    grid-template-columns: minmax(240px, 1.7fr) repeat(2, minmax(150px, 1fr));
+    gap: clamp(22px, 4vw, 58px);
+    padding-bottom: 30px;
+    border-bottom: 1px solid #1c1c1c;
+}
+
+.site-shell-footer-about {
+    max-width: 520px;
+}
+
+.site-shell-footer-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .6px;
+    text-decoration: none;
+}
+
+    .site-shell-footer-brand b {
+        color: #e50920;
+    }
+
+    .site-shell-footer-brand small {
+        display: block;
+        margin-top: 2px;
+        color: #858585;
+        font-size: 7px;
+        font-weight: 500;
+        letter-spacing: 1px;
+    }
+
+.site-shell-footer-mark {
+    display: grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: 5px;
+    background: #e50920;
+    color: white;
+    font-size: 21px;
+    font-style: italic;
+}
+
+.site-shell-footer-about > p {
+    max-width: 480px;
+    margin: 13px 0 14px;
+    color: #b0b0b0;
+    font-size: 10px;
+    line-height: 1.8;
+}
+
+.site-shell-footer-contact {
+    display: grid;
+    gap: 8px;
+}
+
+    .site-shell-footer-contact p {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        margin: 0;
+        color: #a3a3a3;
+        font-size: 9px;
+        line-height: 1.7;
+    }
+
+    .site-shell-footer-contact .material-symbols-outlined {
+        flex: 0 0 auto;
+        color: #e50920;
+        font-size: 16px;
+    }
+
+    .site-shell-footer-contact strong,
+    .site-shell-footer-contact a {
+        display: block;
+    }
+
+    .site-shell-footer-contact strong {
+        color: #fff;
+        font-size: 9px;
+    }
+
+    .site-shell-footer-contact a {
+        margin-top: 2px;
+        color: #ff6675;
+        font: 600 10px "Roboto Mono", monospace;
+        text-decoration: none;
+    }
+
+.site-shell-footer-column {
+    display: flex;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+}
+
+    .site-shell-footer-column h2 {
+        margin: 1px 0 4px;
+        color: #fff;
+        font-size: 10px;
+        font-weight: 800;
+        letter-spacing: .55px;
+        text-transform: uppercase;
+    }
+
+    .site-shell-footer-column a {
+        display: inline-flex;
+        min-height: 30px;
+        align-items: center;
+        color: #a3a3a3;
+        font-size: 9px;
+        line-height: 1.5;
+        text-decoration: none;
+        transition: color .18s ease;
+    }
+
+        .site-shell-footer-column a:hover {
+            color: #fff;
+        }
+
+.site-shell-footer-bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding-top: 16px;
+    color: #858585;
+    font-size: 8px;
+}
+
+    .site-shell-footer-bottom p {
+        margin: 0;
+        line-height: 1.7;
+    }
+
+    .site-shell-footer-bottom a {
+        color: #b5b5b5;
+        font-size: 8px;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+.site-shell-footer a:focus-visible {
+    outline: 2px solid #ffb3ac;
+    outline-offset: 3px;
+}
+
+@media (max-width: 760px) {
+    .site-shell-footer-inner {
+        width: calc(100% - 36px);
+    }
+
+    .site-shell-footer-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 23px 20px;
+    }
+
+    .site-shell-footer-about {
+        grid-column: 1 / -1;
+        max-width: none;
+    }
+}
+
+@media (max-width: 430px) {
+    .site-shell-footer-inner {
+        width: calc(100% - 28px);
+        padding-top: 32px;
+    }
+
+    .site-shell-footer-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .site-shell-footer-about {
+        grid-column: auto;
+    }
+
+    .site-shell-footer-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .site-shell-footer *,
+    .site-shell-footer *::before,
+    .site-shell-footer *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        transition-duration: .01ms !important;
+    }
+}
