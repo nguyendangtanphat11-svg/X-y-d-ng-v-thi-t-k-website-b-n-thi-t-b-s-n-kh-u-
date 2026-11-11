@@ -30,6 +30,7 @@
             action,
             StringComparison.OrdinalIgnoreCase);
 
+    // Trạng thái active cho các nhóm chức năng
     bool isDashboardActive =
         isController("Admin") && isAction("Index");
 
@@ -38,9 +39,6 @@
 
     bool isProductsActive =
         isController("AdminProduct");
-
-    bool isCustomersActive =
-        isController("AdminCustomer");
 
     bool isInventoryActive =
         isController("AdminInventory");
@@ -51,12 +49,21 @@
     bool isInventoryHistoryActive =
         isInventoryActive && isAction("History");
 
+    bool isCustomersActive =
+        isController("AdminCustomer");
+
+    bool isConsultationsActive =
+        isController("AdminConsultation");
+
+    bool isReviewsActive =
+        isController("AdminReview");
+
     string avatarLetter =
         string.IsNullOrWhiteSpace(currentUserName)
             ? "A"
             : currentUserName.Substring(0, 1).ToUpperInvariant();
 
-    // Partial View dùng chung cho các chức năng đang phát triển.
+    // Partial View dùng chung cho các chức năng đang phát triển / sắp ra mắt.
     Func<string, string, IHtmlString> comingSoon = (icon, text) =>
     {
         var partialViewData =
@@ -215,7 +222,7 @@
 
                 </a>
 
-                <!-- CATEGORIES -->
+                <!-- CATEGORIES (Coming Soon) -->
                 @comingSoon("category", "Danh mục")
 
                 <!-- INVENTORY -->
@@ -250,7 +257,7 @@
 
                 </a>
 
-                <!-- PROMOTIONS -->
+                <!-- PROMOTIONS (Coming Soon) -->
                 @comingSoon("local_offer", "Khuyến mãi")
 
             </div>
@@ -278,11 +285,37 @@
 
                 </a>
 
-                <!-- CONSULTING -->
-                @comingSoon("support_agent", "Yêu cầu tư vấn")
+                <!-- CONSULTATIONS -->
+                <a href="@Url.Action("Consultations", "AdminConsultation")"
+                   class="admin-nav-item @(isConsultationsActive ? "is-active" : "")"
+                   @(isConsultationsActive ? "aria-current=page" : "")>
+
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
+                        support_agent
+                    </span>
+
+                    <span class="admin-nav-text">
+                        Yêu cầu tư vấn
+                    </span>
+
+                </a>
 
                 <!-- REVIEWS -->
-                @comingSoon("reviews", "Đánh giá sản phẩm")
+                <a href="@Url.Action("Reviews", "AdminReview")"
+                   class="admin-nav-item @(isReviewsActive ? "is-active" : "")"
+                   @(isReviewsActive ? "aria-current=page" : "")>
+
+                    <span class="material-symbols-outlined"
+                          aria-hidden="true">
+                        rate_review
+                    </span>
+
+                    <span class="admin-nav-text">
+                        Đánh giá sản phẩm
+                    </span>
+
+                </a>
 
             </div>
 
