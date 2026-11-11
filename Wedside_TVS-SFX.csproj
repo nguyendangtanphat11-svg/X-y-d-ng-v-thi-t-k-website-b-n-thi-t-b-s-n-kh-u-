@@ -194,11 +194,19 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+<<<<<<< HEAD
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminCustomerController.cs" />
     <Compile Include="Controllers\AdminInventoryController.cs" />
     <Compile Include="Controllers\AdminOrderController.cs" />
     <Compile Include="Controllers\AdminProductController.cs" />
+=======
+    <Compile Include="Controllers\AdminConsultationController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
+    <Compile Include="Controllers\AdminOrderController.cs" />
+    <Compile Include="Controllers\AdminProductController.cs" />
+    <Compile Include="Controllers\AdminReviewController.cs" />
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <Compile Include="Controllers\Base\AdminAuthorizeAttribute.cs" />
     <Compile Include="Controllers\CartController.cs" />
     <Compile Include="Controllers\CatalogController.cs" />
@@ -275,9 +283,13 @@
     <Compile Include="Models\VaiTro.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
+<<<<<<< HEAD
     <Compile Include="ViewModels\Admin\AdminCustomerViewModels.cs" />
     <Compile Include="ViewModels\Admin\AdminDashboardViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminInventoryViewModel.cs" />
+=======
+    <Compile Include="ViewModels\Admin\AdminDashboardViewModel.cs" />
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <Compile Include="ViewModels\Admin\AdminOrderDetailViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminOrderListViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminProductDetailViewModel.cs" />
@@ -301,6 +313,10 @@
     <Compile Include="ViewModels\ProfileViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
+=======
+    <Content Include="Content\css\admin\admin-consultations.css" />
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <Content Include="Content\css\admin\admin-dashboard.css" />
     <Content Include="Content\css\admin\admin-header.css" />
     <Content Include="Content\css\admin\admin-layout.css" />
@@ -309,6 +325,10 @@
     <Content Include="Content\css\admin\admin-product-detail.css" />
     <Content Include="Content\css\admin\admin-product-form.css" />
     <Content Include="Content\css\admin\admin-products.css" />
+<<<<<<< HEAD
+=======
+    <Content Include="Content\css\admin\admin-reviews.css" />
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <Content Include="Content\css\admin\admin-sidebar.css" />
     <Content Include="Content\css\auth.css" />
     <Content Include="Content\css\cart.css" />
@@ -344,7 +364,10 @@
       <DependentUpon>StageFxModel.edmx</DependentUpon>
     </Content>
     <Content Include="Scripts\admin\admin-dashboard.js" />
+<<<<<<< HEAD
     <Content Include="Scripts\admin\admin-inventory.js" />
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <Content Include="Scripts\admin\admin-layout.js" />
     <Content Include="Scripts\admin\admin-order-detail.js" />
     <Content Include="Scripts\admin\admin-orders.js" />
@@ -358,7 +381,10 @@
     <Content Include="Scripts\header.js" />
     <Content Include="Scripts\home.js" />
     <Content Include="Scripts\product-detail.js" />
+<<<<<<< HEAD
     <Content Include="Content\css\admin\admin-inventory.css" />
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -401,9 +427,14 @@
     <Content Include="Views\Admin\ProductEdit.cshtml" />
     <Content Include="Views\Admin\_AdminProductForm.cshtml" />
     <Content Include="Views\Admin\ProductDetail.cshtml" />
+<<<<<<< HEAD
     <Content Include="Views\Admin\Customers.cshtml" />
     <Content Include="Views\Admin\Inventory.cshtml" />
     <Content Include="Views\Admin\InventoryHistory.cshtml" />
+=======
+    <Content Include="Views\Admin\Consultations.cshtml" />
+    <Content Include="Views\Admin\Reviews.cshtml" />
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />
@@ -444,4 +475,13 @@
     <Error Condition="!Exists('packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets'))" />
   </Target>
   <Import Project="packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets" Condition="Exists('packages\System.ValueTuple.4.6.2\build\net471\System.ValueTuple.targets')" />
+<<<<<<< HEAD
+=======
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 </Project>

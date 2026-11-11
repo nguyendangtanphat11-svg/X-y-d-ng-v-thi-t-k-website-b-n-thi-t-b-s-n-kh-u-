@@ -44,8 +44,13 @@ namespace STAGEFX_PRO.Controllers
             }
             catch (Exception)
             {
+<<<<<<< HEAD
                 // Gi? dashboard ? tr?ng thái r?ng khi database không kh? d?ng.
                 // Không ??a chi ti?t exception ra giao di?n qu?n tr?.
+=======
+                // Gi? dashboard ? tr?ng thï¿½i r?ng khi database khï¿½ng kh? d?ng.
+                // Khï¿½ng ??a chi ti?t exception ra giao di?n qu?n tr?.
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 model = new AdminDashboardViewModel();
             }
 
@@ -153,7 +158,11 @@ namespace STAGEFX_PRO.Controllers
                         MaSanPham = x.MaSanPham,
                         TenSanPham = snapshot != null
                             ? snapshot.TenSanPhamLucDat
+<<<<<<< HEAD
                             : "Không xác ??nh",
+=======
+                            : "Khï¿½ng xï¿½c ??nh",
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                         SKU = snapshot != null
                             ? snapshot.SKULucDat
                             : null,

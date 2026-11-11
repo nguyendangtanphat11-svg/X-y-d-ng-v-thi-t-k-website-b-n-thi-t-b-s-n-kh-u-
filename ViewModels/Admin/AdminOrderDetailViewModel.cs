@@ -35,6 +35,7 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
 
         public string GhiChu { get; set; }
 
+<<<<<<< HEAD
         public List<System.Web.Mvc.SelectListItem> AllowedStatusTransitions { get; set; }
             = new List<System.Web.Mvc.SelectListItem>();
 
@@ -43,6 +44,8 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
 
         public AdminOrderCancellationViewModel CancellationRequest { get; set; }
 
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         public List<AdminOrderDetailProductViewModel> Products { get; set; }
             = new List<AdminOrderDetailProductViewModel>();
 
@@ -50,6 +53,7 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
             = new List<AdminOrderPaymentViewModel>();
     }
 
+<<<<<<< HEAD
     public class AdminOrderStatusHistoryViewModel
     {
         public string TrangThaiCu { get; set; }
@@ -71,6 +75,8 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
         public DateTime? NgayXuLy { get; set; }
     }
 
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     public class AdminOrderDetailProductViewModel
     {
         public int MaChiTietDonHang { get; set; }

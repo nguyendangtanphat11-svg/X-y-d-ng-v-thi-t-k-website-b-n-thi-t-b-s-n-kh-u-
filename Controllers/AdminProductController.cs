@@ -305,6 +305,7 @@ namespace STAGEFX_PRO.Controllers
                     .ToList();
 
                 var inventoryHistory = db.LichSuKho
+<<<<<<< HEAD
     .AsNoTracking()
     .Where(x => x.MaSanPham == id)
     .OrderByDescending(x => x.NgayTao)
@@ -318,6 +319,21 @@ namespace STAGEFX_PRO.Controllers
         GhiChu = x.GhiChu
     })
     .ToList();
+=======
+                    .AsNoTracking()
+                    .Where(x => x.MaSanPham == id)
+                    .OrderByDescending(x => x.NgayTao)
+                    .Select(x => new AdminInventoryHistoryViewModel
+                    {
+                        NgayTao = x.NgayTao,
+                        LoaiGiaoDich = x.LoaiGiaoDich,
+                        SoLuong = x.SoLuong,
+                        TonTruoc = x.TonTruoc,
+                        TonSau = x.TonSau,
+                        GhiChu = x.GhiChu
+                    })
+                    .ToList();
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
                 var model = new AdminProductDetailViewModel
                 {

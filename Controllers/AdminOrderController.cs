@@ -1,6 +1,9 @@
 ﻿
 using System;
+<<<<<<< HEAD
 using System.Collections.Generic;
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 using System.Linq;
 using System.Data;
 using System.Data.Entity;
@@ -17,6 +20,7 @@ namespace STAGEFX_PRO.Controllers
     {
         private const int PAGE_SIZE = 10;
 
+<<<<<<< HEAD
         private static readonly IDictionary<string, string[]> AllowedTransitions =
             new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
             {
@@ -30,6 +34,8 @@ namespace STAGEFX_PRO.Controllers
                 { "TuChoi", new string[0] }
             };
 
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         // =====================================================
         // 1. DANH SÁCH ĐƠN HÀNG
         // =====================================================
@@ -318,6 +324,7 @@ namespace STAGEFX_PRO.Controllers
                     SetPaymentRecordStatus(payment);
                 }
 
+<<<<<<< HEAD
                 model.AllowedStatusTransitions = GetAllowedStatusItems(order.TrangThai);
                 model.StatusHistory = db.LichSuTrangThaiDonHang
                     .AsNoTracking()
@@ -355,6 +362,8 @@ namespace STAGEFX_PRO.Controllers
                     .FirstOrDefault();
                 model.CancellationRequest = cancellation;
 
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 ViewBag.Title = "Chi tiết đơn hàng";
 
                 return View(
@@ -364,6 +373,7 @@ namespace STAGEFX_PRO.Controllers
             }
         }
 
+<<<<<<< HEAD
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateStatus(int orderId, string newStatus, string note)
@@ -391,6 +401,8 @@ namespace STAGEFX_PRO.Controllers
             return ProcessCancellation(orderId, requestId, false, note);
         }
 
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         // =====================================================
         // 3. XÁC NHẬN ĐƠN HÀNG
         // =====================================================
@@ -472,6 +484,7 @@ namespace STAGEFX_PRO.Controllers
                     if (order == null)
                         return HttpNotFound();
 
+<<<<<<< HEAD
                     string[] transitions;
                     if (!AllowedTransitions.TryGetValue(order.TrangThai ?? "", out transitions) ||
                         !transitions.Contains(newStatus, StringComparer.OrdinalIgnoreCase))
@@ -480,6 +493,16 @@ namespace STAGEFX_PRO.Controllers
                             "Không thể chuyển trạng thái theo quy trình hiện tại.";
 
                         return RedirectToAction("OrderDetail", new { id = orderId });
+=======
+                    // CHỈ CHO PHÉP XỬ LÝ ĐƠN CHỜ XÁC NHẬN
+                    if (order.TrangThai != "ChoXacNhan")
+                    {
+                        TempData["OrderError"] =
+                            "Đơn hàng không còn ở trạng thái chờ xác nhận. " +
+                            "Vui lòng tải lại danh sách.";
+
+                        return RedirectToAction("Orders");
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                     }
 
                     DateTime now = DateTime.Now;
@@ -510,7 +533,14 @@ namespace STAGEFX_PRO.Controllers
                     // HOÀN TẤT TRANSACTION
                     transaction.Commit();
 
+<<<<<<< HEAD
                     TempData["OrderSuccess"] = "Đã cập nhật trạng thái đơn hàng thành công.";
+=======
+                    TempData["OrderSuccess"] =
+                        newStatus == "DaXacNhan"
+                            ? "Đã xác nhận đơn hàng thành công."
+                            : "Đã từ chối đơn hàng thành công.";
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 }
             }
             catch (Exception)
@@ -520,6 +550,7 @@ namespace STAGEFX_PRO.Controllers
                     "Vui lòng kiểm tra dữ liệu và thử lại.";
             }
 
+<<<<<<< HEAD
             return RedirectToAction("OrderDetail", new { id = orderId });
         }
 
@@ -627,6 +658,9 @@ namespace STAGEFX_PRO.Controllers
             var item = new AdminOrderItemViewModel { TrangThai = status };
             SetOrderStatus(item);
             return item.OrderStatusText;
+=======
+            return RedirectToAction("Orders");
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         }
 
         // =====================================================

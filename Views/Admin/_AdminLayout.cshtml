@@ -1,4 +1,5 @@
 
+<<<<<<< HEAD
 @using System
 
 @{
@@ -73,6 +74,26 @@
     };
 }
 
+=======
+@{
+    string pageTitle = ViewBag.Title ?? "Bảng điều khiển";
+    string currentController = ViewContext.RouteData.Values["controller"] as string ?? "";
+    string currentAction = ViewContext.RouteData.Values["action"] as string ?? "";
+
+    string currentUserName = Session["HoTen"] as string ?? "";
+    string currentUserEmail = Session["Email"] as string ?? "";
+    string currentRole = Session["TenVaiTro"] as string ?? "ADMINISTRATOR";
+
+    Func<string, bool> isActive = controller =>
+        string.Equals(currentController, controller, StringComparison.OrdinalIgnoreCase);
+
+    bool isDashboardActive =
+        isActive("Admin") &&
+        string.Equals(currentAction, "Index", StringComparison.OrdinalIgnoreCase);
+
+    bool isOrdersActive = isActive("AdminOrder");
+}
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -82,11 +103,16 @@
 
     <title>@pageTitle - STAGEFX PRO Admin</title>
 
+<<<<<<< HEAD
     <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect"
           href="https://fonts.gstatic.com"
           crossorigin />
+=======
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
     <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&display=swap"
           rel="stylesheet" />
@@ -94,7 +120,10 @@
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
           rel="stylesheet" />
 
+<<<<<<< HEAD
     <!-- ADMIN STYLES -->
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <link rel="stylesheet"
           href="@Url.Content("~/Content/css/admin/admin-layout.css")" />
 
@@ -109,7 +138,10 @@
 
 <body class="admin-shell">
 
+<<<<<<< HEAD
     <!-- SIDEBAR BACKDROP -->
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <div class="admin-shell-backdrop"
          data-admin-sidebar-close
          aria-hidden="true">
@@ -120,7 +152,10 @@
            id="admin-sidebar"
            aria-label="Điều hướng quản trị">
 
+<<<<<<< HEAD
         <!-- BRAND -->
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         <div class="admin-sidebar-brand">
 
             <a href="@Url.Action("Index", "Admin")"
@@ -133,7 +168,10 @@
                     <strong>STAGEFX <b>PRO</b></strong>
                     <small>ADMINISTRATOR PANEL</small>
                 </span>
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
             </a>
 
             <button type="button"
@@ -141,6 +179,7 @@
                     data-admin-sidebar-close
                     aria-label="Đóng menu">
 
+<<<<<<< HEAD
                 <span class="material-symbols-outlined"
                       aria-hidden="true">
                     close
@@ -153,10 +192,20 @@
         <!-- NAVIGATION -->
         <nav class="admin-navigation"
              aria-label="Menu quản trị">
+=======
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    close
+                </span>
+            </button>
+        </div>
+
+        <nav class="admin-navigation" aria-label="Menu quản trị">
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
             <!-- OVERVIEW -->
             <div class="admin-nav-group">
 
+<<<<<<< HEAD
                 <span class="admin-nav-label">
                     OVERVIEW
                 </span>
@@ -174,6 +223,19 @@
                         Dashboard
                     </span>
 
+=======
+                <span class="admin-nav-label">OVERVIEW</span>
+
+                <a class="admin-nav-item @(isDashboardActive ? "is-active" : "")"
+                   href="@Url.Action("Index", "Admin")"
+                   @(isDashboardActive ? "aria-current=page" : "")>
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        dashboard
+                    </span>
+
+                    <span class="admin-nav-text">Dashboard</span>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 </a>
 
             </div>
@@ -181,15 +243,21 @@
             <!-- BUSINESS MANAGEMENT -->
             <div class="admin-nav-group">
 
+<<<<<<< HEAD
                 <span class="admin-nav-label">
                     BUSINESS MANAGEMENT
                 </span>
 
                 <!-- ORDERS -->
+=======
+                <span class="admin-nav-label">BUSINESS MANAGEMENT</span>
+
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 <a href="@Url.Action("Orders", "AdminOrder")"
                    class="admin-nav-item @(isOrdersActive ? "is-active" : "")"
                    @(isOrdersActive ? "aria-current=page" : "")>
 
+<<<<<<< HEAD
                     <span class="material-symbols-outlined"
                           aria-hidden="true">
                         receipt_long
@@ -254,12 +322,73 @@
 
                 <!-- PROMOTIONS -->
                 @comingSoon("local_offer", "Khuyến mãi")
+=======
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        receipt_long
+                    </span>
+
+                    <span class="admin-nav-text">Đơn hàng</span>
+                </a>
+                <a href="@Url.Action("Consultations", "AdminConsultation")"
+                   class="admin-nav-item @(isActive("AdminConsultation") ? "is-active" : "")">
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        support_agent
+                    </span>
+
+                    <span class="admin-nav-text">
+                        Yêu cầu tư vấn
+                    </span>
+
+                </a>
+                <a href="@Url.Action("Reviews", "AdminReview")"
+                   class="admin-nav-item @(ViewContext.RouteData.Values["controller"].ToString() == "AdminReview" ? "is-active" : "")">
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        rate_review
+                    </span>
+                    <span class="admin-nav-text">
+                        Đánh giá sản phẩm
+                    </span>
+                </a>
+                <a href="@Url.Action("Products", "AdminProduct")"
+                   class="admin-nav-item">
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        inventory_2
+                    </span>
+                    <span class="admin-nav-text">Sản phẩm</span>
+                </a>
+
+                @Html.Partial(
+                                   "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                                   new ViewDataDictionary {
+                        { "Icon", "category" },
+                        { "Text", "Danh mục" }
+                       }
+                               )
+
+                @Html.Partial(
+                                   "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                                   new ViewDataDictionary {
+                        { "Icon", "warehouse" },
+                        { "Text", "Kho hàng" }
+                       }
+                               )
+
+                @Html.Partial(
+                                   "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                                   new ViewDataDictionary {
+                        { "Icon", "local_offer" },
+                        { "Text", "Khuyến mãi" }
+                       }
+                               )
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
             </div>
 
             <!-- CUSTOMER MANAGEMENT -->
             <div class="admin-nav-group">
 
+<<<<<<< HEAD
                 <span class="admin-nav-label">
                     CUSTOMER MANAGEMENT
                 </span>
@@ -285,12 +414,40 @@
 
                 <!-- REVIEWS -->
                 @comingSoon("reviews", "Đánh giá sản phẩm")
+=======
+                <span class="admin-nav-label">CUSTOMER MANAGEMENT</span>
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "business" },
+                        { "Text", "Khách hàng B2B" }
+                     }
+                     )
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "support_agent" },
+                        { "Text", "Yêu cầu tư vấn" }
+                     }
+                     )
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "reviews" },
+                        { "Text", "Đánh giá sản phẩm" }
+                     }
+                     )
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
             </div>
 
             <!-- REPORTS & SYSTEM -->
             <div class="admin-nav-group">
 
+<<<<<<< HEAD
                 <span class="admin-nav-label">
                     REPORTS &amp; SYSTEM
                 </span>
@@ -298,11 +455,31 @@
                 @comingSoon("bar_chart", "Báo cáo")
 
                 @comingSoon("settings", "Cài đặt")
+=======
+                <span class="admin-nav-label">REPORTS &amp; SYSTEM</span>
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "bar_chart" },
+                        { "Text", "Báo cáo" }
+                     }
+                     )
+
+                @Html.Partial(
+                         "~/Views/Admin/_AdminComingSoonItem.cshtml",
+                         new ViewDataDictionary {
+                        { "Icon", "settings" },
+                        { "Text", "Cài đặt" }
+                     }
+                     )
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
             </div>
 
         </nav>
 
+<<<<<<< HEAD
         <!-- SIDEBAR FOOTER -->
         <div class="admin-sidebar-footer">
 
@@ -314,6 +491,11 @@
                 Hệ thống hoạt động
             </span>
 
+=======
+        <div class="admin-sidebar-footer">
+            <span class="admin-status-dot" aria-hidden="true"></span>
+            <span>Hệ thống hoạt động</span>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         </div>
 
     </aside>
@@ -326,7 +508,10 @@
 
             <div class="admin-header-left">
 
+<<<<<<< HEAD
                 <!-- SIDEBAR TOGGLE -->
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 <button type="button"
                         class="admin-sidebar-toggle"
                         data-admin-sidebar-toggle
@@ -334,6 +519,7 @@
                         aria-controls="admin-sidebar"
                         aria-label="Thu gọn menu">
 
+<<<<<<< HEAD
                     <span class="material-symbols-outlined"
                           aria-hidden="true">
                         menu
@@ -349,6 +535,18 @@
 
                     <span class="material-symbols-outlined"
                           aria-hidden="true">
+=======
+                    <span class="material-symbols-outlined" aria-hidden="true">
+                        menu
+                    </span>
+                </button>
+
+                <div class="admin-breadcrumb" aria-label="Breadcrumb">
+
+                    <span>Admin</span>
+
+                    <span class="material-symbols-outlined" aria-hidden="true">
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                         chevron_right
                     </span>
 
@@ -360,22 +558,33 @@
 
             <div class="admin-header-right">
 
+<<<<<<< HEAD
                 <!-- CURRENT PAGE -->
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 <div class="admin-current-page">
 
                     <span class="admin-current-page-label">
                         TRANG HIỆN TẠI
                     </span>
 
+<<<<<<< HEAD
                     <strong>
                         @pageTitle
                     </strong>
+=======
+                    <strong>@pageTitle</strong>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
                 </div>
 
                 <!-- ACCOUNT MENU -->
+<<<<<<< HEAD
                 <div class="admin-account"
                      data-admin-account>
+=======
+                <div class="admin-account" data-admin-account>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
                     <button type="button"
                             class="admin-account-toggle"
@@ -383,6 +592,7 @@
                             aria-expanded="false"
                             aria-controls="admin-account-menu">
 
+<<<<<<< HEAD
                         <span class="admin-account-avatar"
                               aria-hidden="true">
                             @avatarLetter
@@ -398,6 +608,17 @@
                                 @currentRole
                             </small>
 
+=======
+                        <span class="admin-account-avatar" aria-hidden="true">
+                            @(string.IsNullOrWhiteSpace(currentUserName)
+                                ? "A"
+                                : currentUserName.Substring(0, 1).ToUpperInvariant())
+                        </span>
+
+                        <span class="admin-account-details">
+                            <strong>@currentUserName</strong>
+                            <small>@currentRole</small>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                         </span>
 
                         <span class="material-symbols-outlined admin-account-chevron"
@@ -407,13 +628,17 @@
 
                     </button>
 
+<<<<<<< HEAD
                     <!-- ACCOUNT DROPDOWN -->
+=======
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                     <div class="admin-account-menu"
                          id="admin-account-menu"
                          hidden>
 
                         <div class="admin-account-menu-user">
 
+<<<<<<< HEAD
                             <strong>
                                 @currentUserName
                             </strong>
@@ -459,6 +684,34 @@
                                 Đăng xuất
                             </span>
 
+=======
+                            <strong>@currentUserName</strong>
+                            <span>@currentUserEmail</span>
+                            <small>@currentRole</small>
+
+                        </div>
+
+                        <div class="admin-account-divider"></div>
+
+                        <a href="@Url.Action("Profile", "Account")"
+                           class="admin-account-menu-item">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                person
+                            </span>
+
+                            <span>Thông tin tài khoản</span>
+                        </a>
+
+                        <a href="@Url.Action("Logout", "Account")"
+                           class="admin-account-menu-item admin-logout-link">
+
+                            <span class="material-symbols-outlined" aria-hidden="true">
+                                logout
+                            </span>
+
+                            <span>Đăng xuất</span>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                         </a>
 
                     </div>
@@ -469,17 +722,24 @@
 
         </header>
 
+<<<<<<< HEAD
         <!-- PAGE CONTENT -->
         <main class="admin-main"
               id="admin-main-content">
 
             @RenderBody()
 
+=======
+        <!-- PAGE BODY -->
+        <main class="admin-main" id="admin-main-content">
+            @RenderBody()
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         </main>
 
         <!-- FOOTER -->
         <footer class="admin-footer">
 
+<<<<<<< HEAD
             <span>
                 STAGEFX PRO
             </span>
@@ -491,16 +751,29 @@
             <span>
                 &copy; @DateTime.Now.Year
             </span>
+=======
+            <span>STAGEFX PRO</span>
+            <span>Admin panel v1.0</span>
+            <span>&copy; @DateTime.Now.Year</span>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
         </footer>
 
     </div>
 
     <!-- JAVASCRIPT -->
+<<<<<<< HEAD
     <script src="@Url.Content("~/Scripts/admin/admin-layout.js")"
             defer></script>
+=======
+    <script src="@Url.Content("~/Scripts/admin/admin-layout.js")" defer></script>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
     @RenderSection("scripts", required: false)
 
 </body>
+<<<<<<< HEAD
 </html>
+=======
+</html>
+>>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
