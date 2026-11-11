@@ -1,13 +1,8 @@
-<<<<<<< HEAD
-﻿@using System.Linq
+@using System.Linq
 @model Wedside_TVS_SFX.ViewModels.Admin.AdminOrderDetailViewModel
-=======
-﻿@model Wedside_TVS_SFX.ViewModels.Admin.AdminOrderDetailViewModel
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
 @{
     ViewBag.Title = "Chi tiết đơn hàng";
-
     Layout = "~/Views/Admin/_AdminLayout.cshtml";
 }
 
@@ -82,7 +77,6 @@
 
     </section>
 
-<<<<<<< HEAD
     @if (TempData["OrderSuccess"] != null || TempData["OrderError"] != null)
     {
         <div class="order-action-message @(TempData["OrderError"] != null ? "is-error" : "is-success")">
@@ -124,11 +118,10 @@
             {
                 <div class="order-cancellation-actions">
                     @using (Html.BeginForm("ApproveCancellation", "AdminOrder", FormMethod.Post, new { @class = "order-inline-form" }))
-                    { @Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Ghi chú xử lý" /><button class="order-confirm-button" type="submit" data-confirm-cancellation>Chấp nhận hủy</button> }
+                    {@Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Ghi chú xử lý" /><button class="order-confirm-button" type="submit" data-confirm-cancellation>Chấp nhận hủy</button>}
                     @using (Html.BeginForm("RejectCancellation", "AdminOrder", FormMethod.Post, new { @class = "order-inline-form" }))
-                    { @Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Lý do từ chối" /><button class="order-reject-button" type="submit">Từ chối</button> }
+                    {@Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Lý do từ chối" /><button class="order-reject-button" type="submit">Từ chối</button>}
                 </div>
-
             }
         </section>
     }
@@ -143,7 +136,6 @@
                     <article class="order-status-history-item"><div class="order-status-history-marker"></div><div><strong>@history.TrangThaiCuText → @history.TrangThaiMoiText</strong><small>@history.NguoiThucHien · @history.NgayThayDoi.ToString("dd/MM/yyyy HH:mm")</small><p>@(string.IsNullOrWhiteSpace(history.GhiChu) ? "Không có ghi chú." : history.GhiChu)</p></div></article>
                 }
             </div>
-
         }
         else
         {
@@ -151,8 +143,6 @@
         }
     </section>
 
-=======
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     <!-- CUSTOMER INFORMATION -->
     <div class="order-detail-two-columns">
 
@@ -446,12 +436,7 @@
 
     </section>
 
-<<<<<<< HEAD
 </div>
 
 @section scripts {
-    <script src="@Url.Content("~/Scripts/admin/admin-order-detail.js")" defer></script>
-}
-=======
-</div>
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
+    <script src="@Url.Content("~/Scripts/admin/admin-order-detail.js")"

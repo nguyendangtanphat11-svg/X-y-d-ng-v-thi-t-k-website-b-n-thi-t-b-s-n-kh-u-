@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
@@ -44,13 +44,8 @@ namespace STAGEFX_PRO.Controllers
             }
             catch (Exception)
             {
-<<<<<<< HEAD
-                // Gi? dashboard ? tr?ng th�i r?ng khi database kh�ng kh? d?ng.
-                // Kh�ng ??a chi ti?t exception ra giao di?n qu?n tr?.
-=======
-                // Gi? dashboard ? tr?ng th�i r?ng khi database kh�ng kh? d?ng.
-                // Kh�ng ??a chi ti?t exception ra giao di?n qu?n tr?.
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
+                // Giữ dashboard ở trạng thái rỗng khi database không khả dụng.
+                // Không đưa chi tiết exception ra giao diện quản trị.
                 model = new AdminDashboardViewModel();
             }
 
@@ -158,11 +153,7 @@ namespace STAGEFX_PRO.Controllers
                         MaSanPham = x.MaSanPham,
                         TenSanPham = snapshot != null
                             ? snapshot.TenSanPhamLucDat
-<<<<<<< HEAD
-                            : "Kh�ng x�c ??nh",
-=======
-                            : "Kh�ng x�c ??nh",
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
+                            : "Không xác định",
                         SKU = snapshot != null
                             ? snapshot.SKULucDat
                             : null,

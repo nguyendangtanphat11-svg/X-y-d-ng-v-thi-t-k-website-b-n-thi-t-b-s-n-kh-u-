@@ -1,5 +1,4 @@
-using System;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Wedside_TVS_SFX.ViewModels.Admin
@@ -17,11 +16,7 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
 
         public int PendingOrders { get; set; }
 
-<<<<<<< HEAD
-        // Ch? t�nh t�i kho?n kh�ch h�ng ?ang ho?t ??ng (MaVaiTro = 3, TrangThai = true).
-=======
-        // Ch? t�nh t�i kho?n kh�ch h�ng ?ang ho?t ??ng (MaVaiTro = 3, TrangThai = true).
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
+        // Chỉ tính tài khoản khách hàng đang hoạt động (MaVaiTro = 3, TrangThai = true).
         public int TotalCustomers { get; set; }
 
         public int TotalProducts { get; set; }
@@ -63,11 +58,7 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
         public string SKU { get; set; }
         public int SoLuong { get; set; }
 
-<<<<<<< HEAD
-        // ?�y l� t?ng gi� tr? d�ng h�ng, kh�ng ph?i doanh thu ?� thu ti?n.
-=======
-        // ?�y l� t?ng gi� tr? d�ng h�ng, kh�ng ph?i doanh thu ?� thu ti?n.
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
+        // Đây là tổng giá trị dòng hàng, không phải doanh thu đã thu tiền.
         public decimal GiaTriDonHang { get; set; }
     }
 }

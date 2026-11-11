@@ -1,9 +1,5 @@
-﻿
-using System;
-<<<<<<< HEAD
+﻿using System;
 using System.Collections.Generic;
-=======
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 using System.Linq;
 using System.Data;
 using System.Data.Entity;
@@ -20,7 +16,6 @@ namespace STAGEFX_PRO.Controllers
     {
         private const int PAGE_SIZE = 10;
 
-<<<<<<< HEAD
         private static readonly IDictionary<string, string[]> AllowedTransitions =
             new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase)
             {
@@ -34,8 +29,6 @@ namespace STAGEFX_PRO.Controllers
                 { "TuChoi", new string[0] }
             };
 
-=======
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         // =====================================================
         // 1. DANH SÁCH ĐƠN HÀNG
         // =====================================================
@@ -324,7 +317,6 @@ namespace STAGEFX_PRO.Controllers
                     SetPaymentRecordStatus(payment);
                 }
 
-<<<<<<< HEAD
                 model.AllowedStatusTransitions = GetAllowedStatusItems(order.TrangThai);
                 model.StatusHistory = db.LichSuTrangThaiDonHang
                     .AsNoTracking()
@@ -362,8 +354,6 @@ namespace STAGEFX_PRO.Controllers
                     .FirstOrDefault();
                 model.CancellationRequest = cancellation;
 
-=======
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 ViewBag.Title = "Chi tiết đơn hàng";
 
                 return View(
@@ -373,7 +363,6 @@ namespace STAGEFX_PRO.Controllers
             }
         }
 
-<<<<<<< HEAD
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult UpdateStatus(int orderId, string newStatus, string note)
@@ -401,8 +390,6 @@ namespace STAGEFX_PRO.Controllers
             return ProcessCancellation(orderId, requestId, false, note);
         }
 
-=======
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         // =====================================================
         // 3. XÁC NHẬN ĐƠN HÀNG
         // =====================================================
@@ -457,7 +444,6 @@ namespace STAGEFX_PRO.Controllers
             if (orderId <= 0)
                 return HttpNotFound();
 
-            // Kiểm tra Session Admin
             if (Session["MaNguoiDung"] == null)
                 return new HttpStatusCodeResult(403);
 
@@ -477,14 +463,12 @@ namespace STAGEFX_PRO.Controllers
                     db.Database.BeginTransaction(
                         IsolationLevel.Serializable))
                 {
-                    // LẤY ĐƠN HÀNG
                     var order = db.DonHang.FirstOrDefault(
                         x => x.MaDonHang == orderId);
 
                     if (order == null)
                         return HttpNotFound();
 
-<<<<<<< HEAD
                     string[] transitions;
                     if (!AllowedTransitions.TryGetValue(order.TrangThai ?? "", out transitions) ||
                         !transitions.Contains(newStatus, StringComparer.OrdinalIgnoreCase))
@@ -493,26 +477,14 @@ namespace STAGEFX_PRO.Controllers
                             "Không thể chuyển trạng thái theo quy trình hiện tại.";
 
                         return RedirectToAction("OrderDetail", new { id = orderId });
-=======
-                    // CHỈ CHO PHÉP XỬ LÝ ĐƠN CHỜ XÁC NHẬN
-                    if (order.TrangThai != "ChoXacNhan")
-                    {
-                        TempData["OrderError"] =
-                            "Đơn hàng không còn ở trạng thái chờ xác nhận. " +
-                            "Vui lòng tải lại danh sách.";
-
-                        return RedirectToAction("Orders");
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                     }
 
                     DateTime now = DateTime.Now;
                     string oldStatus = order.TrangThai;
 
-                    // CẬP NHẬT ĐƠN HÀNG
                     order.TrangThai = newStatus;
                     order.NgayCapNhat = now;
 
-                    // GHI LỊCH SỬ
                     var history = new LichSuTrangThaiDonHang
                     {
                         MaDonHang = order.MaDonHang,
@@ -527,20 +499,11 @@ namespace STAGEFX_PRO.Controllers
 
                     db.Set<LichSuTrangThaiDonHang>().Add(history);
 
-                    // LƯU CẢ HAI THAY ĐỔI
                     db.SaveChanges();
 
-                    // HOÀN TẤT TRANSACTION
                     transaction.Commit();
 
-<<<<<<< HEAD
                     TempData["OrderSuccess"] = "Đã cập nhật trạng thái đơn hàng thành công.";
-=======
-                    TempData["OrderSuccess"] =
-                        newStatus == "DaXacNhan"
-                            ? "Đã xác nhận đơn hàng thành công."
-                            : "Đã từ chối đơn hàng thành công.";
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 }
             }
             catch (Exception)
@@ -550,7 +513,6 @@ namespace STAGEFX_PRO.Controllers
                     "Vui lòng kiểm tra dữ liệu và thử lại.";
             }
 
-<<<<<<< HEAD
             return RedirectToAction("OrderDetail", new { id = orderId });
         }
 
@@ -658,9 +620,6 @@ namespace STAGEFX_PRO.Controllers
             var item = new AdminOrderItemViewModel { TrangThai = status };
             SetOrderStatus(item);
             return item.OrderStatusText;
-=======
-            return RedirectToAction("Orders");
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
         }
 
         // =====================================================
