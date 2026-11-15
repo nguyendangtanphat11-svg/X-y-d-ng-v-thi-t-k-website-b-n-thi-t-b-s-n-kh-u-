@@ -234,6 +234,7 @@ img {
         color: var(--peach);
     }
 
+
 /* =========================================================
    5. HERO
 ========================================================= */
@@ -245,24 +246,31 @@ img {
     background: var(--dark);
 }
 
-.hero-bg {
+/* HERO VIDEO BACKGROUND */
+.hero-video {
     position: absolute;
     inset: 0;
     z-index: -2;
-    background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2LxpHbk7chfY_FD0NX2NuFJtwlypQxb1i00cYi593MgMfaa77_-WARBx07JPzfSJJMdl_ddNZhnPN7-M_kfyjcGy72_2AvAjfN6JKF0h86qdD3UrkNrQxT-RYUHPRTG7tEvtIcZ61-tNOk4gp8-GqZryyyXdDKl07h-qHs1sjsCiclcHhsZTL9IsCbXWtawK81fjIzJYplzS57-_IfyRqq_Mci7ShSlqqixNI6PSlvpYOSwJyWpu9RQ');
-    background-size: cover;
-    background-position: center;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
     filter: brightness(.78);
+    pointer-events: none;
 }
 
+/* VIDEO OVERLAY */
 .hero-scrim {
     position: absolute;
     inset: 0;
     z-index: -1;
     background: linear-gradient( 0deg, var(--dark) 0%, rgba(14, 14, 14, .78) 45%, rgba(14, 14, 14, .38) 100% ), linear-gradient( 90deg, var(--dark), rgba(14, 14, 14, .65) 58%, transparent );
+    pointer-events: none;
 }
 
 .hero-content {
+    position: relative;
+    z-index: 1;
     min-height: 680px;
     padding-top: 100px;
     padding-bottom: 38px;
@@ -338,6 +346,7 @@ img {
         color: var(--green);
         font-size: 18px;
     }
+
 
 /* =========================================================
    6. HERO STATISTICS
@@ -1420,5 +1429,45 @@ textarea:focus-visible {
         animation-duration: .01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: .01ms !important;
+    }
+}
+.category-image {
+    position: relative;
+    height: 205px;
+    overflow: hidden;
+    background-color: #171717;
+}
+
+    .category-image > img,
+    .category-image-placeholder {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        background-size: cover;
+        background-position: center;
+        transition: transform .4s ease;
+    }
+
+.category-card:hover .category-image > img {
+    transform: scale(1.05);
+}
+
+.category-image::before {
+    z-index: 1;
+}
+
+.category-image span {
+    z-index: 2;
+}
+
+@media (max-width: 720px) {
+    .category-image {
+        height: 150px;
+    }
+}
+
+@media (max-width: 420px) {
+    .category-image {
+        height: 190px;
     }
 }

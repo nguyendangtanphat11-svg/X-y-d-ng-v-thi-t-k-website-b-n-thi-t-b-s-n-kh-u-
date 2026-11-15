@@ -1349,4 +1349,32 @@ a {
     .primary-button:hover {
         color: #E50920 !important;
     }
+/* ==========================================
+   CART PRODUCT IMAGE
+========================================== */
 
+.item-image-wrap {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-product-image {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    border-radius: inherit;
+}
+
+.item-placeholder-icon {
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    color: #777;
+    font-size: 42px;
+}

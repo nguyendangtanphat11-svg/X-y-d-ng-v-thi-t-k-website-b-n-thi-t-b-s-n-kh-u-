@@ -58,6 +58,20 @@
                 <p>Nhập thông tin tài khoản của bạn.</p>
             </div>
 
+            @if (TempData["AuthSuccess"] != null)
+            {
+                <div class="auth-message">
+                    @TempData["AuthSuccess"]
+                </div>
+            }
+
+            @if (TempData["AuthError"] != null)
+            {
+                <div class="auth-message">
+                    @TempData["AuthError"]
+                </div>
+            }
+
             @using (Html.BeginForm("Login", "Account",
                 FormMethod.Post, new { @class = "auth-form" }))
             {
@@ -67,6 +81,7 @@
                 <input id="login-email"
                        name="email"
                        type="email"
+                       value="@ViewData["LoginEmail"]"
                        autocomplete="email"
                        placeholder="ten@congty.vn"
                        required />
@@ -110,7 +125,7 @@
                 </button>
 
                 @Html.ValidationSummary(
-                    false, "", new { @class = "auth-message" })
+                    true, "", new { @class = "auth-message" })
             }
 
             <p class="auth-switch">

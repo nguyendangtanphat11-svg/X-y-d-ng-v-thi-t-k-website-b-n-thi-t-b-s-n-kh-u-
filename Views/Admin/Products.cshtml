@@ -318,20 +318,17 @@
 
                                     <!-- VIEW -->
                                     <a class="product-action-btn view"
-                                       href="@Url.Action("ProductDetail", "AdminProduct", new { id = item.MaSanPham })"
-                                       title="Xem chi tiết">
+                                       href="@Url.Action("ProductDetail", "AdminProduct", new { id = item.MaSanPham })">
                                         <span class="material-symbols-outlined">visibility</span>
                                         Xem
                                     </a>
 
                                     <!-- EDIT -->
                                     <a class="product-action-btn edit"
-                                       href="@Url.Action("EditProduct", "AdminProduct", new { id = item.MaSanPham })"
-                                       title="Chỉnh sửa">
+                                       href="@Url.Action("EditProduct", "AdminProduct", new { id = item.MaSanPham })">
                                         <span class="material-symbols-outlined">edit</span>
                                         Sửa
                                     </a>
-
                                     <!-- TOGGLE STATUS -->
                                     @using (Html.BeginForm(
                                         "ToggleProductStatus",

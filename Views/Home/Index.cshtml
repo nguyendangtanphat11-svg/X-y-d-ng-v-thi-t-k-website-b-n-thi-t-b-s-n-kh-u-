@@ -1,9 +1,15 @@
 ﻿
 @model STAGEFX_PRO.ViewModels.HomeViewModel
 
+@using System
+@using System.Linq
+
 @{
     ViewBag.Title = "STAGEFX PRO | Giải pháp hiệu ứng sân khấu";
     Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var categories = Model.Categories;
+    var products = Model.Products;
 
     Func<string, string> getCategoryType = name =>
     {
@@ -29,10 +35,10 @@
 
     Func<string, string> getProductType = name =>
     {
-        var value = getCategoryType(name);
+        var type = getCategoryType(name);
 
-        if (value == "flame" || value == "fog" || value == "co2")
-            return value;
+        if (type == "flame" || type == "fog" || type == "co2")
+            return type;
 
         return "haze";
     };
@@ -40,168 +46,263 @@
 
 <main id="home">
 
-    <!-- HERO -->
-    <section class="hero">
-        <div class="hero-bg"></div>
+
+    <!-- ==========================================
+         01. HERO
+    =========================================== -->
+    <section class="hero" id="trang-chu">
+
+        <!-- HERO VIDEO BACKGROUND -->
+        <video class="hero-video"
+               autoplay
+               muted
+               loop
+               playsinline
+               preload="metadata"
+               poster="@Url.Content("~/Content/images/banner-fallback.jpg")">
+
+            <source src="@Url.Content("~/Content/videos/stage-banner.mp4")"
+                    type="video/mp4" />
+
+            Trình duyệt không hỗ trợ video.
+        </video>
+
         <div class="hero-scrim"></div>
 
         <div class="container hero-content">
+
             <div class="status-pill">
-                <i></i> DMX512 CONTROLLED
-                <span>|</span> CE/ROHS VERIFIED
-                <span>|</span> SYSTEM REV 4.2
+                <i></i>
+                <span>STAGEFX PRO</span>
+                <span>|</span>
+                <span>PROFESSIONAL STAGE SOLUTIONS</span>
             </div>
 
             <h1>
-                GIẢI PHÁP HIỆU ỨNG SÂN KHẤU
-                <em>CHUYÊN NGHIỆP</em>
+                GIẢI PHÁP HIỆU ỨNG
+                <em>SÂN KHẤU CHUYÊN NGHIỆP</em>
             </h1>
 
             <p class="hero-copy">
-                Thiết bị hiệu ứng hiện đại – Nâng tầm mọi sự kiện, đại nhạc hội
-                &amp; sân khấu truyền hình đỉnh cao với kiểm soát DMX chính xác
-                và tiêu chuẩn an toàn biểu diễn.
+                Cung cấp thiết bị hiệu ứng sân khấu và giải pháp kỹ thuật
+                dành cho công ty tổ chức sự kiện, đơn vị sản xuất chương trình
+                và nhà thầu sân khấu trên toàn quốc.
             </p>
 
             <div class="hero-actions">
-                <button class="btn btn-primary" type="button" data-scroll="#danh-muc">
-                    Khám phá thiết bị <span>→</span>
+
+                <button type="button"
+                        class="btn btn-primary"
+                        data-scroll="#danh-muc">
+                    Khám phá thiết bị
+                    <span>→</span>
                 </button>
 
-                <button class="btn btn-secondary" type="button" data-scroll="#tu-van">
-                    <span class="material-symbols-outlined">support_agent</span>
+                <button type="button"
+                        class="btn btn-secondary"
+                        data-scroll="#tu-van">
+                    <span class="material-symbols-outlined">
+                        support_agent
+                    </span>
                     Nhận tư vấn B2B
                 </button>
 
                 <span class="cert-note">
-                    <span class="material-symbols-outlined">verified_user</span>
-                    Hồ sơ CO/CQ &amp; PCCC đầy đủ
+                    <span class="material-symbols-outlined">
+                        verified_user
+                    </span>
+                    Tư vấn hồ sơ kỹ thuật và an toàn
                 </span>
+
             </div>
 
+            <!-- HERO STATS -->
             <div class="stats">
+
                 <div class="stat">
-                    <span class="material-symbols-outlined red">stadium</span>
+                    <span class="material-symbols-outlined red">
+                        stadium
+                    </span>
                     <div>
                         <strong>500+</strong>
-                        <small>Dự án đại nhạc hội toàn quốc</small>
+                        <small>Dự án sự kiện tham khảo</small>
                     </div>
                 </div>
 
                 <div class="stat">
-                    <span class="material-symbols-outlined green">verified</span>
+                    <span class="material-symbols-outlined green">
+                        verified
+                    </span>
                     <div>
-                        <strong>100%</strong>
-                        <small>Chuẩn an toàn CE / RoHS / ISO</small>
+                        <strong>CE / RoHS</strong>
+                        <small>Tiêu chuẩn thiết bị theo hồ sơ</small>
                     </div>
                 </div>
 
                 <div class="stat">
-                    <span class="material-symbols-outlined peach">published_with_changes</span>
+                    <span class="material-symbols-outlined peach">
+                        engineering
+                    </span>
                     <div>
-                        <strong>24 Tháng</strong>
-                        <small>Bảo hành linh kiện tận nơi</small>
+                        <strong>Technical</strong>
+                        <small>Hỗ trợ tư vấn kỹ thuật</small>
                     </div>
                 </div>
 
                 <div class="stat">
-                    <span class="material-symbols-outlined red">engineering</span>
+                    <span class="material-symbols-outlined red">
+                        settings_remote
+                    </span>
                     <div>
-                        <strong>24/7 Live</strong>
-                        <small>Kỹ sư trực chiến hiện trường</small>
+                        <strong>DMX512</strong>
+                        <small>Giải pháp điều khiển sân khấu</small>
                     </div>
                 </div>
+
             </div>
+
         </div>
     </section>
 
-    <!-- TRUST -->
+
+
+    <!-- ==========================================
+         02. TRUST / ADVANTAGES
+    =========================================== -->
     <section class="trust section-dark">
+
         <div class="container trust-grid">
 
             <article class="trust-card">
+
                 <div class="trust-top">
-                    <span class="material-symbols-outlined red">precision_manufacturing</span>
+                    <span class="material-symbols-outlined red">
+                        precision_manufacturing
+                    </span>
                     <code>PIL-01</code>
                 </div>
+
                 <h3>Thiết bị chuyên nghiệp</h3>
+
                 <p>
-                    Thiết bị chuẩn touring, linh kiện công nghiệp chịu tải cao
-                    trong suốt show diễn.
+                    Danh mục thiết bị hiệu ứng phục vụ sân khấu,
+                    sự kiện trực tiếp và chương trình biểu diễn.
                 </p>
+
             </article>
 
             <article class="trust-card">
+
                 <div class="trust-top">
-                    <span class="material-symbols-outlined orange">analytics</span>
+                    <span class="material-symbols-outlined orange">
+                        analytics
+                    </span>
                     <code>PIL-02</code>
                 </div>
+
                 <h3>Thông số minh bạch</h3>
+
                 <p>
-                    Công khai DMX512 profile, áp suất khí nén, công suất
-                    và chu kỳ vận hành.
+                    Cung cấp thông tin sản phẩm, thông số kỹ thuật
+                    và tài liệu tham khảo để khách hàng lựa chọn.
                 </p>
+
             </article>
 
             <article class="trust-card">
+
                 <div class="trust-top">
-                    <span class="material-symbols-outlined green">support_agent</span>
+                    <span class="material-symbols-outlined green">
+                        support_agent
+                    </span>
                     <code>PIL-03</code>
                 </div>
-                <h3>Hỗ trợ kỹ thuật 24/7</h3>
+
+                <h3>Tư vấn kỹ thuật</h3>
+
                 <p>
-                    Đội ngũ kỹ thuật hỗ trợ vận hành tour, xử lý DMX
-                    và kiểm tra an toàn tại chỗ.
+                    Hỗ trợ trao đổi về cấu hình thiết bị,
+                    khả năng kết nối và phương án triển khai.
                 </p>
+
             </article>
 
             <article class="trust-card">
+
                 <div class="trust-top">
-                    <span class="material-symbols-outlined peach">local_shipping</span>
+                    <span class="material-symbols-outlined peach">
+                        local_shipping
+                    </span>
                     <code>PIL-04</code>
                 </div>
-                <h3>Giao hàng theo lịch hẹn</h3>
+
+                <h3>Hỗ trợ giao nhận</h3>
+
                 <p>
-                    Vận chuyển flight-case chuyên dụng đến địa điểm sự kiện
-                    theo kế hoạch.
+                    Phối hợp kế hoạch giao nhận thiết bị
+                    theo thời gian và địa điểm của dự án.
                 </p>
+
             </article>
 
         </div>
     </section>
 
-    <!-- DANH MỤC ĐỘNG -->
+
+    <!-- ==========================================
+         03. CATEGORIES
+    =========================================== -->
     <section class="section categories" id="danh-muc">
+
         <div class="container">
 
             <div class="section-heading">
+
                 <div>
-                    <span class="eyebrow">⌁ HỆ THỐNG PHÂN LOẠI PHẦN CỨNG</span>
+                    <span class="eyebrow">
+                        ⌁ STAGEFX EQUIPMENT COLLECTION
+                    </span>
+
                     <h2>DANH MỤC THIẾT BỊ SÂN KHẤU</h2>
                 </div>
 
                 <p>
-                    Các dòng máy touring tương thích hệ thống điều khiển
-                    GrandMA2, GrandMA3 và Avolites.
+                    Khám phá các dòng thiết bị hiệu ứng
+                    được phân loại theo nhu cầu sử dụng và giải pháp biểu diễn.
                 </p>
+
             </div>
+
 
             <div class="category-grid">
 
-                @if (Model.Categories != null && Model.Categories.Any())
+                @if (categories != null && categories.Any())
                 {
-                    foreach (var category in Model.Categories)
+                    foreach (var category in categories)
                     {
                         var categoryType = getCategoryType(category.TenDanhMuc);
 
                         <article class="category-card"
                                  data-category="@category.MaDanhMuc">
 
-                            <div class="category-image img-@categoryType">
+                            <div class="category-image">
+                                @if (!string.IsNullOrWhiteSpace(category.AnhDanhMuc))
+                                {
+                                    <img src="@Url.Content(category.AnhDanhMuc)"
+                                         alt="@category.TenDanhMuc"
+                                         loading="lazy"
+                                         onerror="this.style.display='none';" />
+                                }
+                                else
+                                {
+                                    <div class="category-image-placeholder img-@categoryType"></div>
+                                }
+
                                 <span>@category.TenDanhMuc.ToUpper()</span>
                             </div>
 
                             <div class="category-body">
+
                                 <h3>@category.TenDanhMuc</h3>
 
                                 <p>
@@ -211,15 +312,24 @@
                                 </p>
 
                                 <div class="card-bottom">
+
                                     <small>
-                                        @category.SoLuongSanPham MODEL CÓ SẴN
+                                        @category.SoLuongSanPham MODEL
                                     </small>
 
                                     <a class="text-button"
-                                       href="@Url.Action("Index", "Catalog", new { q = category.TenDanhMuc })">
-                                        Xem thiết bị →
+                                       href="@Url.Action(
+                                           "Index",
+                                           "Catalog",
+                                           new { q = category.TenDanhMuc })">
+
+                                        Xem thiết bị
+                                        <span>→</span>
+
                                     </a>
+
                                 </div>
+
                             </div>
 
                         </article>
@@ -227,36 +337,59 @@
                 }
                 else
                 {
-                    <p>Hiện chưa có danh mục thiết bị nào.</p>
+                    <div class="report-empty">
+                        <span class="material-symbols-outlined">
+                            category
+                        </span>
+
+                        <p>Hiện chưa có danh mục thiết bị.</p>
+                    </div>
                 }
 
             </div>
+
         </div>
     </section>
 
-    <!-- SẢN PHẨM NỔI BẬT ĐỘNG -->
-    <section class="featured section-dark" id="giai-phap-noi-bat">
+
+    <!-- ==========================================
+         04. FEATURED PRODUCTS
+    =========================================== -->
+    <section class="featured section-dark"
+             id="giai-phap-noi-bat">
+
         <div class="container">
 
             <div class="section-heading">
+
                 <div>
-                    <span class="eyebrow">THIẾT BỊ ĐƯỢC QUAN TÂM</span>
-                    <h2>GIẢI PHÁP NỔI BẬT</h2>
+                    <span class="eyebrow">
+                        STAGEFX PRODUCT COLLECTION
+                    </span>
+
+                    <h2>THIẾT BỊ NỔI BẬT</h2>
                 </div>
 
                 <p>
-                    Danh mục tham khảo dành cho đơn vị tổ chức sự kiện,
+                    Những dòng thiết bị dành cho đơn vị tổ chức sự kiện,
                     agency và nhà thầu sân khấu.
                 </p>
 
                 <a class="featured-catalog-link"
                    href="@Url.Action("Index", "Catalog")">
-                    Xem toàn bộ thiết bị <span aria-hidden="true">→</span>
+
+                    Xem toàn bộ thiết bị
+                    <span>→</span>
+
                 </a>
+
             </div>
 
-            <!-- BỘ LỌC THEO DANH MỤC -->
-            <div class="filters" role="group" aria-label="Lọc thiết bị">
+
+            <!-- CATEGORY FILTER -->
+            <div class="filters"
+                 role="group"
+                 aria-label="Lọc sản phẩm theo danh mục">
 
                 <button class="filter active"
                         type="button"
@@ -264,32 +397,36 @@
                     Tất cả
                 </button>
 
-                @if (Model.Categories != null)
+                @if (categories != null)
                 {
-                    foreach (var category in Model.Categories)
+                    foreach (var category in categories)
                     {
                         <button class="filter"
                                 type="button"
                                 data-filter="@category.MaDanhMuc">
+
                             @category.TenDanhMuc
+
                         </button>
                     }
                 }
 
             </div>
 
-            <!-- DANH SÁCH SẢN PHẨM -->
+
+            <!-- PRODUCT GRID -->
             <div class="product-grid" id="productGrid">
 
-                @if (Model.Products != null && Model.Products.Any())
+                @if (products != null && products.Any())
                 {
-                    foreach (var product in Model.Products)
+                    foreach (var product in products)
                     {
                         var productType = getProductType(product.TenDanhMuc);
 
                         <article class="product-card"
                                  data-product-category="@product.MaDanhMuc">
 
+                            <!-- PRODUCT IMAGE -->
                             <div class="product-visual product-@productType">
 
                                 @if (!string.IsNullOrWhiteSpace(product.DuongDanAnh))
@@ -300,18 +437,29 @@
                                 }
                                 else
                                 {
-                                    <span class="product-tag">STAGEFX PRO</span>
+                                    <span class="product-tag">
+                                        STAGEFX PRO
+                                    </span>
                                 }
 
                             </div>
 
+
+                            <!-- PRODUCT INFORMATION -->
                             <div class="product-info">
 
-                                <small>@product.SKU</small>
+                                <small>
+                                    @product.SKU
+                                </small>
 
                                 <h3>
-                                    <a href="@Url.Action("Index", "Catalog", new { q = product.SKU })">
+                                    <a href="@Url.Action(
+                                        "Index",
+                                        "Catalog",
+                                        new { q = product.SKU })">
+
                                         @product.TenSanPham
+
                                     </a>
                                 </h3>
 
@@ -321,27 +469,35 @@
                                         : product.ThongSoKyThuat)
                                 </p>
 
+
+                                <!-- PRODUCT FOOTER -->
                                 <div class="product-bottom">
 
                                     <strong>
+
                                         @if (product.GiaBan > 0)
                                         {
-                                            @product.GiaBan.ToString("N0") @:₫
+                                            @product.GiaBan.ToString("N0")
+                                            @:₫
                                         }
                                         else
                                         {
                                             @:Liên hệ báo giá
                                         }
+
                                     </strong>
 
                                     <button class="add-button"
                                             type="button"
                                             data-product="@product.TenSanPham"
-                                            aria-label="Yêu cầu báo giá">
+                                            aria-label="Yêu cầu báo giá sản phẩm">
+
                                         ＋
+
                                     </button>
 
                                 </div>
+
                             </div>
 
                         </article>
@@ -349,167 +505,297 @@
                 }
                 else
                 {
-                    <p>Hiện chưa có sản phẩm nào được đăng bán.</p>
+                    <div class="product-empty">
+                        <span class="material-symbols-outlined">
+                            inventory_2
+                        </span>
+
+                        <p>Hiện chưa có sản phẩm được đăng bán.</p>
+                    </div>
                 }
 
             </div>
 
+
             <p class="demo-note">
                 * Giá bán và thông số được hiển thị theo dữ liệu sản phẩm
-                trong hệ thống. Báo giá dự án có thể được xác nhận
-                theo cấu hình thực tế.
+                trong hệ thống. Giá dự án có thể được xác nhận theo cấu hình
+                và số lượng thiết bị thực tế.
             </p>
 
         </div>
     </section>
 
-    <!-- GIẢI PHÁP -->
+
+    <!-- ==========================================
+         05. SOLUTIONS
+    =========================================== -->
     <section class="solutions section" id="giai-phap">
+
         <div class="container solution-layout">
 
             <div class="solution-art">
-                <div class="art-label">STAGEFX / FIELD OPERATIONS</div>
+
+                <div class="art-label">
+                    STAGEFX / FIELD OPERATIONS
+                </div>
 
                 <div class="art-caption">
-                    <strong>PRECISION IN EVERY SHOW</strong>
-                    <span>DMX512 • TOURING • SAFETY</span>
+
+                    <strong>
+                        PRECISION IN EVERY SHOW
+                    </strong>
+
+                    <span>
+                        DMX512 • TOURING • PROFESSIONAL
+                    </span>
+
                 </div>
+
             </div>
 
-            <div class="solution-copy">
-                <span class="eyebrow">ĐỒNG HÀNH CÙNG ĐƠN VỊ TỔ CHỨC</span>
 
-                <h2>GIẢI PHÁP HIỆU ỨNG CHO MỌI QUY MÔ SỰ KIỆN</h2>
+            <div class="solution-copy">
+
+                <span class="eyebrow">
+                    PROFESSIONAL STAGE SOLUTIONS
+                </span>
+
+                <h2>
+                    GIẢI PHÁP HIỆU ỨNG
+                    CHO MỌI QUY MÔ SỰ KIỆN
+                </h2>
 
                 <p>
-                    STAGEFX PRO hỗ trợ lựa chọn thiết bị, tư vấn cấu hình điều khiển,
-                    lập kế hoạch vận chuyển và phối hợp kỹ thuật theo lịch trình sự kiện.
+                    STAGEFX PRO đồng hành cùng doanh nghiệp trong việc
+                    lựa chọn thiết bị, tham khảo cấu hình điều khiển,
+                    lập kế hoạch giao nhận và phối hợp kỹ thuật cho dự án.
                 </p>
 
                 <ul>
-                    <li><span>✓</span> Tư vấn cấu hình theo quy mô sân khấu</li>
-                    <li><span>✓</span> Hỗ trợ tích hợp điều khiển DMX512</li>
-                    <li><span>✓</span> Lên kế hoạch giao nhận thiết bị</li>
-                    <li><span>✓</span> Hồ sơ kỹ thuật và checklist nghiệm thu</li>
+
+                    <li>
+                        <span>✓</span>
+                        Tư vấn cấu hình theo quy mô sân khấu
+                    </li>
+
+                    <li>
+                        <span>✓</span>
+                        Hỗ trợ tích hợp hệ thống DMX512
+                    </li>
+
+                    <li>
+                        <span>✓</span>
+                        Lập kế hoạch giao nhận thiết bị
+                    </li>
+
+                    <li>
+                        <span>✓</span>
+                        Tài liệu kỹ thuật và checklist nghiệm thu
+                    </li>
+
                 </ul>
 
-                <button class="btn btn-primary" type="button" data-scroll="#tu-van">
-                    Trao đổi dự án <span>→</span>
+                <button class="btn btn-primary"
+                        type="button"
+                        data-scroll="#tu-van">
+
+                    Trao đổi dự án
+                    <span>→</span>
+
                 </button>
+
             </div>
 
         </div>
     </section>
 
-    <!-- ĐỐI TÁC / ĐÁNH GIÁ -->
+
+    <!-- ==========================================
+         06. PARTNERS / TESTIMONIALS
+    =========================================== -->
     <section class="testimonials section-dark" id="doi-tac">
+
         <div class="container">
 
             <div class="section-heading">
+
                 <div>
-                    <span class="eyebrow">ĐỐI TÁC &amp; KHÁCH HÀNG</span>
-                    <h2>ĐỐI TÁC VÀ ĐẠO DIỄN NÓI GÌ</h2>
+                    <span class="eyebrow">
+                        PARTNERS & CUSTOMER EXPERIENCE
+                    </span>
+
+                    <h2>ĐỒNG HÀNH CÙNG ĐỐI TÁC</h2>
                 </div>
 
                 <p>
-                    Trải nghiệm hợp tác trong quá trình chuẩn bị
-                    và vận hành sự kiện.
+                    Hướng đến quy trình hợp tác rõ ràng,
+                    hỗ trợ kỹ thuật và triển khai theo kế hoạch.
                 </p>
+
             </div>
+
 
             <div class="quote-grid">
 
                 <blockquote>
+
                     <div class="stars">★★★★★</div>
 
                     <p>
-                        “Quy trình tư vấn rõ ràng, thông số thiết bị được cung cấp
-                        đầy đủ để đội ngũ kỹ thuật lên phương án sân khấu.”
+                        “Quy trình tư vấn rõ ràng, thông tin thiết bị
+                        được trình bày đầy đủ để đội ngũ kỹ thuật
+                        tham khảo và lên phương án sân khấu.”
                     </p>
 
                     <footer>
+
                         <span class="quote-avatar">EA</span>
+
                         <span>
                             <b>Event Agency</b>
-                            <small>Đối tác tổ chức sự kiện</small>
+                            <small>Đơn vị tổ chức sự kiện</small>
                         </span>
+
                     </footer>
+
                 </blockquote>
 
+
                 <blockquote>
+
                     <div class="stars">★★★★★</div>
 
                     <p>
-                        “Việc phối hợp lịch giao nhận và kiểm tra thiết bị giúp
-                        đội ngũ sản xuất chủ động hơn trước giờ tổng duyệt.”
+                        “Việc phối hợp kế hoạch giao nhận và kiểm tra
+                        thiết bị giúp đội ngũ sản xuất chủ động hơn
+                        trong quá trình chuẩn bị chương trình.”
                     </p>
 
                     <footer>
+
                         <span class="quote-avatar">SP</span>
+
                         <span>
                             <b>Stage Production</b>
                             <small>Đội ngũ sản xuất sân khấu</small>
                         </span>
+
                     </footer>
+
                 </blockquote>
 
+
                 <blockquote>
+
                     <div class="stars">★★★★★</div>
 
                     <p>
-                        “Đội ngũ tư vấn hỗ trợ lựa chọn cấu hình phù hợp với
-                        yêu cầu kỹ thuật và quy mô chương trình.”
+                        “Được hỗ trợ trao đổi về cấu hình thiết bị
+                        và phương án kỹ thuật phù hợp với yêu cầu
+                        của chương trình.”
                     </p>
 
                     <footer>
+
                         <span class="quote-avatar">LE</span>
+
                         <span>
                             <b>Live Event Team</b>
-                            <small>Đối tác sự kiện trực tiếp</small>
+                            <small>Đơn vị sản xuất sự kiện</small>
                         </span>
+
                     </footer>
+
                 </blockquote>
 
             </div>
 
             <p class="demo-note">
-                * Các nhận xét trên là nội dung minh họa cho giao diện mẫu.
+                * Nội dung nhận xét hiện là dữ liệu minh họa giao diện.
             </p>
 
         </div>
     </section>
 
-    <!-- TƯ VẤN -->
+
+    <!-- ==========================================
+         07. B2B CONSULTATION
+    =========================================== -->
     <section class="consult section" id="tu-van">
+
         <div class="container consult-layout">
 
+            <!-- CONSULTATION INFORMATION -->
             <div class="consult-copy">
-                <span class="eyebrow">B2B PROJECT CONSULTATION</span>
 
-                <h2>BẮT ĐẦU DỰ ÁN SÂN KHẤU CỦA BẠN</h2>
+                <span class="eyebrow">
+                    B2B PROJECT CONSULTATION
+                </span>
+
+                <h2>
+                    BẮT ĐẦU DỰ ÁN
+                    SÂN KHẤU CỦA BẠN
+                </h2>
 
                 <p>
-                    Gửi thông tin cơ bản, đội ngũ STAGEFX PRO sẽ liên hệ trao đổi
-                    nhu cầu, cấu hình thiết bị và phương án triển khai.
+                    Hãy gửi thông tin cơ bản về nhu cầu của doanh nghiệp.
+                    Đội ngũ STAGEFX PRO sẽ tiếp nhận và trao đổi
+                    phương án thiết bị phù hợp với dự án.
                 </p>
+
 
                 <div class="contact-line">
-                    <span class="material-symbols-outlined">call</span>
+
+                    <span class="material-symbols-outlined">
+                        call
+                    </span>
 
                     <div>
-                        <small>HOTLINE TƯ VẤN</small>
-                        <a href="tel:0988683977">0988 683 977</a>
+
+                        <small>
+                            HOTLINE TƯ VẤN
+                        </small>
+
+                        <a href="tel:0988683977">
+                            0912 877 344
+                        </a>
+
                     </div>
+
                 </div>
 
+
+                <div class="contact-line">
+
+                    <span class="material-symbols-outlined">
+                        support_agent
+                    </span>
+
+                    <div>
+
+                        <small>
+                            HỖ TRỢ KHÁCH HÀNG
+                        </small>
+
+                        <span>
+                            Tư vấn thiết bị và giải pháp B2B
+                        </span>
+
+                    </div>
+
+                </div>
+
+
                 <p class="response-note">
-                    Kỹ sư phản hồi phương án và báo giá chi tiết trong vòng 15 phút
-                    (theo thông tin giới thiệu mẫu).
+                    Thông tin yêu cầu sẽ được tiếp nhận để đội ngũ
+                    phụ trách liên hệ trao đổi.
                 </p>
+
             </div>
 
 
-
+            <!-- CONSULTATION FORM -->
             <form id="consultForm"
                   class="consult-form"
                   action="@Url.Action("GuiYeuCauTuVan", "Home")"
@@ -517,80 +803,152 @@
 
                 @Html.AntiForgeryToken()
 
+
                 <div class="form-group">
-                    <label for="companyName">Tên công ty / người liên hệ</label>
+
+                    <label for="companyName">
+                        Tên công ty / người liên hệ
+                    </label>
+
                     <input type="text"
                            id="companyName"
                            name="CompanyName"
                            placeholder="Nhập tên công ty hoặc người liên hệ"
                            value="@(Session["HoTen"] ?? "")"
+                           maxlength="200"
                            required />
+
                 </div>
 
+
                 <div class="form-group">
-                    <label for="email">Email liên hệ</label>
+
+                    <label for="email">
+                        Email liên hệ
+                    </label>
+
                     <input type="email"
                            id="email"
                            name="Email"
                            placeholder="example@email.com"
                            value="@(Session["Email"] ?? "")"
+                           maxlength="200"
                            required />
+
                 </div>
 
+
                 <div class="form-group">
-                    <label for="phone">Số điện thoại</label>
+
+                    <label for="phone">
+                        Số điện thoại
+                    </label>
+
                     <input type="tel"
                            id="phone"
                            name="Phone"
-                           placeholder="Nhập số điện thoại" />
+                           placeholder="Nhập số điện thoại"
+                           maxlength="20" />
+
                 </div>
+
 
                 <div class="form-group">
-                    <label for="scale">Quy mô sự kiện</label>
+
+                    <label for="scale">
+                        Quy mô sự kiện
+                    </label>
+
                     <select id="scale" name="Scale">
-                        <option value="">Chọn quy mô sự kiện</option>
-                        <option value="Dưới 100 người">Dưới 100 người</option>
-                        <option value="100 - 500 người">100 - 500 người</option>
-                        <option value="500 - 1000 người">500 - 1000 người</option>
-                        <option value="Trên 1000 người">Trên 1000 người</option>
+
+                        <option value="">
+                            Chọn quy mô sự kiện
+                        </option>
+
+                        <option value="Dưới 100 người">
+                            Dưới 100 người
+                        </option>
+
+                        <option value="100 - 500 người">
+                            100 - 500 người
+                        </option>
+
+                        <option value="500 - 1000 người">
+                            500 - 1000 người
+                        </option>
+
+                        <option value="Trên 1000 người">
+                            Trên 1000 người
+                        </option>
+
                     </select>
+
+                </div>
+                <div class="form-group">
+                    <label for="consultContent">Nội dung yêu cầu tư vấn</label>
+                    <textarea id="consultContent"
+                              name="Content"
+                              rows="5"
+                              maxlength="1000"
+                              placeholder="Mô tả nhu cầu, loại thiết bị, hiệu ứng hoặc yêu cầu của sự kiện..."></textarea>
                 </div>
 
+
+                <!-- PRODUCT SELECTED FROM FEATURED SECTION -->
                 <input type="hidden"
                        id="requestedProduct"
                        name="RequestedProduct"
                        value="" />
 
-                <button type="submit" class="form-submit btn btn-primary">
+
+                <button type="submit"
+                        class="form-submit btn btn-primary">
+
                     Gửi yêu cầu tư vấn
+                    <span>→</span>
+
                 </button>
+
 
                 <p id="formMessage"
                    class="form-message"
                    role="status"
-                   aria-live="polite"></p>
+                   aria-live="polite">
+                </p>
+
 
                 <p class="privacy-note">
-                    Thông tin của bạn được bảo mật và chỉ sử dụng cho mục đích tư vấn.
+                    Thông tin được sử dụng cho mục đích tiếp nhận
+                    và tư vấn yêu cầu của khách hàng.
                 </p>
 
             </form>
-
-
 
         </div>
     </section>
 
 </main>
 
+
+<!-- ==========================================
+     PAGE STYLES
+=========================================== -->
 @section styles {
+
     <link rel="stylesheet"
           href="@Url.Content("~/Content/css/home.css")" />
 
     <link rel="stylesheet"
           href="@Url.Content("~/Content/css/home-links.css")" />
+
 }
 
+
+<!-- ==========================================
+     PAGE SCRIPTS
+=========================================== -->
 @section scripts {
+
     <script src="@Url.Content("~/Scripts/home.js")" defer></script>
+
 }

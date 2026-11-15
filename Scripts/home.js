@@ -193,7 +193,6 @@ if (consultForm && formMessage) {
             const formData = new FormData(consultForm);
 
             console.log('URL gửi:', consultForm.action);
-            console.log('Dữ liệu gửi:', [...formData.entries()]);
 
             const response = await fetch(consultForm.action, {
                 method: 'POST',
@@ -206,23 +205,20 @@ if (consultForm && formMessage) {
             // Đọc dạng text trước để không mất lỗi HTML hoặc JSON
             const responseText = await response.text();
 
-            console.log('HTTP Status:', response.status);
-            console.log('Server Response:', responseText);
-
-            if (!response.ok) {
-                throw new Error(
-                    `HTTP ${response.status}: ${responseText.substring(0, 500)}`
-                );
-            }
-
             let result;
 
             try {
                 result = JSON.parse(responseText);
             } catch (parseError) {
                 throw new Error(
-                    'Máy chủ không trả về JSON hợp lệ: ' +
-                    responseText.substring(0, 500)
+                    'Máy chủ không trả về phản hồi hợp lệ.'
+                );
+            }
+
+            if (!response.ok) {
+                throw new Error(
+                    result.message ||
+                    'Máy chủ không thể xử lý yêu cầu. Vui lòng thử lại.'
                 );
             }
 

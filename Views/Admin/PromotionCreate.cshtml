@@ -1,0 +1,118 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminPromotionFormViewModel
+
+@{
+    ViewBag.Title = "Thêm khuyến mãi";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-promotion.css")" />
+}
+
+<div class="admin-promotion-page">
+
+    <!-- PAGE HEADING -->
+    <div class="promotion-page-heading">
+        <div>
+            <div class="promotion-breadcrumb">
+                <span>Quản trị</span>
+                <span>/</span>
+
+                <a href="@Url.Action("Promotions", "AdminPromotion")">
+                    Khuyến mãi
+                </a>
+
+                <span>/</span>
+                <span>Thêm mới</span>
+            </div>
+
+            <h1>Thêm chương trình khuyến mãi</h1>
+
+            <p>
+                Tạo mã ưu đãi mới dành cho khách hàng STAGEFX PRO.
+            </p>
+        </div>
+
+        <a href="@Url.Action("Promotions", "AdminPromotion")"
+           class="promotion-back-btn">
+
+            <span class="material-symbols-outlined" aria-hidden="true">
+                arrow_back
+            </span>
+
+            Quay lại
+        </a>
+    </div>
+
+    <!-- ERROR MESSAGE -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="promotion-alert promotion-alert-error" role="alert">
+
+            <span class="material-symbols-outlined" aria-hidden="true">
+                error
+            </span>
+
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+    <!-- VALIDATION SUMMARY -->
+    @if (!Html.ViewData.ModelState.IsValid)
+    {
+        <div class="promotion-validation-summary">
+            @Html.ValidationSummary(false, "", new
+            {
+                @class = "promotion-field-error"
+            })
+        </div>
+    }
+
+    <!-- CREATE FORM -->
+    @using (Html.BeginForm(
+        "Create",
+        "AdminPromotion",
+        FormMethod.Post,
+        new
+        {
+            @class = "promotion-form-container",
+            id = "promotion-form"
+        }))
+    {
+        @Html.AntiForgeryToken()
+
+        <!-- PROMOTION FORM PARTIAL -->
+        @Html.Partial(
+                 "~/Views/Admin/_AdminPromotionForm.cshtml",
+                 Model
+             )
+
+        <!-- FORM FOOTER -->
+        <div class="promotion-form-footer">
+
+            <a href="@Url.Action("Promotions", "AdminPromotion")"
+               class="promotion-cancel-btn">
+                Hủy bỏ
+            </a>
+
+            <button type="submit" class="promotion-submit-btn">
+
+                <span class="material-symbols-outlined" aria-hidden="true">
+                    add
+                </span>
+
+                Tạo khuyến mãi
+            </button>
+
+        </div>
+    }
+
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="@Url.Content("~/Scripts/admin/admin-promotion.js")"></script>
+}

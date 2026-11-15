@@ -1,0 +1,372 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminReportViewModel
+@using System.Linq
+@{
+    ViewBag.Title = "Báo cáo & Thống kê";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+
+    decimal maxRevenue = Model.RevenueChart.Any()
+        ? Model.RevenueChart.Max(x => x.Revenue)
+        : 0;
+}
+
+@section styles {
+    <link href="~/Content/css/admin/admin-report.css" rel="stylesheet" />
+}
+
+<div class="admin-report-page">
+
+    <!-- HEADER -->
+    <div class="report-header">
+        <div>
+            <div class="report-breadcrumb">
+                QUẢN TRỊ / BÁO CÁO
+            </div>
+
+            <h1>Báo cáo & Thống kê</h1>
+
+            <p>
+                Theo dõi tình hình đơn hàng và hoạt động kinh doanh STAGEFX PRO.
+            </p>
+        </div>
+
+        <div class="report-header-icon">
+            <span class="material-symbols-outlined">monitoring</span>
+        </div>
+    </div>
+
+    <!-- DATE FILTER -->
+    <div class="report-filter-card">
+        <form method="get"
+              action="@Url.Action("Reports", "AdminReport")"
+              class="report-filter-form">
+
+            <div class="report-filter-title">
+                <span class="material-symbols-outlined">calendar_month</span>
+                <span>Khoảng thời gian báo cáo</span>
+            </div>
+
+            <div class="report-filter-fields">
+                <div class="report-filter-group">
+                    <label for="fromDate">Từ ngày</label>
+                    <input type="date"
+                           id="fromDate"
+                           name="fromDate"
+                           value="@Model.FromDate.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <div class="report-filter-group">
+                    <label for="toDate">Đến ngày</label>
+                    <input type="date"
+                           id="toDate"
+                           name="toDate"
+                           value="@Model.ToDate.ToString("yyyy-MM-dd")" />
+                </div>
+
+                <button type="submit" class="report-filter-btn">
+                    <span class="material-symbols-outlined">filter_alt</span>
+                    Lọc báo cáo
+                </button>
+
+                <a href="@Url.Action("Reports", "AdminReport")"
+                   class="report-reset-btn">
+                    Đặt lại
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- KPI CARDS -->
+    <div class="report-section-heading">
+        <div>
+            <h2>Tổng quan kinh doanh</h2>
+            <p>Số liệu trong khoảng thời gian đã chọn</p>
+        </div>
+    </div>
+
+    <div class="report-kpi-grid">
+
+        <div class="report-kpi-card revenue">
+            <div class="report-kpi-top">
+                <span>Doanh thu đơn hàng</span>
+                <span class="material-symbols-outlined">payments</span>
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.TotalOrderRevenue.ToString("N0") ₫
+            </div>
+
+            <div class="report-kpi-description">
+                Đơn hàng đã xác nhận
+            </div>
+        </div>
+
+        <div class="report-kpi-card orders">
+            <div class="report-kpi-top">
+                <span>Tổng đơn hàng</span>
+                <span class="material-symbols-outlined">shopping_bag</span>
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.TotalOrders.ToString("N0")
+            </div>
+
+            <div class="report-kpi-description">
+                @Model.ConfirmedOrders đơn đã xác nhận
+            </div>
+        </div>
+
+        <div class="report-kpi-card deposit">
+            <div class="report-kpi-top">
+                <span>Tổng tiền đặt cọc</span>
+                <span class="material-symbols-outlined">account_balance_wallet</span>
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.TotalDeposit.ToString("N0") ₫
+            </div>
+
+            <div class="report-kpi-description">
+                Tiền cọc của đơn đã xác nhận
+            </div>
+        </div>
+
+        <div class="report-kpi-card pending">
+            <div class="report-kpi-top">
+                <span>Thanh toán chờ xử lý</span>
+                <span class="material-symbols-outlined">pending_actions</span>
+            </div>
+
+            <div class="report-kpi-value">
+                @Model.PendingPayment.ToString("N0") ₫
+            </div>
+
+            <div class="report-kpi-description">
+                Giao dịch có trạng thái ChoXuLy
+            </div>
+        </div>
+
+    </div>
+
+    <!-- SECONDARY STATS -->
+    <div class="report-secondary-grid">
+
+        <div class="report-mini-card">
+            <span>Giá trị đơn trung bình</span>
+            <strong>@Model.AverageOrderValue.ToString("N0") ₫</strong>
+        </div>
+
+        <div class="report-mini-card">
+            <span>Sản phẩm đã bán</span>
+            <strong>@Model.TotalProductsSold.ToString("N0")</strong>
+        </div>
+
+        <div class="report-mini-card">
+            <span>Đơn đã hủy</span>
+            <strong class="text-danger">@Model.CancelledOrders</strong>
+        </div>
+
+        <div class="report-mini-card">
+            <span>Đơn bị từ chối</span>
+            <strong>@Model.RejectedOrders</strong>
+        </div>
+
+    </div>
+
+    <!-- REVENUE CHART -->
+    <div class="report-content-grid">
+
+        <div class="report-panel report-chart-panel">
+            <div class="report-panel-header">
+                <div>
+                    <h2>Biểu đồ doanh thu</h2>
+                    <p>Doanh thu theo ngày của đơn đã xác nhận</p>
+                </div>
+
+                <span class="material-symbols-outlined">bar_chart</span>
+            </div>
+
+            @if (Model.RevenueChart.Any())
+            {
+                <div class="report-chart">
+                    @foreach (var item in Model.RevenueChart)
+                    {
+                        var barHeight = maxRevenue > 0
+                            ? (double)(item.Revenue / maxRevenue * 100)
+                            : 0;
+
+                        <div class="report-chart-column">
+                            <div class="report-chart-value">
+                                @item.Revenue.ToString("N0")
+                            </div>
+
+                            <div class="report-chart-bar-area">
+                                <div class="report-chart-bar"
+                                     style="height: @(barHeight.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture))%">
+                                </div>
+                            </div>
+
+                            <span class="report-chart-label">
+                                @item.Label
+                            </span>
+
+                            <span class="report-chart-orders">
+                                @item.OrderCount đơn
+                            </span>
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="report-empty">
+                    <span class="material-symbols-outlined">bar_chart</span>
+                    <p>Chưa có dữ liệu doanh thu trong khoảng thời gian này.</p>
+                </div>
+            }
+        </div>
+
+        <!-- ORDER STATUS -->
+        <div class="report-panel report-status-panel">
+            <div class="report-panel-header">
+                <div>
+                    <h2>Trạng thái đơn hàng</h2>
+                    <p>Phân loại theo trạng thái hiện tại</p>
+                </div>
+
+                <span class="material-symbols-outlined">fact_check</span>
+            </div>
+
+            @if (Model.OrderStatuses.Any())
+            {
+                foreach (var item in Model.OrderStatuses)
+                {
+                    <div class="report-status-row">
+                        <div class="report-status-info">
+                            <span>@item.DisplayName</span>
+                            <strong>@item.Count</strong>
+                        </div>
+
+                        <div class="report-status-track">
+                            <div class="report-status-fill"
+                                 style="width: @(Model.TotalOrders > 0 ? (item.Count * 100.0 / Model.TotalOrders).ToString("0.##", System.Globalization.CultureInfo.InvariantCulture) : "0")%">
+                            </div>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="report-empty">
+                    <p>Chưa có dữ liệu đơn hàng.</p>
+                </div>
+            }
+        </div>
+
+    </div>
+
+    <!-- TOP PRODUCTS -->
+    <div class="report-panel report-products-panel">
+        <div class="report-panel-header">
+            <div>
+                <h2>Sản phẩm bán chạy</h2>
+                <p>Top 5 sản phẩm theo số lượng bán</p>
+            </div>
+
+            <span class="material-symbols-outlined">inventory_2</span>
+        </div>
+
+        @if (Model.TopProducts.Any())
+        {
+            <div class="report-table-wrapper">
+                <table class="report-table">
+                    <thead>
+                        <tr>
+                            <th>STT</th>
+                            <th>Mã sản phẩm</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Số lượng bán</th>
+                            <th>Giá trị chi tiết</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @{
+                            int index = 0;
+                        }
+
+                        @foreach (var item in Model.TopProducts)
+                        {
+                            index++;
+
+                            <tr>
+                                <td>@index</td>
+                                <td>#@item.MaSanPham</td>
+                                <td class="report-product-name">
+                                    @item.TenSanPham
+                                </td>
+                                <td>
+                                    <strong>@item.SoLuongBan</strong>
+                                </td>
+                                <td class="report-money">
+                                    @item.TongDoanhThu.ToString("N0") ₫
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+                <span class="material-symbols-outlined">inventory_2</span>
+                <p>Chưa có dữ liệu sản phẩm bán ra.</p>
+            </div>
+        }
+    </div>
+
+    <!-- PAYMENT STATUS -->
+    <div class="report-panel report-payment-panel">
+        <div class="report-panel-header">
+            <div>
+                <h2>Trạng thái thanh toán</h2>
+                <p>Thống kê các giao dịch trong khoảng thời gian đã chọn</p>
+            </div>
+
+            <span class="material-symbols-outlined">credit_card</span>
+        </div>
+
+        @if (Model.PaymentStatuses.Any())
+        {
+            <div class="report-payment-list">
+                @foreach (var item in Model.PaymentStatuses)
+                {
+                    <div class="report-payment-item">
+                        <span>@item.DisplayName</span>
+                        <strong>@item.Count giao dịch</strong>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <div class="report-empty">
+                <p>Chưa có giao dịch thanh toán trong khoảng thời gian này.</p>
+            </div>
+        }
+
+        <div class="report-payment-note">
+            <span class="material-symbols-outlined">info</span>
+            <span>
+                Số tiền đã thu chưa được xác định vì hiện chưa có trạng thái
+                thanh toán thành công được xác nhận.
+            </span>
+        </div>
+    </div>
+
+</div>
+
+@section scripts {
+    <script src="~/Scripts/admin/admin-report.js"></script>
+}

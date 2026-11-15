@@ -44,5 +44,6 @@ namespace Wedside_TVS_SFX.Models
         public virtual DbSet<YeuCauHuyDon> YeuCauHuyDon { get; set; }
         public virtual DbSet<YeuCauTuVan> YeuCauTuVan { get; set; }
         public virtual DbSet<ThongTinDuAn> ThongTinDuAn { get; set; }
+        public virtual DbSet<sysdiagrams> sysdiagrams { get; set; }
     }
 }

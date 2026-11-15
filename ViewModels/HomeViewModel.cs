@@ -21,6 +21,7 @@ namespace STAGEFX_PRO.ViewModels
         public string TenDanhMuc { get; set; }
         public string MoTa { get; set; }
         public int SoLuongSanPham { get; set; }
+        public string AnhDanhMuc { get; set; }
     }
 
     public class HomeProductViewModel

@@ -2,42 +2,34 @@
 document.addEventListener('DOMContentLoaded', function () {
     'use strict';
 
-<<<<<<< HEAD
-=======
-    // =====================================================
-    // 1. CONFIGURATION
-    // =====================================================
-
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
     const MAX_FILE_SIZE = 5 * 1024 * 1024;
     const MAX_FILES = 10;
+    const ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp'];
+    const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
 
-    const ALLOWED_EXTENSIONS = [
-<<<<<<< HEAD
-        '.jpg', '.jpeg', '.png', '.webp'
-    ];
-
-    document.querySelectorAll(
+    const forms = document.querySelectorAll(
         '.product-create-form, .product-edit-form'
-    ).forEach(function (form) {
+    );
 
+    forms.forEach(function (form) {
         const fileInput = form.querySelector('#NewImages');
         const preview = form.querySelector('#productImagePreview');
         const mainImageIndex = form.querySelector('#MainImageNewIndex');
 
         if (!fileInput) return;
 
-        let objectUrls = [];
+        let previewUrls = [];
 
+        // Giải phóng URL ảnh preview cũ
         function clearPreview() {
-            objectUrls.forEach(function (url) {
+            previewUrls.forEach(function (url) {
                 URL.revokeObjectURL(url);
             });
 
-            objectUrls = [];
+            previewUrls = [];
 
             if (preview) {
-                preview.replaceChildren();
+                preview.innerHTML = '';
             }
 
             if (mainImageIndex) {
@@ -45,14 +37,17 @@ document.addEventListener('DOMContentLoaded', function () {
             }
         }
 
-        function getExtension(name) {
-            const index = name.lastIndexOf('.');
+        // Lấy phần mở rộng của file
+        function getExtension(fileName) {
+            const index = (fileName || '').lastIndexOf('.');
+
             return index >= 0
-                ? name.substring(index).toLowerCase()
+                ? fileName.substring(index).toLowerCase()
                 : '';
         }
 
-        function validate(file) {
+        // Kiểm tra file ảnh
+        function validateFile(file) {
             if (!file || file.size <= 0) {
                 return 'Tệp ảnh không hợp lệ.';
             }
@@ -61,19 +56,25 @@ document.addEventListener('DOMContentLoaded', function () {
                 return 'Mỗi ảnh không được vượt quá 5 MB.';
             }
 
-            if (!ALLOWED_EXTENSIONS.includes(
-                getExtension(file.name)
-            )) {
+            if (!ALLOWED_EXTENSIONS.includes(getExtension(file.name))) {
                 return 'Chỉ hỗ trợ JPG, JPEG, PNG và WEBP.';
+            }
+
+            if (
+                file.type &&
+                !ALLOWED_MIME_TYPES.includes(file.type.toLowerCase())
+            ) {
+                return 'Định dạng nội dung ảnh không hợp lệ.';
             }
 
             return null;
         }
 
-        function render(files) {
-            if (!preview) return;
-
+        // Hiển thị preview ảnh mới
+        function renderPreview(files) {
             clearPreview();
+
+            if (!preview) return;
 
             files.forEach(function (file, index) {
                 const card = document.createElement('div');
@@ -84,265 +85,19 @@ document.addEventListener('DOMContentLoaded', function () {
                 image.loading = 'lazy';
 
                 const url = URL.createObjectURL(file);
-                objectUrls.push(url);
-
+                previewUrls.push(url);
                 image.src = url;
 
                 const info = document.createElement('div');
                 info.className = 'new-image-preview-info';
 
                 const name = document.createElement('span');
-=======
-        '.jpg',
-        '.jpeg',
-        '.png',
-        '.webp'
-    ];
-
-    const ALLOWED_MIME_TYPES = [
-        'image/jpeg',
-        'image/png',
-        'image/webp'
-    ];
-
-    // Giới hạn kích thước ảnh để hạn chế ảnh có độ phân giải
-    // quá lớn gây áp lực bộ nhớ khi trình duyệt hiển thị preview.
-    const MAX_IMAGE_WIDTH = 8000;
-    const MAX_IMAGE_HEIGHT = 8000;
-    const MAX_IMAGE_PIXELS = 40000000;
-
-    // =====================================================
-    // 2. ELEMENTS
-    // =====================================================
-
-    const forms = document.querySelectorAll(
-        '.product-create-form, .product-edit-form'
-    );
-
-    if (!forms.length) {
-        return;
-    }
-
-    // =====================================================
-    // 3. FILE VALIDATION
-    // =====================================================
-
-    function validateFile(file) {
-        if (!file) {
-            return 'Không tìm thấy tệp ảnh.';
-        }
-
-        if (file.size <= 0) {
-            return 'Tệp ảnh bị rỗng.';
-        }
-
-        if (file.size > MAX_FILE_SIZE) {
-            return 'Dung lượng ảnh không được vượt quá 5 MB.';
-        }
-
-        const fileName = file.name || '';
-        const extension = fileName.includes('.')
-            ? fileName.substring(fileName.lastIndexOf('.')).toLowerCase()
-            : '';
-
-        if (!ALLOWED_EXTENSIONS.includes(extension)) {
-            return 'Chỉ hỗ trợ JPG, JPEG, PNG và WEBP.';
-        }
-
-        if (
-            file.type &&
-            !ALLOWED_MIME_TYPES.includes(file.type.toLowerCase())
-        ) {
-            return 'Định dạng nội dung ảnh không hợp lệ.';
-        }
-
-        return null;
-    }
-
-    // =====================================================
-    // 4. IMAGE DIMENSION VALIDATION
-    // =====================================================
-
-    function validateImageDimensions(file) {
-        return new Promise(function (resolve) {
-            const objectUrl = URL.createObjectURL(file);
-            const image = new Image();
-
-            let completed = false;
-
-            function finish(result) {
-                if (completed) return;
-
-                completed = true;
-
-                image.onload = null;
-                image.onerror = null;
-
-                URL.revokeObjectURL(objectUrl);
-
-                resolve(result);
-            }
-
-            image.onload = function () {
-                const width = image.naturalWidth;
-                const height = image.naturalHeight;
-                const pixels = width * height;
-
-                if (
-                    width <= 0 ||
-                    height <= 0 ||
-                    width > MAX_IMAGE_WIDTH ||
-                    height > MAX_IMAGE_HEIGHT ||
-                    pixels > MAX_IMAGE_PIXELS
-                ) {
-                    finish(
-                        'Kích thước ảnh quá lớn. Vui lòng chọn ảnh có kích thước tối đa 8000 x 8000 pixel và không vượt quá 40 megapixel.'
-                    );
-
-                    return;
-                }
-
-                finish(null);
-            };
-
-            image.onerror = function () {
-                finish('Không thể đọc ảnh. Tệp có thể bị lỗi hoặc không phải ảnh hợp lệ.');
-            };
-
-            image.src = objectUrl;
-        });
-    }
-
-    // =====================================================
-    // 5. PREVIEW MANAGEMENT
-    // =====================================================
-
-    function createImagePreviewManager(container, hiddenInput) {
-        let previewUrls = [];
-        let currentFiles = [];
-
-        function revokePreviewUrls() {
-            previewUrls.forEach(function (url) {
-                try {
-                    URL.revokeObjectURL(url);
-                } catch (error) {
-                    console.warn(
-                        '[STAGEFX] Không thể giải phóng preview URL:',
-                        error
-                    );
-                }
-            });
-
-            previewUrls = [];
-        }
-
-        function clearPreview() {
-            revokePreviewUrls();
-
-            if (container) {
-                container.innerHTML = '';
-            }
-
-            currentFiles = [];
-
-            if (hiddenInput) {
-                hiddenInput.value = '';
-            }
-        }
-
-        function clearNewMainImage() {
-            if (hiddenInput) {
-                hiddenInput.value = '';
-            }
-
-            if (!container) return;
-
-            container
-                .querySelectorAll('.new-image-preview')
-                .forEach(function (card) {
-                    card.classList.remove('is-main');
-
-                    const radio = card.querySelector(
-                        'input[type="radio"]'
-                    );
-
-                    if (radio) {
-                        radio.checked = false;
-                    }
-                });
-        }
-
-        function clearExistingMainImage() {
-            document.querySelectorAll(
-                'input[name="MainImageId"]'
-            ).forEach(function (radio) {
-                radio.checked = false;
-            });
-        }
-
-        function selectMainImage(index, card) {
-            if (hiddenInput) {
-                hiddenInput.value = String(index);
-            }
-
-            clearExistingMainImage();
-
-            if (!container) return;
-
-            container
-                .querySelectorAll('.new-image-preview')
-                .forEach(function (item) {
-                    item.classList.remove('is-main');
-                });
-
-            card.classList.add('is-main');
-        }
-
-        function renderPreview(files) {
-            if (!container) return;
-
-            clearPreview();
-
-            currentFiles = files.slice();
-
-            files.forEach(function (file, index) {
-                const card = document.createElement('div');
-
-                card.className = 'new-image-preview';
-
-                // IMAGE
-                const image = document.createElement('img');
-
-                image.alt = file.name;
-                image.loading = 'lazy';
-                image.decoding = 'async';
-
-                const objectUrl = URL.createObjectURL(file);
-
-                previewUrls.push(objectUrl);
-
-                image.src = objectUrl;
-
-                image.addEventListener('error', function () {
-                    card.classList.add('is-image-error');
-                    image.removeAttribute('src');
-                });
-
-                // INFORMATION
-                const info = document.createElement('div');
-
-                info.className = 'new-image-preview-info';
-
-                const name = document.createElement('span');
-
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
                 name.className = 'new-image-name';
                 name.textContent = file.name;
 
                 const size = document.createElement('small');
-<<<<<<< HEAD
                 size.textContent =
-                    (file.size / 1048576).toFixed(2) + ' MB';
+                    (file.size / (1024 * 1024)).toFixed(2) + ' MB';
 
                 const label = document.createElement('label');
                 label.className = 'new-image-main-option';
@@ -350,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 const radio = document.createElement('input');
                 radio.type = 'radio';
                 radio.name = 'MainImageNewIndexSelector';
-                radio.value = index;
+                radio.value = String(index);
 
                 radio.addEventListener('change', function () {
                     if (!radio.checked) return;
@@ -359,17 +114,15 @@ document.addEventListener('DOMContentLoaded', function () {
                         mainImageIndex.value = String(index);
                     }
 
-                    form.querySelectorAll(
-                        'input[name="MainImageId"]'
-                    ).forEach(function (item) {
-                        item.checked = false;
-                    });
+                    form.querySelectorAll('input[name="MainImageId"]')
+                        .forEach(function (item) {
+                            item.checked = false;
+                        });
 
-                    preview.querySelectorAll(
-                        '.new-image-preview'
-                    ).forEach(function (item) {
-                        item.classList.remove('is-main');
-                    });
+                    preview.querySelectorAll('.new-image-preview')
+                        .forEach(function (item) {
+                            item.classList.remove('is-main');
+                        });
 
                     card.classList.add('is-main');
                 });
@@ -383,162 +136,64 @@ document.addEventListener('DOMContentLoaded', function () {
                 info.appendChild(name);
                 info.appendChild(size);
                 info.appendChild(label);
-=======
-
-                size.textContent =
-                    (file.size / (1024 * 1024)).toFixed(2) + ' MB';
-
-                // MAIN IMAGE RADIO
-                const mainLabel = document.createElement('label');
-
-                mainLabel.className = 'new-image-main-option';
-
-                const radio = document.createElement('input');
-
-                radio.type = 'radio';
-                radio.name = 'MainImageNewIndexSelector';
-                radio.value = String(index);
-
-                radio.addEventListener('change', function () {
-                    if (radio.checked) {
-                        selectMainImage(index, card);
-                    }
-                });
-
-                const radioText = document.createElement('span');
-
-                radioText.textContent = 'Chọn làm ảnh chính';
-
-                mainLabel.appendChild(radio);
-                mainLabel.appendChild(radioText);
-
-                // APPEND
-                info.appendChild(name);
-                info.appendChild(size);
-                info.appendChild(mainLabel);
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
 
                 card.appendChild(image);
                 card.appendChild(info);
 
-<<<<<<< HEAD
                 preview.appendChild(card);
             });
         }
 
+        // Khi người dùng chọn ảnh mới
         fileInput.addEventListener('change', function () {
             const files = Array.from(fileInput.files || []);
 
-            clearPreview();
-
-            if (!files.length) return;
-
             if (files.length > MAX_FILES) {
-                alert('Chỉ được chọn tối đa 10 ảnh.');
+                window.alert('Chỉ được chọn tối đa 10 ảnh.');
                 fileInput.value = '';
+                clearPreview();
                 return;
             }
 
             for (const file of files) {
-                const error = validate(file);
+                const error = validateFile(file);
 
                 if (error) {
-                    alert(file.name + '\n' + error);
+                    window.alert(file.name + '\n' + error);
                     fileInput.value = '';
                     clearPreview();
                     return;
                 }
             }
 
-            render(files);
-        });
-=======
-                container.appendChild(card);
-            });
-        }
-
-        function destroy() {
-            revokePreviewUrls();
-            currentFiles = [];
-        }
-
-        return {
-            clearPreview: clearPreview,
-            clearNewMainImage: clearNewMainImage,
-            clearExistingMainImage: clearExistingMainImage,
-            renderPreview: renderPreview,
-            destroy: destroy,
-            getCurrentFiles: function () {
-                return currentFiles;
-            }
-        };
-    }
-
-    // =====================================================
-    // 6. INITIALIZE EACH FORM
-    // =====================================================
-
-    forms.forEach(function (form) {
-        const fileInput = form.querySelector('#NewImages');
-
-        const previewContainer = form.querySelector(
-            '#productImagePreview'
-        );
-
-        const mainImageNewIndex = form.querySelector(
-            '#MainImageNewIndex'
-        );
-
-        if (!fileInput) {
-            console.warn(
-                '[STAGEFX] Không tìm thấy input NewImages trong form.'
-            );
-
-            return;
-        }
-
-        const preview = createImagePreviewManager(
-            previewContainer,
-            mainImageNewIndex
-        );
-
-        let validating = false;
-
-        // =================================================
-        // 7. EXISTING IMAGE EVENTS
-        // =================================================
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
-
-        form.querySelectorAll(
-            'input[name="MainImageId"]'
-        ).forEach(function (radio) {
-            radio.addEventListener('change', function () {
-<<<<<<< HEAD
-                if (radio.checked && mainImageIndex) {
-                    mainImageIndex.value = '';
-                }
-
-                if (preview) {
-                    preview.querySelectorAll(
-                        '.new-image-preview'
-                    ).forEach(function (card) {
-                        card.classList.remove('is-main');
-                    });
-
-                    preview.querySelectorAll(
-                        'input[type="radio"]'
-                    ).forEach(function (item) {
-                        item.checked = false;
-                    });
-=======
-                if (radio.checked) {
-                    preview.clearNewMainImage();
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13
-                }
-            });
+            renderPreview(files);
         });
 
-<<<<<<< HEAD
+        // Chọn ảnh cũ làm ảnh chính
+        form.querySelectorAll('input[name="MainImageId"]')
+            .forEach(function (radio) {
+                radio.addEventListener('change', function () {
+                    if (!radio.checked) return;
+
+                    if (mainImageIndex) {
+                        mainImageIndex.value = '';
+                    }
+
+                    if (preview) {
+                        preview.querySelectorAll('input[type="radio"]')
+                            .forEach(function (item) {
+                                item.checked = false;
+                            });
+
+                        preview.querySelectorAll('.new-image-preview')
+                            .forEach(function (item) {
+                                item.classList.remove('is-main');
+                            });
+                    }
+                });
+            });
+
+        // Kiểm tra form trước khi gửi
         form.addEventListener('submit', function (event) {
             if (!form.checkValidity()) {
                 event.preventDefault();
@@ -546,188 +201,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 return;
             }
 
-            const buttons = form.querySelectorAll(
-                '.product-form-submit'
-            );
-
-            buttons.forEach(function (button) {
-                button.disabled = true;
-                button.textContent = 'Đang lưu...';
-            });
+            form.querySelectorAll('.product-form-submit')
+                .forEach(function (button) {
+                    button.disabled = true;
+                    button.textContent = 'Đang lưu...';
+                });
         });
 
+        // Giải phóng URL ảnh tạm khi rời trang
         window.addEventListener('pagehide', clearPreview);
     });
 });
-
-=======
-        // =================================================
-        // 8. FILE INPUT CHANGE
-        // =================================================
-
-        fileInput.addEventListener('change', async function () {
-            if (validating) return;
-
-            const files = Array.from(fileInput.files || []);
-
-            preview.clearPreview();
-
-            if (files.length === 0) {
-                return;
-            }
-
-            // CHECK NUMBER OF FILES
-            if (files.length > MAX_FILES) {
-                window.alert(
-                    'Chỉ được chọn tối đa ' + MAX_FILES + ' ảnh.'
-                );
-
-                fileInput.value = '';
-
-                return;
-            }
-
-            // CHECK FILE TYPE AND SIZE
-            for (const file of files) {
-                const error = validateFile(file);
-
-                if (error) {
-                    window.alert(
-                        'Ảnh không hợp lệ: ' +
-                        file.name +
-                        '\n\n' +
-                        error
-                    );
-
-                    fileInput.value = '';
-
-                    return;
-                }
-            }
-
-            // CHECK IMAGE DIMENSIONS
-            validating = true;
-            fileInput.disabled = true;
-
-            try {
-                for (const file of files) {
-                    const error = await validateImageDimensions(file);
-
-                    if (error) {
-                        window.alert(
-                            'Không thể sử dụng ảnh: ' +
-                            file.name +
-                            '\n\n' +
-                            error
-                        );
-
-                        fileInput.value = '';
-
-                        preview.clearPreview();
-
-                        return;
-                    }
-                }
-
-                // RENDER ONLY AFTER ALL FILES PASS VALIDATION
-                preview.renderPreview(files);
-
-            } catch (error) {
-                console.error(
-                    '[STAGEFX] Image preview error:',
-                    error
-                );
-
-                fileInput.value = '';
-
-                preview.clearPreview();
-
-                window.alert(
-                    'Không thể xử lý ảnh. Vui lòng thử một ảnh khác.'
-                );
-
-            } finally {
-                validating = false;
-                fileInput.disabled = false;
-            }
-        });
-
-        // =================================================
-        // 9. FORM SUBMISSION
-        // =================================================
-
-        form.addEventListener('submit', function (event) {
-            if (validating) {
-                event.preventDefault();
-
-                window.alert(
-                    'Đang kiểm tra ảnh. Vui lòng chờ hoàn tất.'
-                );
-
-                return;
-            }
-
-            if (!form.checkValidity()) {
-                event.preventDefault();
-
-                form.reportValidity();
-
-                return;
-            }
-
-            const files = Array.from(fileInput.files || []);
-
-            if (files.length > MAX_FILES) {
-                event.preventDefault();
-
-                window.alert(
-                    'Chỉ được tải lên tối đa ' + MAX_FILES + ' ảnh.'
-                );
-
-                return;
-            }
-
-            for (const file of files) {
-                const error = validateFile(file);
-
-                if (error) {
-                    event.preventDefault();
-
-                    window.alert(
-                        'Ảnh không hợp lệ: ' +
-                        file.name +
-                        '\n\n' +
-                        error
-                    );
-
-                    return;
-                }
-            }
-
-            // PREVENT DOUBLE SUBMISSION
-            const submitButtons = form.querySelectorAll(
-                '.product-form-submit'
-            );
-
-            submitButtons.forEach(function (button) {
-                button.disabled = true;
-                button.classList.add('is-loading');
-
-                button.innerHTML =
-                    '<span class="material-symbols-outlined">' +
-                    'hourglass_top' +
-                    '</span> Đang lưu...';
-            });
-        });
-
-        // =================================================
-        // 10. CLEANUP
-        // =================================================
-
-        window.addEventListener('beforeunload', function () {
-            preview.destroy();
-        });
-    });
-
-});
->>>>>>> 8dd10d954939e9e3bea89f79058d14c043feda13

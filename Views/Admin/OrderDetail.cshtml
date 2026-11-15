@@ -1,4 +1,7 @@
+
+@using System
 @using System.Linq
+@using System.Web.Mvc
 @model Wedside_TVS_SFX.ViewModels.Admin.AdminOrderDetailViewModel
 
 @{
@@ -13,11 +16,16 @@
 
 <div class="admin-order-detail">
 
-    <!-- PAGE HEADER -->
+    <!-- ==========================================
+         PAGE HEADER
+    =========================================== -->
+
     <div class="order-detail-header">
 
-        <div>
+        <div class="order-detail-header-content">
+
             <div class="order-detail-eyebrow">
+                <span class="material-symbols-outlined">receipt_long</span>
                 ORDER MANAGEMENT
             </div>
 
@@ -26,24 +34,28 @@
             <p>
                 Theo dõi thông tin, sản phẩm và thanh toán của đơn hàng.
             </p>
+
         </div>
 
         <a href="@Url.Action("Orders", "AdminOrder")"
            class="order-back-button">
 
-            <span class="material-symbols-outlined">
-                arrow_back
-            </span>
-
+            <span class="material-symbols-outlined">arrow_back</span>
             Quay lại danh sách
+
         </a>
 
     </div>
 
-    <!-- ORDER SUMMARY -->
+
+    <!-- ==========================================
+         ORDER SUMMARY
+    =========================================== -->
+
     <section class="order-detail-card">
 
         <div class="order-card-heading">
+
             <div>
                 <span class="order-section-label">MÃ ĐƠN HÀNG</span>
                 <h2>@Model.MaSoDonHang</h2>
@@ -52,6 +64,7 @@
             <span class="order-status @Model.OrderStatusClass">
                 @Model.OrderStatusText
             </span>
+
         </div>
 
         <div class="order-summary-grid">
@@ -77,80 +90,355 @@
 
     </section>
 
-    @if (TempData["OrderSuccess"] != null || TempData["OrderError"] != null)
+
+    <!-- ==========================================
+         ACTION MESSAGE
+    =========================================== -->
+
+    @if (TempData["OrderSuccess"] != null ||
+         TempData["OrderError"] != null)
     {
         <div class="order-action-message @(TempData["OrderError"] != null ? "is-error" : "is-success")">
-            @((TempData["OrderError"] ?? TempData["OrderSuccess"]))
+
+            <span class="material-symbols-outlined">
+                @(TempData["OrderError"] != null ? "error" : "check_circle")
+            </span>
+
+            <span>
+                @(TempData["OrderError"] ?? TempData["OrderSuccess"])
+            </span>
+
         </div>
     }
 
+
+    <!-- ==========================================
+         UPDATE ORDER STATUS
+    =========================================== -->
+
     <section class="order-detail-card order-status-management">
+
         <div class="order-section-heading">
-            <span class="material-symbols-outlined">published_with_changes</span>
+
+            <span class="material-symbols-outlined">
+                published_with_changes
+            </span>
+
             <h3>Cập nhật trạng thái đơn hàng</h3>
+
         </div>
-        @if (Model.AllowedStatusTransitions.Any())
+
+        @if (Model.AllowedStatusTransitions != null &&
+             Model.AllowedStatusTransitions.Any())
         {
-            using (Html.BeginForm("UpdateStatus", "AdminOrder", FormMethod.Post, new { id = "orderStatusForm", data_status_form = "true" }))
+            using (Html.BeginForm(
+                "UpdateStatus",
+                "AdminOrder",
+                FormMethod.Post,
+                new
+                {
+                    id = "orderStatusForm",
+                    @class = "order-status-form",
+                    data_status_form = "true"
+                }))
             {
                 @Html.AntiForgeryToken()
+
                 @Html.Hidden("orderId", Model.MaDonHang)
+
                 <div class="order-status-form-grid">
-                    <label>Trạng thái mới @Html.DropDownList("newStatus", Model.AllowedStatusTransitions, "Chọn trạng thái")</label>
-                    <label>Ghi chú <textarea name="note" rows="3" maxlength="1000" placeholder="Ghi chú khi chuyển trạng thái..."></textarea></label>
+
+                    <!-- Chọn trạng thái -->
+
+                    <div class="form-group">
+
+                        <label for="newStatus">
+                            Trạng thái mới
+                        </label>
+
+                        @Html.DropDownList(
+                                 "newStatus",
+                                 Model.AllowedStatusTransitions,
+                                 "Chọn trạng thái",
+                                 new
+                                 {
+                                     id = "newStatus",
+                                     @class = "order-status-select"
+                                 })
+
+                    </div>
+
+
+                    <!-- Ghi chú -->
+
+                    <div class="form-group order-note-group">
+
+                        <label for="note">
+                            Ghi chú khi chuyển trạng thái
+                        </label>
+
+                        <textarea id="note"
+                                  name="note"
+                                  rows="3"
+                                  maxlength="1000"
+                                  placeholder="Ghi chú khi chuyển trạng thái..."></textarea>
+
+                        <small class="order-form-hint">
+                            Ghi chú không bắt buộc. Tối đa 1000 ký tự.
+                        </small>
+
+                    </div>
+
+
+                    <!-- Nút cập nhật -->
+
+                    <div class="form-actions">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <span class="material-symbols-outlined">
+                                save
+                            </span>
+
+                            Cập nhật trạng thái
+
+                        </button>
+
+                    </div>
+
                 </div>
-                <button class="order-status-update-button" type="submit">Cập nhật trạng thái</button>
             }
         }
         else
         {
-            <div class="order-empty-state">Đơn hàng đang ở trạng thái kết thúc hoặc không có bước chuyển tiếp hợp lệ.</div>
+            <div class="order-empty-state">
+
+                <span class="material-symbols-outlined">
+                    info
+                </span>
+
+                <p>
+                    Đơn hàng đang ở trạng thái kết thúc hoặc không có
+                    bước chuyển tiếp hợp lệ.
+                </p>
+
+            </div>
         }
+
     </section>
+
+
+    <!-- ==========================================
+         CANCELLATION REQUEST
+    =========================================== -->
 
     @if (Model.CancellationRequest != null)
     {
         <section class="order-detail-card order-cancellation-card">
-            <div class="order-section-heading"><span class="material-symbols-outlined">cancel</span><h3>Yêu cầu hủy đơn</h3></div>
-            <p><strong>Lý do khách hàng:</strong> @Model.CancellationRequest.LyDoHuy</p>
-            <p><strong>Trạng thái yêu cầu:</strong> @Model.CancellationRequest.TrangThaiYeuCau</p>
-            @if (Model.CancellationRequest.TrangThaiYeuCau == "ChoXuLy" || Model.CancellationRequest.TrangThaiYeuCau == "ChoDuyet")
+
+            <div class="order-section-heading">
+
+                <span class="material-symbols-outlined">
+                    cancel
+                </span>
+
+                <h3>Yêu cầu hủy đơn</h3>
+
+            </div>
+
+            <div class="order-info-list">
+
+                <div>
+                    <span>Lý do khách hàng</span>
+                    <strong>
+                        @Model.CancellationRequest.LyDoHuy
+                    </strong>
+                </div>
+
+                <div>
+                    <span>Trạng thái yêu cầu</span>
+                    <strong>
+                        @Model.CancellationRequest.TrangThaiYeuCau
+                    </strong>
+                </div>
+
+            </div>
+
+            @if (Model.CancellationRequest.TrangThaiYeuCau == "ChoXuLy" ||
+                 Model.CancellationRequest.TrangThaiYeuCau == "ChoDuyet")
             {
                 <div class="order-cancellation-actions">
-                    @using (Html.BeginForm("ApproveCancellation", "AdminOrder", FormMethod.Post, new { @class = "order-inline-form" }))
-                    {@Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Ghi chú xử lý" /><button class="order-confirm-button" type="submit" data-confirm-cancellation>Chấp nhận hủy</button>}
-                    @using (Html.BeginForm("RejectCancellation", "AdminOrder", FormMethod.Post, new { @class = "order-inline-form" }))
-                    {@Html.AntiForgeryToken() @Html.Hidden("orderId", Model.MaDonHang) @Html.Hidden("requestId", Model.CancellationRequest.MaYeuCauHuy) <input name="note" placeholder="Lý do từ chối" /><button class="order-reject-button" type="submit">Từ chối</button>}
+
+                    <!-- Chấp nhận hủy -->
+
+                    @using (Html.BeginForm(
+                        "ApproveCancellation",
+                        "AdminOrder",
+                        FormMethod.Post,
+                        new { @class = "order-inline-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.Hidden("orderId", Model.MaDonHang)
+
+                        @Html.Hidden(
+                                 "requestId",
+                                 Model.CancellationRequest.MaYeuCauHuy)
+
+                        <input type="text"
+                               name="note"
+                               maxlength="1000"
+                               placeholder="Ghi chú xử lý..." />
+
+                        <button type="submit"
+                                class="order-confirm-button"
+                                data-confirm-cancellation>
+
+                            <span class="material-symbols-outlined">
+                                check_circle
+                            </span>
+
+                            Chấp nhận hủy
+
+                        </button>
+                    }
+
+
+                    <!-- Từ chối hủy -->
+
+                    @using (Html.BeginForm(
+                        "RejectCancellation",
+                        "AdminOrder",
+                        FormMethod.Post,
+                        new { @class = "order-inline-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        @Html.Hidden("orderId", Model.MaDonHang)
+
+                        @Html.Hidden(
+                                 "requestId",
+                                 Model.CancellationRequest.MaYeuCauHuy)
+
+                        <input type="text"
+                               name="note"
+                               maxlength="1000"
+                               placeholder="Lý do từ chối..." />
+
+                        <button type="submit"
+                                class="order-reject-button">
+
+                            <span class="material-symbols-outlined">
+                                close
+                            </span>
+
+                            Từ chối
+
+                        </button>
+                    }
+
                 </div>
             }
+
         </section>
     }
 
+
+    <!-- ==========================================
+         STATUS HISTORY
+    =========================================== -->
+
     <section class="order-detail-card order-history-card">
-        <div class="order-section-heading"><span class="material-symbols-outlined">history</span><h3>Lịch sử trạng thái</h3></div>
-        @if (Model.StatusHistory.Any())
+
+        <div class="order-section-heading">
+
+            <span class="material-symbols-outlined">
+                history
+            </span>
+
+            <h3>Lịch sử trạng thái</h3>
+
+            <span class="order-count">
+                @(Model.StatusHistory?.Count ?? 0) lần thay đổi
+            </span>
+
+        </div>
+
+        @if (Model.StatusHistory != null &&
+             Model.StatusHistory.Any())
         {
             <div class="order-status-timeline">
+
                 @foreach (var history in Model.StatusHistory)
                 {
-                    <article class="order-status-history-item"><div class="order-status-history-marker"></div><div><strong>@history.TrangThaiCuText → @history.TrangThaiMoiText</strong><small>@history.NguoiThucHien · @history.NgayThayDoi.ToString("dd/MM/yyyy HH:mm")</small><p>@(string.IsNullOrWhiteSpace(history.GhiChu) ? "Không có ghi chú." : history.GhiChu)</p></div></article>
+                    <article class="order-status-history-item">
+
+                        <div class="order-status-history-marker"></div>
+
+                        <div class="order-status-history-content">
+
+                            <strong>
+                                @history.TrangThaiCuText
+                                <span class="material-symbols-outlined">
+                                    arrow_forward
+                                </span>
+                                @history.TrangThaiMoiText
+                            </strong>
+
+                            <small>
+                                @history.NguoiThucHien
+                                ·
+                                @history.NgayThayDoi.ToString("dd/MM/yyyy HH:mm")
+                            </small>
+
+                            <p>
+                                @(string.IsNullOrWhiteSpace(history.GhiChu)
+                                    ? "Không có ghi chú."
+                                    : history.GhiChu)
+                            </p>
+
+                        </div>
+
+                    </article>
                 }
+
             </div>
         }
         else
         {
-            <div class="order-empty-state">Chưa có lịch sử thay đổi trạng thái.</div>
+            <div class="order-empty-state">
+
+                <span class="material-symbols-outlined">
+                    history
+                </span>
+
+                <p>Chưa có lịch sử thay đổi trạng thái.</p>
+
+            </div>
         }
+
     </section>
 
-    <!-- CUSTOMER INFORMATION -->
+
+    <!-- ==========================================
+         CUSTOMER AND SHIPPING INFORMATION
+    =========================================== -->
+
     <div class="order-detail-two-columns">
+
+        <!-- CUSTOMER -->
 
         <section class="order-detail-card">
 
             <div class="order-section-heading">
-                <span class="material-symbols-outlined">business</span>
+
+                <span class="material-symbols-outlined">
+                    business
+                </span>
+
                 <h3>Thông tin khách hàng</h3>
+
             </div>
 
             <div class="order-info-list">
@@ -164,8 +452,8 @@
                     <span>Email</span>
                     <strong>
                         @(string.IsNullOrWhiteSpace(Model.CustomerEmail)
-                        ? "Chưa cập nhật"
-                        : Model.CustomerEmail)
+                            ? "Chưa cập nhật"
+                            : Model.CustomerEmail)
                     </strong>
                 </div>
 
@@ -173,8 +461,8 @@
                     <span>Số điện thoại</span>
                     <strong>
                         @(string.IsNullOrWhiteSpace(Model.CustomerPhone)
-                        ? "Chưa cập nhật"
-                        : Model.CustomerPhone)
+                            ? "Chưa cập nhật"
+                            : Model.CustomerPhone)
                     </strong>
                 </div>
 
@@ -182,11 +470,19 @@
 
         </section>
 
+
+        <!-- SHIPPING -->
+
         <section class="order-detail-card">
 
             <div class="order-section-heading">
-                <span class="material-symbols-outlined">local_shipping</span>
+
+                <span class="material-symbols-outlined">
+                    local_shipping
+                </span>
+
                 <h3>Thông tin nhận hàng</h3>
+
             </div>
 
             <div class="order-info-list">
@@ -212,19 +508,28 @@
 
     </div>
 
-    <!-- PRODUCT LIST -->
+
+    <!-- ==========================================
+         PRODUCT LIST
+    =========================================== -->
+
     <section class="order-detail-card">
 
         <div class="order-section-heading">
-            <span class="material-symbols-outlined">inventory_2</span>
+
+            <span class="material-symbols-outlined">
+                inventory_2
+            </span>
+
             <h3>Sản phẩm trong đơn hàng</h3>
 
             <span class="order-count">
-                @Model.Products.Count sản phẩm
+                @(Model.Products?.Count ?? 0) sản phẩm
             </span>
+
         </div>
 
-        @if (Model.Products.Count > 0)
+        @if (Model.Products != null && Model.Products.Any())
         {
             <div class="order-table-wrapper">
 
@@ -242,9 +547,11 @@
                     </thead>
 
                     <tbody>
+
                         @foreach (var item in Model.Products)
                         {
                             <tr>
+
                                 <td>
                                     <strong>@item.TenSanPham</strong>
                                     <small>SKU: @item.SKU</small>
@@ -254,9 +561,12 @@
                                     @(string.IsNullOrWhiteSpace(item.HinhThucDat)
                                         ? "Chưa xác định"
                                         : item.HinhThucDat)
+
                                     @if (item.SoNgayThue.HasValue)
                                     {
-                                        <small>@item.SoNgayThue ngày thuê</small>
+                                        <small>
+                                            @item.SoNgayThue ngày thuê
+                                        </small>
                                     }
                                 </td>
 
@@ -264,13 +574,18 @@
                                     @item.DonGia.ToString("N0") ₫
                                 </td>
 
-                                <td>@item.SoLuong</td>
+                                <td>
+                                    @item.SoLuong
+                                </td>
 
                                 <td>
                                     @if (item.CoFlightcase)
                                     {
                                         <strong>Có</strong>
-                                        <small>@item.PhiFlightcase.ToString("N0") ₫</small>
+
+                                        <small>
+                                            @item.PhiFlightcase.ToString("N0") ₫
+                                        </small>
                                     }
                                     else
                                     {
@@ -279,17 +594,22 @@
                                 </td>
 
                                 <td class="order-money">
+
                                     @if (item.ThanhTien.HasValue)
                                     {
-                                        @item.ThanhTien.Value.ToString("N0") @:₫
+                                        @item.ThanhTien.Value.ToString("N0")
+                                        @:₫
                                     }
                                     else
                                     {
                                         <span>Chưa có dữ liệu</span>
                                     }
+
                                 </td>
+
                             </tr>
                         }
+
                     </tbody>
 
                 </table>
@@ -299,20 +619,37 @@
         else
         {
             <div class="order-empty-state">
-                Chưa có sản phẩm trong đơn hàng này.
+
+                <span class="material-symbols-outlined">
+                    inventory_2
+                </span>
+
+                <p>Chưa có sản phẩm trong đơn hàng này.</p>
+
             </div>
         }
 
     </section>
 
-    <!-- PAYMENT SUMMARY -->
+
+    <!-- ==========================================
+         PAYMENT SUMMARY
+    =========================================== -->
+
     <div class="order-detail-two-columns">
+
+        <!-- ORDER TOTAL -->
 
         <section class="order-detail-card">
 
             <div class="order-section-heading">
-                <span class="material-symbols-outlined">receipt_long</span>
+
+                <span class="material-symbols-outlined">
+                    receipt_long
+                </span>
+
                 <h3>Tổng kết đơn hàng</h3>
+
             </div>
 
             <div class="order-price-list">
@@ -346,14 +683,26 @@
 
         </section>
 
+
+        <!-- PAYMENT HISTORY -->
+
         <section class="order-detail-card">
 
             <div class="order-section-heading">
-                <span class="material-symbols-outlined">payments</span>
+
+                <span class="material-symbols-outlined">
+                    payments
+                </span>
+
                 <h3>Lịch sử thanh toán</h3>
+
+                <span class="order-count">
+                    @(Model.Payments?.Count ?? 0) giao dịch
+                </span>
+
             </div>
 
-            @if (Model.Payments.Count > 0)
+            @if (Model.Payments != null && Model.Payments.Any())
             {
                 <div class="order-payment-list">
 
@@ -362,6 +711,7 @@
                         <div class="order-payment-item">
 
                             <div class="payment-item-heading">
+
                                 <strong>
                                     Giao dịch #@payment.MaThanhToan
                                 </strong>
@@ -369,6 +719,7 @@
                                 <span class="order-status @payment.PaymentStatusClass">
                                     @payment.PaymentStatusText
                                 </span>
+
                             </div>
 
                             <div class="payment-item-amount">
@@ -377,22 +728,30 @@
 
                             <div class="payment-item-info">
                                 <span>Phương thức</span>
-                                <strong>@(payment.PhuongThuc ?? "Chưa xác định")</strong>
+                                <strong>
+                                    @(payment.PhuongThuc ?? "Chưa xác định")
+                                </strong>
                             </div>
 
                             <div class="payment-item-info">
                                 <span>Đơn vị thanh toán</span>
-                                <strong>@(payment.DonViThanhToan ?? "Không có")</strong>
+                                <strong>
+                                    @(payment.DonViThanhToan ?? "Không có")
+                                </strong>
                             </div>
 
                             <div class="payment-item-info">
                                 <span>Mã giao dịch</span>
-                                <strong>@(payment.MaGiaoDich ?? "Chưa có")</strong>
+                                <strong>
+                                    @(payment.MaGiaoDich ?? "Chưa có")
+                                </strong>
                             </div>
 
                             <div class="payment-item-info">
                                 <span>Ngày tạo</span>
-                                <strong>@payment.NgayTao.ToString("dd/MM/yyyy HH:mm")</strong>
+                                <strong>
+                                    @payment.NgayTao.ToString("dd/MM/yyyy HH:mm")
+                                </strong>
                             </div>
 
                             <div class="payment-item-info">
@@ -412,7 +771,13 @@
             else
             {
                 <div class="order-empty-state">
-                    Chưa có giao dịch thanh toán.
+
+                    <span class="material-symbols-outlined">
+                        payments
+                    </span>
+
+                    <p>Chưa có giao dịch thanh toán.</p>
+
                 </div>
             }
 
@@ -420,23 +785,42 @@
 
     </div>
 
-    <!-- NOTE -->
+
+    <!-- ==========================================
+         ORDER NOTE
+    =========================================== -->
+
     <section class="order-detail-card">
 
         <div class="order-section-heading">
-            <span class="material-symbols-outlined">description</span>
+
+            <span class="material-symbols-outlined">
+                description
+            </span>
+
             <h3>Ghi chú đơn hàng</h3>
+
         </div>
 
         <div class="order-note">
+
             @(string.IsNullOrWhiteSpace(Model.GhiChu)
                 ? "Khách hàng không để lại ghi chú."
                 : Model.GhiChu)
+
         </div>
 
     </section>
 
 </div>
 
+
+<!-- ==========================================
+     PAGE SCRIPTS
+=========================================== -->
+
 @section scripts {
-    <script src="@Url.Content("~/Scripts/admin/admin-order-detail.js")"
+
+    <script src="@Url.Content("~/Scripts/admin/admin-order-detail.js")"></script>
+
+}

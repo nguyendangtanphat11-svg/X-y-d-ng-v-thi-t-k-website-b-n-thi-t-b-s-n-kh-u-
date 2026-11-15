@@ -1,0 +1,110 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminCategoryFormViewModel
+
+@Html.HiddenFor(x => x.MaDanhMuc)
+@Html.HiddenFor(x => x.AnhDanhMuc)
+
+<div class="category-form-grid">
+
+    <!-- TÊN DANH MỤC -->
+    <div class="category-form-group full-width">
+        <label for="TenDanhMuc">
+            Tên danh mục <span class="required">*</span>
+        </label>
+
+        @Html.TextBoxFor(x => x.TenDanhMuc, new
+        {
+            @class = "category-input",
+            placeholder = "Nhập tên danh mục...",
+            maxlength = "150",
+            required = "required"
+        })
+
+        @Html.ValidationMessageFor(x => x.TenDanhMuc, "", new
+        {
+            @class = "category-validation"
+        })
+    </div>
+
+    <!-- MÔ TẢ -->
+    <div class="category-form-group full-width">
+        <label for="MoTa">Mô tả</label>
+
+        @Html.TextAreaFor(x => x.MoTa, new
+        {
+            @class = "category-input category-textarea",
+            placeholder = "Nhập mô tả cho danh mục...",
+            maxlength = "1000",
+            rows = "5"
+        })
+
+        @Html.ValidationMessageFor(x => x.MoTa, "", new
+        {
+            @class = "category-validation"
+        })
+    </div>
+
+    <!-- ẢNH DANH MỤC -->
+    <div class="category-form-group full-width">
+        <label for="AnhUpload">Ảnh danh mục</label>
+
+        <div class="category-image-upload">
+            <div class="category-image-preview" id="categoryImagePreview">
+                @if (!string.IsNullOrWhiteSpace(Model?.AnhDanhMuc))
+                {
+                    <img src="@Url.Content(Model.AnhDanhMuc)"
+                         alt="Ảnh danh mục hiện tại"
+                         id="categoryPreviewImage" />
+                }
+                else
+                {
+                    <div class="category-image-placeholder" id="categoryImagePlaceholder">
+                        <span class="material-symbols-outlined">image</span>
+                        <span>Chưa có ảnh danh mục</span>
+                    </div>
+                }
+            </div>
+
+            <div class="category-image-actions">
+                <input type="file"
+                       id="AnhUpload"
+                       name="AnhUpload"
+                       class="category-file-input"
+                       accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" />
+
+                <label for="AnhUpload" class="category-upload-button">
+                    <span class="material-symbols-outlined">upload</span>
+                    Chọn ảnh
+                </label>
+
+                <small class="category-help">
+                    Định dạng JPG, JPEG, PNG, WEBP. Dung lượng tối đa 5MB.
+                </small>
+
+                <span id="categoryImageFileName" class="category-file-name"></span>
+
+                <span id="categoryImageError"
+                      class="category-validation"
+                      style="display:none;"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- TRẠNG THÁI -->
+    <div class="category-form-group full-width">
+        <label>Trạng thái danh mục</label>
+
+        <label class="category-status-control">
+            @Html.CheckBoxFor(x => x.TrangThai)
+            <span class="category-status-slider"></span>
+            <span class="category-status-label">
+                Kích hoạt danh mục
+            </span>
+        </label>
+
+        <small class="category-help">
+            Danh mục được kích hoạt có thể được sử dụng trong hệ thống.
+        </small>
+    </div>
+
+</div>

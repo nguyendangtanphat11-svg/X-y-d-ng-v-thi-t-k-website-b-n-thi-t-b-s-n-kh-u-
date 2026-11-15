@@ -120,11 +120,28 @@
                         <article class="cart-item">
 
                             @* ẢNH / BIỂU TƯỢNG *@
+                         
                             <div class="item-image-wrap">
 
-                                <span class="material-symbols-outlined item-placeholder-icon">
-                                    precision_manufacturing
-                                </span>
+                                @if (!string.IsNullOrWhiteSpace(item.HinhAnh))
+                                {
+                                    <img src="@Url.Content(item.HinhAnh)"
+                                         alt="@item.TenSanPham"
+                                         class="cart-product-image"
+                                         loading="lazy"
+                                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+
+                                    <span class="material-symbols-outlined item-placeholder-icon"
+                                          style="display:none;">
+                                        precision_manufacturing
+                                    </span>
+                                }
+                                else
+                                {
+                                    <span class="material-symbols-outlined item-placeholder-icon">
+                                        precision_manufacturing
+                                    </span>
+                                }
 
                                 <span class="item-sku">
                                     @item.SKU

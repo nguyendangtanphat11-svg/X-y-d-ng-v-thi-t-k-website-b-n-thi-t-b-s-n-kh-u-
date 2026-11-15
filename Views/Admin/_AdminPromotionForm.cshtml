@@ -1,0 +1,299 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminPromotionFormViewModel
+
+@using System
+@using System.Collections.Generic
+@using System.Web.Mvc
+
+<div class="promotion-form">
+
+    @Html.HiddenFor(m => m.MaKhuyenMai)
+
+    @Html.ValidationSummary(false, "", new
+    {
+        @class = "promotion-validation-summary"
+    })
+
+    <!-- THÔNG TIN CƠ BẢN -->
+    <div class="promotion-form-section">
+
+        <div class="promotion-form-section-heading">
+            <span class="material-symbols-outlined">confirmation_number</span>
+            <div>
+                <h3>Thông tin khuyến mãi</h3>
+                <p>Thông tin nhận diện và mô tả chương trình</p>
+            </div>
+        </div>
+
+        <div class="promotion-form-grid">
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.MaCode, "Mã khuyến mãi")
+                <span class="promotion-required">*</span>
+
+                @Html.TextBoxFor(m => m.MaCode, new
+                {
+                    @class = "promotion-form-control promotion-code-input",
+                    placeholder = "Ví dụ: STAGEFX10",
+                    maxlength = "50",
+                    autocomplete = "off"
+                })
+
+                @Html.ValidationMessageFor(m => m.MaCode, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+
+                <small>Mã khách hàng nhập khi đặt hàng. Tối đa 50 ký tự.</small>
+            </div>
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.TenKhuyenMai, "Tên chương trình")
+                <span class="promotion-required">*</span>
+
+                @Html.TextBoxFor(m => m.TenKhuyenMai, new
+                {
+                    @class = "promotion-form-control",
+                    placeholder = "Nhập tên chương trình khuyến mãi",
+                    maxlength = "200"
+                })
+
+                @Html.ValidationMessageFor(m => m.TenKhuyenMai, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+            </div>
+
+            <div class="promotion-form-group promotion-form-full">
+                @Html.LabelFor(m => m.MoTa, "Mô tả chương trình")
+
+                @Html.TextAreaFor(m => m.MoTa, new
+                {
+                    @class = "promotion-form-control promotion-textarea",
+                    placeholder = "Nhập nội dung mô tả chương trình...",
+                    rows = "4",
+                    maxlength = "1000"
+                })
+
+                @Html.ValidationMessageFor(m => m.MoTa, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+
+                <small>Mô tả tối đa 1000 ký tự.</small>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- THIẾT LẬP GIẢM GIÁ -->
+    <div class="promotion-form-section">
+
+        <div class="promotion-form-section-heading">
+            <span class="material-symbols-outlined">sell</span>
+            <div>
+                <h3>Thiết lập giảm giá</h3>
+                <p>Chọn hình thức và giá trị ưu đãi</p>
+            </div>
+        </div>
+
+        <div class="promotion-form-grid">
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.LoaiGiamGia, "Loại giảm giá")
+                <span class="promotion-required">*</span>
+
+                @Html.DropDownListFor(
+                              m => m.LoaiGiamGia,
+                              new SelectList(
+                                  new[]
+                                  {
+                            new { Value = "PhanTram", Text = "Giảm theo phần trăm (%)" },
+                            new { Value = "SoTien", Text = "Giảm theo số tiền (VNĐ)" }
+                          },
+                                  "Value",
+                                  "Text",
+                                  Model == null ? null : Model.LoaiGiamGia
+                              ),
+                              "-- Chọn loại giảm giá --",
+                              new
+                              {
+                                  @class = "promotion-form-control",
+                                  id = "LoaiGiamGia"
+                              }
+                          )
+
+                @Html.ValidationMessageFor(m => m.LoaiGiamGia, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+            </div>
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.GiaTriGiam, "Giá trị giảm")
+                <span class="promotion-required">*</span>
+
+                @Html.TextBoxFor(m => m.GiaTriGiam, "{0:0.##}", new
+                {
+                    @class = "promotion-form-control",
+                    type = "number",
+                    min = "0.01",
+                    step = "0.01",
+                    placeholder = "Nhập giá trị giảm"
+                })
+
+                @Html.ValidationMessageFor(m => m.GiaTriGiam, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+
+                <small id="promotion-discount-hint">
+                    Nhập tỷ lệ giảm hoặc số tiền giảm tùy loại khuyến mãi.
+                </small>
+            </div>
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.GiaTriDonHangToiThieu, "Giá trị đơn hàng tối thiểu")
+                <span class="promotion-required">*</span>
+
+                @Html.TextBoxFor(m => m.GiaTriDonHangToiThieu, "{0:0.##}", new
+                {
+                    @class = "promotion-form-control",
+                    type = "number",
+                    min = "0",
+                    step = "0.01",
+                    placeholder = "0"
+                })
+
+                @Html.ValidationMessageFor(m => m.GiaTriDonHangToiThieu, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+
+                <small>Giá trị tối thiểu để khách hàng được áp dụng mã.</small>
+            </div>
+
+            <div class="promotion-form-group" id="promotion-max-discount-group">
+                @Html.LabelFor(m => m.GiamToiDa, "Mức giảm tối đa")
+
+                @Html.TextBoxFor(m => m.GiamToiDa, "{0:0.##}", new
+                {
+                    @class = "promotion-form-control",
+                    type = "number",
+                    min = "0",
+                    step = "0.01",
+                    placeholder = "Không giới hạn"
+                })
+
+                @Html.ValidationMessageFor(m => m.GiamToiDa, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+
+                <small>Chỉ áp dụng cho chương trình giảm theo phần trăm.</small>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- THỜI GIAN VÀ SỐ LƯỢNG -->
+    <div class="promotion-form-section">
+
+        <div class="promotion-form-section-heading">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <div>
+                <h3>Thời gian và giới hạn</h3>
+                <p>Thiết lập thời gian có hiệu lực và lượt sử dụng</p>
+            </div>
+        </div>
+
+        <div class="promotion-form-grid">
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.NgayBatDau, "Ngày bắt đầu")
+                <span class="promotion-required">*</span>
+
+                @Html.TextBoxFor(m => m.NgayBatDau, "{0:yyyy-MM-dd}", new
+                {
+                    @class = "promotion-form-control",
+                    type = "date"
+                })
+
+                @Html.ValidationMessageFor(m => m.NgayBatDau, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+            </div>
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.NgayKetThuc, "Ngày kết thúc")
+                <span class="promotion-required">*</span>
+
+                @Html.TextBoxFor(m => m.NgayKetThuc, "{0:yyyy-MM-dd}", new
+                {
+                    @class = "promotion-form-control",
+                    type = "date"
+                })
+
+                @Html.ValidationMessageFor(m => m.NgayKetThuc, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+            </div>
+
+            <div class="promotion-form-group">
+                @Html.LabelFor(m => m.GioiHanSuDung, "Giới hạn lượt sử dụng")
+
+                @Html.TextBoxFor(m => m.GioiHanSuDung, new
+                {
+                    @class = "promotion-form-control",
+                    type = "number",
+                    min = "1",
+                    step = "1",
+                    placeholder = "Để trống nếu không giới hạn"
+                })
+
+                @Html.ValidationMessageFor(m => m.GioiHanSuDung, "", new
+                {
+                    @class = "promotion-field-error"
+                })
+
+                <small>Để trống nếu chương trình không giới hạn lượt sử dụng.</small>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TRẠNG THÁI -->
+    <div class="promotion-form-section">
+
+        <div class="promotion-form-section-heading">
+            <span class="material-symbols-outlined">toggle_on</span>
+            <div>
+                <h3>Trạng thái chương trình</h3>
+                <p>Cho phép hoặc tạm ngừng áp dụng mã khuyến mãi</p>
+            </div>
+        </div>
+
+        <label class="promotion-switch-wrapper">
+
+            @Html.CheckBoxFor(m => m.TrangThai, new
+            {
+                id = "TrangThai"
+            })
+
+            <span class="promotion-switch"></span>
+
+            <span class="promotion-switch-content">
+                <strong>Kích hoạt khuyến mãi</strong>
+                <small>
+                    Khi bật, mã có thể được áp dụng nếu đáp ứng điều kiện
+                    và nằm trong thời gian hiệu lực.
+                </small>
+            </span>
+
+        </label>
+
+    </div>
+
+</div>

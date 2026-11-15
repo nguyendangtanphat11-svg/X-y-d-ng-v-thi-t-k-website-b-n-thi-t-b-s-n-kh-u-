@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.Diagnostics;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Web.Mvc;
 using STAGEFX_PRO.ViewModels;
@@ -26,6 +28,9 @@ namespace STAGEFX_PRO.Controllers
                         MaDanhMuc = d.MaDanhMuc,
                         TenDanhMuc = d.TenDanhMuc,
                         MoTa = d.MoTa,
+
+                        // Lấy đường dẫn ảnh danh mục từ database
+                        AnhDanhMuc = d.AnhDanhMuc,
 
                         SoLuongSanPham = db.SanPham.Count(p =>
                             p.MaDanhMuc == d.MaDanhMuc &&
@@ -83,6 +88,7 @@ namespace STAGEFX_PRO.Controllers
             // Kiểm tra dữ liệu đầu vào
             if (model == null)
             {
+                Response.StatusCode = 400;
                 return Json(new
                 {
                     success = false,
@@ -90,8 +96,26 @@ namespace STAGEFX_PRO.Controllers
                 });
             }
 
+            model.CompanyName = (model.CompanyName ?? "").Trim();
+            model.Email = (model.Email ?? "").Trim();
+            model.Phone = (model.Phone ?? "").Trim();
+            model.Scale = (model.Scale ?? "").Trim();
+            model.RequestedProduct = (model.RequestedProduct ?? "").Trim();
+            model.Content = (model.Content ?? "").Trim();
+
+            if (string.IsNullOrWhiteSpace(model.CompanyName))
+                ModelState.AddModelError(
+                    "CompanyName",
+                    "Vui lòng nhập tên công ty hoặc người liên hệ.");
+
+            if (string.IsNullOrWhiteSpace(model.Email))
+                ModelState.AddModelError("Email", "Vui lòng nhập email.");
+            else if (!new EmailAddressAttribute().IsValid(model.Email))
+                ModelState.AddModelError("Email", "Email không hợp lệ.");
+
             if (!ModelState.IsValid)
             {
+                Response.StatusCode = 400;
                 var errors = ModelState.Values
                     .SelectMany(v => v.Errors)
                     .Select(e => e.ErrorMessage)
@@ -131,11 +155,15 @@ namespace STAGEFX_PRO.Controllers
 
                 // Tạo nội dung yêu cầu
                 string noiDung =
-                    "Sản phẩm quan tâm: " + sanPham +
-                    "\nQuy mô sự kiện: " +
-                    (string.IsNullOrWhiteSpace(model.Scale)
-                        ? "Chưa cung cấp"
-                        : model.Scale.Trim());
+     "Sản phẩm quan tâm: " + sanPham +
+     "\nQuy mô sự kiện: " +
+     (string.IsNullOrWhiteSpace(model.Scale)
+         ? "Chưa cung cấp"
+         : model.Scale.Trim()) +
+     "\nNội dung yêu cầu: " +
+     (string.IsNullOrWhiteSpace(model.Content)
+         ? "Không có"
+         : model.Content.Trim());
 
                 using (var db = new StageFxEntities())
                 {
@@ -179,18 +207,15 @@ namespace STAGEFX_PRO.Controllers
             }
             catch (Exception ex)
             {
-                // Ghi lỗi chi tiết vào Output của Visual Studio
-                System.Diagnostics.Debug.WriteLine(
-                    "LỖI GỬI YÊU CẦU TƯ VẤN:");
+                Trace.TraceError(
+                    "[HomeController - GuiYeuCauTuVan] {0}",
+                    ex);
 
-                System.Diagnostics.Debug.WriteLine(ex.ToString());
-
-                // Thông báo lỗi khi đang kiểm tra trên máy local
+                Response.StatusCode = 500;
                 return Json(new
                 {
                     success = false,
-                    message = "Lỗi lưu yêu cầu: "
-                        + ex.GetBaseException().Message
+                    message = "Không thể lưu yêu cầu lúc này. Vui lòng thử lại sau."
                 });
             }
         }

@@ -94,6 +94,8 @@
 .admin-account-menu-item .material-symbols-outlined { font-size: 18px; }
 .admin-logout-link:hover,
 .admin-logout-link:focus-visible { color: var(--admin-accent); }
+.admin-logout-form { margin: 0; }
+.admin-logout-form button { width: 100%; border: 0; background: transparent; text-align: left; font: inherit; cursor: pointer; }
 
 @media (max-width: 1024px) {
     .admin-header { padding: 14px 24px; }

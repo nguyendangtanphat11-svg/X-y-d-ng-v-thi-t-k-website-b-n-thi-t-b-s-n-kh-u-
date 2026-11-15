@@ -135,13 +135,21 @@
 
                     <div class="site-shell-dropdown-divider"></div>
 
-                    <a href="@Url.Action("Logout", "Account")"
-                       class="site-shell-dropdown-item logout-item"
-                       onclick="return confirm('Bạn có chắc muốn đăng xuất?')">
+                    @using (Html.BeginForm(
+                        "Logout",
+                        "Account",
+                        FormMethod.Post,
+                        new { @class = "site-shell-logout-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit"
+                                class="site-shell-dropdown-item logout-item"
+                                onclick="return confirm('Bạn có chắc muốn đăng xuất?')">
 
-                        <span class="material-symbols-outlined">logout</span>
-                        <span>Đăng xuất</span>
-                    </a>
+                            <span class="material-symbols-outlined">logout</span>
+                            <span>Đăng xuất</span>
+                        </button>
+                    }
 
                 </div>
             </div>

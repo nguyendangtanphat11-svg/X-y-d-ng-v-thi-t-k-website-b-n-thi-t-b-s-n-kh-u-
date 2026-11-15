@@ -1,0 +1,149 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminPromotionFormViewModel
+
+@{
+    ViewBag.Title = "Chỉnh sửa khuyến mãi";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-promotion.css")" />
+}
+
+<div class="admin-promotion-page">
+
+    <!-- PAGE HEADING -->
+    <div class="promotion-page-heading">
+
+        <div>
+            <div class="promotion-breadcrumb">
+                <span>Quản trị</span>
+                <span>/</span>
+
+                <a href="@Url.Action("Promotions", "AdminPromotion")">
+                    Khuyến mãi
+                </a>
+
+                <span>/</span>
+                <span>Chỉnh sửa</span>
+            </div>
+
+            <h1>Chỉnh sửa khuyến mãi</h1>
+
+            <p>
+                Cập nhật thông tin và điều kiện áp dụng chương trình.
+            </p>
+        </div>
+
+        <a href="@Url.Action("Promotions", "AdminPromotion")"
+           class="promotion-back-btn">
+
+            <span class="material-symbols-outlined"
+                  aria-hidden="true">
+                arrow_back
+            </span>
+
+            Quay lại
+        </a>
+
+    </div>
+
+    <!-- ERROR MESSAGE -->
+    @if (TempData["Error"] != null)
+    {
+        <div class="promotion-alert promotion-alert-error"
+             role="alert">
+
+            <span class="material-symbols-outlined"
+                  aria-hidden="true">
+                error
+            </span>
+
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+    <!-- EDIT INFORMATION -->
+    <div class="promotion-edit-info">
+
+        <span class="material-symbols-outlined"
+              aria-hidden="true">
+            info
+        </span>
+
+        <div>
+            <strong>
+                Đang chỉnh sửa chương trình #@Model.MaKhuyenMai
+            </strong>
+
+            <p>
+                Thông tin hiện tại được tải từ hệ thống.
+                Hãy kiểm tra trước khi lưu thay đổi.
+            </p>
+        </div>
+
+    </div>
+
+    <!-- VALIDATION SUMMARY -->
+    @if (!ViewData.ModelState.IsValid)
+    {
+        <div class="promotion-validation-summary">
+            @Html.ValidationSummary(false, "", new
+            {
+                @class = "promotion-field-error"
+            })
+        </div>
+    }
+
+    <!-- EDIT FORM -->
+    @using (Html.BeginForm(
+        "Edit",
+        "AdminPromotion",
+        new { id = Model.MaKhuyenMai },
+        FormMethod.Post,
+        new
+        {
+            @class = "promotion-form-container",
+            id = "promotion-form"
+        }))
+    {
+        @Html.AntiForgeryToken()
+
+        @Html.HiddenFor(model => model.MaKhuyenMai)
+
+        <!-- PROMOTION FORM PARTIAL -->
+        @Html.Partial(
+                 "~/Views/Admin/_AdminPromotionForm.cshtml",
+                 Model
+             )
+
+        <!-- FORM FOOTER -->
+        <div class="promotion-form-footer">
+
+            <a href="@Url.Action("Promotions", "AdminPromotion")"
+               class="promotion-cancel-btn">
+                Hủy bỏ
+            </a>
+
+            <button type="submit"
+                    class="promotion-submit-btn">
+
+                <span class="material-symbols-outlined"
+                      aria-hidden="true">
+                    save
+                </span>
+
+                Lưu thay đổi
+            </button>
+
+        </div>
+    }
+
+</div>
+
+@section scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="@Url.Content("~/Scripts/admin/admin-promotion.js")"></script>
+}

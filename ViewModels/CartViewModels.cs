@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 
 namespace Wedside_TVS_SFX.Models
 {
@@ -10,6 +9,9 @@ namespace Wedside_TVS_SFX.Models
 
         public string SKU { get; set; }
         public string TenSanPham { get; set; }
+
+        // Đường dẫn ảnh đại diện sản phẩm
+        public string HinhAnh { get; set; }
 
         public int SoLuong { get; set; }
 

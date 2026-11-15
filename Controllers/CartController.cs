@@ -85,6 +85,7 @@ namespace STAGEFX_PRO.Controllers
         // ==========================================
 
         [HttpGet]
+        
         public ActionResult Index()
         {
             if (!CurrentUserId.HasValue)
@@ -95,7 +96,7 @@ namespace STAGEFX_PRO.Controllers
             using (var context = new StageFxEntities())
             {
                 var cart = context.GioHang
-                    .Include("ChiTietGioHang.SanPham")
+                    .Include("ChiTietGioHang.SanPham.HinhAnhSanPham")
                     .FirstOrDefault(x => x.MaNguoiDung == userId);
 
                 var model = new CartIndexViewModel();
@@ -129,6 +130,19 @@ namespace STAGEFX_PRO.Controllers
                         giaCoBan = product.GiaBan;
                     }
 
+                    // ƯU TIÊN ẢNH CHÍNH, SAU ĐÓ ĐẾN THỨ TỰ HIỂN THỊ
+                    var anhDaiDien = product.HinhAnhSanPham
+                        .Where(x =>
+                            !string.IsNullOrEmpty(x.DuongDanAnh))
+                        .OrderByDescending(x => x.LaAnhChinh)
+                        .ThenBy(x => x.ThuTuHienThi)
+                        .ThenBy(x => x.MaHinhAnh)
+                        .FirstOrDefault();
+
+                    string duongDanAnh = anhDaiDien != null
+                        ? anhDaiDien.DuongDanAnh
+                        : null;
+
                     decimal phiFlightcase =
                         item.CoFlightcase
                             ? FLIGHTCASE_FEE
@@ -142,8 +156,11 @@ namespace STAGEFX_PRO.Controllers
                     {
                         MaChiTietGioHang = item.MaChiTietGioHang,
                         MaSanPham = product.MaSanPham,
+
                         SKU = product.SKU,
                         TenSanPham = product.TenSanPham,
+
+                        HinhAnh = duongDanAnh,
 
                         SoLuong = item.SoLuong,
 
@@ -158,8 +175,11 @@ namespace STAGEFX_PRO.Controllers
                     });
                 }
 
-                model.TienHang = model.Items.Sum(x => x.ThanhTien);
-                model.TongSoLuong = model.Items.Sum(x => x.SoLuong);
+                model.TienHang =
+                    model.Items.Sum(x => x.ThanhTien);
+
+                model.TongSoLuong =
+                    model.Items.Sum(x => x.SoLuong);
 
                 return View(model);
             }

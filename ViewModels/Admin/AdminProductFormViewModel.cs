@@ -39,19 +39,17 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
         // GIÁ VÀ KHO HÀNG
         // ==========================================
 
-        [Range(
-            typeof(decimal),
+        [DecimalRange(
             "0",
-            "79228162514264337593543950335",
-            ErrorMessage = "Giá bán không được âm."
+            "9999999999999999.99",
+            ErrorMessage = "Giá bán phải từ 0 đến 9.999.999.999.999.999,99 VNĐ."
         )]
         public decimal GiaBan { get; set; }
 
-        [Range(
-            typeof(decimal),
+        [DecimalRange(
             "0",
-            "79228162514264337593543950335",
-            ErrorMessage = "Giá thuê không được âm."
+            "9999999999999999.99",
+            ErrorMessage = "Giá thuê phải từ 0 đến 9.999.999.999.999.999,99 VNĐ."
         )]
         public decimal? GiaThueNgay { get; set; }
 

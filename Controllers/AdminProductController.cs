@@ -1,5 +1,4 @@
-﻿
-using STAGEFX_PRO.Controllers.Base;
+﻿using STAGEFX_PRO.Controllers.Base;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
@@ -160,6 +159,294 @@ namespace STAGEFX_PRO.Controllers
                     });
             }
         }
+
+        // =========================================================
+        // 2. TẠO SẢN PHẨM - GET
+        // =========================================================
+
+        [HttpGet]
+        public ActionResult CreateProduct()
+        {
+            try
+            {
+                var model = PrepareForm(
+                    new AdminProductFormViewModel());
+
+                return View("~/Views/Admin/ProductCreate.cshtml", model);
+            }
+            catch (Exception ex)
+            {
+                LogError("CreateProduct", ex);
+
+                TempData["ProductError"] =
+                    "Không thể mở biểu mẫu thêm sản phẩm.";
+
+                return RedirectToAction("Products");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult CreateProduct(AdminProductFormViewModel model)
+        {
+            NormalizePriceValues(model);
+            ValidateProduct(model, null);
+
+            if (!ModelState.IsValid)
+            {
+                return View(
+                    "~/Views/Admin/ProductCreate.cshtml",
+                    PrepareForm(model));
+            }
+
+            var savedFiles = new List<string>();
+
+            try
+            {
+                var product = new SanPham
+                {
+                    SKU = model.SKU.Trim(),
+                    TenSanPham = model.TenSanPham.Trim(),
+                    MaDanhMuc = model.MaDanhMuc.Value,
+                    MoTaNgan = model.MoTaNgan,
+                    MoTaChiTiet = model.MoTaChiTiet,
+                    ThongSoKyThuat = model.ThongSoKyThuat,
+                    GiaBan = model.GiaBan,
+                    GiaThueNgay = model.GiaThueNgay,
+                    SoLuongTon = model.SoLuongTon,
+                    TrangThai = model.TrangThai,
+                    NgayTao = DateTime.Now
+                };
+
+                db.SanPham.Add(product);
+                db.SaveChanges();
+
+                var newImages = SaveImages(
+                    model.NewImages,
+                    product.MaSanPham,
+                    savedFiles);
+
+                SetMainImageAfterCreate(
+                    newImages,
+                    model.MainImageNewIndex);
+
+                db.SaveChanges();
+
+                TempData["ProductSuccess"] =
+                    "Đã thêm sản phẩm thành công.";
+
+                return RedirectToAction("Products");
+            }
+            catch (Exception ex)
+            {
+                DeleteFiles(savedFiles);
+                LogError("CreateProduct", ex);
+
+                ModelState.AddModelError(
+                    "",
+                    "Không thể thêm sản phẩm. Vui lòng thử lại.");
+
+                return View(
+                    "~/Views/Admin/ProductCreate.cshtml",
+                    PrepareForm(model));
+            }
+        }
+
+        // =========================================================
+        // 3. CHỈNH SỬA SẢN PHẨM - GET
+        // =========================================================
+
+        [HttpGet]
+        public ActionResult EditProduct(int id)
+        {
+            try
+            {
+                var product = db.SanPham
+                    .AsNoTracking()
+                    .FirstOrDefault(x => x.MaSanPham == id);
+
+                if (product == null)
+                    return HttpNotFound();
+
+                var model = ToForm(product);
+
+                return View("~/Views/Admin/ProductEdit.cshtml", model);
+            }
+            catch (Exception ex)
+            {
+                LogError("EditProduct", ex);
+
+                TempData["ProductError"] =
+                    "Không thể tải thông tin sản phẩm.";
+
+                return RedirectToAction("Products");
+            }
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult EditProduct(AdminProductFormViewModel model)
+        {
+            NormalizePriceValues(model);
+            ValidateProduct(model, model == null ? (int?)null : model.MaSanPham);
+
+            if (!ModelState.IsValid)
+            {
+                return View(
+                    "~/Views/Admin/ProductEdit.cshtml",
+                    PrepareForm(model));
+            }
+
+            var savedFiles = new List<string>();
+            var removedFiles = new List<string>();
+
+            try
+            {
+                var product = db.SanPham
+                    .FirstOrDefault(x => x.MaSanPham == model.MaSanPham);
+
+                if (product == null)
+                    return HttpNotFound();
+
+                product.SKU = model.SKU.Trim();
+                product.TenSanPham = model.TenSanPham.Trim();
+                product.MaDanhMuc = model.MaDanhMuc.Value;
+                product.MoTaNgan = model.MoTaNgan;
+                product.MoTaChiTiet = model.MoTaChiTiet;
+                product.ThongSoKyThuat = model.ThongSoKyThuat;
+                product.GiaBan = model.GiaBan;
+                product.GiaThueNgay = model.GiaThueNgay;
+                product.SoLuongTon = model.SoLuongTon;
+                product.TrangThai = model.TrangThai;
+                product.NgayCapNhat = DateTime.Now;
+
+                removedFiles = RemoveImages(
+                    product.MaSanPham,
+                    model.RemoveImageIds);
+
+                var newImages = SaveImages(
+                    model.NewImages,
+                    product.MaSanPham,
+                    savedFiles);
+
+                db.SaveChanges();
+
+                SetMainImageAfterEdit(
+                    product.MaSanPham,
+                    model.MainImageId,
+                    model.MainImageNewIndex,
+                    newImages);
+
+                db.SaveChanges();
+                DeleteFiles(removedFiles);
+
+                TempData["ProductSuccess"] =
+                    "Đã cập nhật sản phẩm thành công.";
+
+                return RedirectToAction(
+                    "ProductDetail",
+                    new { id = product.MaSanPham });
+            }
+            catch (Exception ex)
+            {
+                DeleteFiles(savedFiles);
+                LogError("EditProduct", ex);
+
+                ModelState.AddModelError(
+                    "",
+                    "Không thể cập nhật sản phẩm. Vui lòng thử lại.");
+
+                return View(
+                    "~/Views/Admin/ProductEdit.cshtml",
+                    PrepareForm(model));
+            }
+        }
+
+        // =========================================================
+        // 4. CHI TIẾT SẢN PHẨM - GET
+        // =========================================================
+
+        [HttpGet]
+        public ActionResult ProductDetail(int id)
+        {
+            try
+            {
+                var product = db.SanPham
+                    .AsNoTracking()
+                    .Include(x => x.DanhMuc)
+                    .Include(x => x.HinhAnhSanPham)
+                    .FirstOrDefault(x => x.MaSanPham == id);
+
+                if (product == null)
+                    return HttpNotFound();
+
+                var model = new AdminProductDetailViewModel
+                {
+                    MaSanPham = product.MaSanPham,
+                    SKU = product.SKU,
+                    TenSanPham = product.TenSanPham,
+
+                    TenDanhMuc = product.DanhMuc != null
+                        ? product.DanhMuc.TenDanhMuc
+                        : "Chưa phân loại",
+
+                    MoTaNgan = product.MoTaNgan,
+                    MoTaChiTiet = product.MoTaChiTiet,
+                    ThongSoKyThuat = product.ThongSoKyThuat,
+
+                    GiaBan = product.GiaBan,
+                    GiaThueNgay = product.GiaThueNgay,
+                    SoLuongTon = product.SoLuongTon,
+                    TrangThai = product.TrangThai,
+
+                    NgayTao = product.NgayTao,
+                    NgayCapNhat = product.NgayCapNhat,
+
+                    Images = product.HinhAnhSanPham
+                        .OrderBy(x => x.ThuTuHienThi)
+                        .Select(ToImageViewModel)
+                        .ToList(),
+
+                    InventoryHistory = db.LichSuKho
+    .AsNoTracking()
+    .Where(x => x.MaSanPham == id)
+    .OrderByDescending(x => x.NgayTao)
+    .ToList()
+    .Select(x => new AdminInventoryHistoryItemViewModel
+    {
+        MaGiaoDichKho = x.MaGiaoDichKho,
+        SKU = x.SanPham != null ? x.SanPham.SKU : "",
+        TenSanPham = x.SanPham != null
+            ? x.SanPham.TenSanPham
+            : "",
+        LoaiGiaoDich = x.LoaiGiaoDich,
+        SoLuong = x.SoLuong,
+        TonTruoc = x.TonTruoc,
+        TonSau = x.TonSau,
+        NguoiThucHien = x.NguoiDung != null
+            ? x.NguoiDung.HoTen
+            : "Hệ thống",
+        GhiChu = x.GhiChu,
+        NgayTao = x.NgayTao
+    })
+    .ToList()
+                };
+
+                return View(
+                    "~/Views/Admin/ProductDetail.cshtml",
+                    model);
+            }
+            catch (Exception ex)
+            {
+                LogError("ProductDetail", ex);
+
+                TempData["ProductError"] =
+                    "Không thể tải chi tiết sản phẩm.";
+
+                return RedirectToAction("Products");
+            }
+        }
+
 
         // =========================================================
         // 5. CHỌN ẢNH CHÍNH
@@ -440,6 +727,72 @@ namespace STAGEFX_PRO.Controllers
             ValidateImages(model.NewImages, model.MainImageNewIndex);
         }
 
+        private void NormalizePriceValues(AdminProductFormViewModel model)
+        {
+            if (model == null)
+                return;
+
+            NormalizePriceValue("GiaBan", false, value => model.GiaBan = value ?? 0m);
+            NormalizePriceValue("GiaThueNgay", true, value => model.GiaThueNgay = value);
+        }
+
+        private void NormalizePriceValue(
+            string key,
+            bool nullable,
+            Action<decimal?> assign)
+        {
+            var valueProviderResult = ValueProvider.GetValue(key);
+            string rawValue = valueProviderResult == null
+                ? null
+                : valueProviderResult.AttemptedValue;
+
+            if (string.IsNullOrWhiteSpace(rawValue))
+            {
+                if (nullable)
+                    assign(null);
+
+                ModelState.Remove(key);
+                return;
+            }
+
+            string normalized = rawValue.Trim().Replace(" ", "");
+            int commaIndex = normalized.LastIndexOf(',');
+            int dotIndex = normalized.LastIndexOf('.');
+
+            if (commaIndex >= 0 && dotIndex >= 0)
+            {
+                char decimalSeparator = commaIndex > dotIndex ? ',' : '.';
+                char thousandsSeparator = decimalSeparator == ',' ? '.' : ',';
+                normalized = normalized.Replace(thousandsSeparator.ToString(), "");
+
+                if (decimalSeparator == ',')
+                    normalized = normalized.Replace(',', '.');
+            }
+            else if (commaIndex >= 0)
+            {
+                normalized = normalized.Replace(',', '.');
+            }
+
+            decimal parsedValue;
+            if (decimal.TryParse(
+                normalized,
+                System.Globalization.NumberStyles.AllowDecimalPoint |
+                System.Globalization.NumberStyles.AllowLeadingSign,
+                System.Globalization.CultureInfo.InvariantCulture,
+                out parsedValue))
+            {
+                assign(parsedValue);
+                ModelState.Remove(key);
+
+                if (parsedValue < 0)
+                    ModelState.AddModelError(key, "Giá trị không được âm.");
+            }
+            else
+            {
+                ModelState.AddModelError(key, "Giá trị không hợp lệ.");
+            }
+        }
+
         // =========================================================
         // 10. VALIDATE ẢNH UPLOAD
         // =========================================================
@@ -649,11 +1002,23 @@ namespace STAGEFX_PRO.Controllers
             return new AdminProductImageViewModel
             {
                 MaHinhAnh = image.MaHinhAnh,
-                DuongDanAnh = image.DuongDanAnh,
+                DuongDanAnh = NormalizeProductImagePath(
+                    image.DuongDanAnh),
                 MoTaAnh = image.MoTaAnh,
                 LaAnhChinh = image.LaAnhChinh,
                 ThuTuHienThi = image.ThuTuHienThi
             };
+        }
+
+        private static string NormalizeProductImagePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path))
+                return path;
+
+            if (path.StartsWith("~/", StringComparison.Ordinal))
+                return path;
+
+            return "~/" + path.TrimStart('/', '\\');
         }
 
         // =========================================================

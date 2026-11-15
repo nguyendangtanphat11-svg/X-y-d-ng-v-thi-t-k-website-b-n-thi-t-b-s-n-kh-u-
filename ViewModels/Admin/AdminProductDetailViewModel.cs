@@ -35,7 +35,9 @@ namespace Wedside_TVS_SFX.ViewModels.Admin
             = new List<AdminProductImageViewModel>();
 
         // Sử dụng chung lớp AdminInventoryHistoryViewModel từ AdminInventoryViewModel.cs
-        public IList<AdminInventoryHistoryViewModel> InventoryHistory { get; set; }
-            = new List<AdminInventoryHistoryViewModel>();
+        public IList<AdminInventoryHistoryItemViewModel>
+    InventoryHistory
+        { get; set; }
+    = new List<AdminInventoryHistoryItemViewModel>();
     }
 }

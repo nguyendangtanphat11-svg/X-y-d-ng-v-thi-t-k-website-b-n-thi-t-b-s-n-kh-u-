@@ -130,10 +130,11 @@
                         Kho Hà Nội &amp; TP.HCM
                     </span>
 
-                    <span class="rating">
+                    <a href="#product-reviews" class="rating">
                         <span class="material-symbols-outlined">star</span>
-                        5.0 (28 đánh giá)
-                    </span>
+                        @Model.DiemDanhGiaTrungBinh.ToString("0.0")
+                        (@Model.TongSoDanhGia đánh giá)
+                    </a>
 
                 </div>
 
@@ -406,6 +407,298 @@
 
     </section>
 
+    <!-- PRODUCT REVIEWS -->
+    <section id="product-reviews" class="product-reviews">
+
+        <div class="reviews-heading">
+            <div>
+                <span class="reviews-eyebrow">CUSTOMER EXPERIENCE</span>
+                <h2>Đánh giá từ khách hàng</h2>
+                <p>Chia sẻ trải nghiệm sử dụng thiết bị STAGEFX PRO.</p>
+            </div>
+
+            <div class="reviews-total">
+                <strong>@Model.TongSoDanhGia</strong>
+                <span>đánh giá</span>
+            </div>
+        </div>
+
+        <!-- REVIEW SUMMARY -->
+        <div class="reviews-summary">
+
+            <div class="reviews-score">
+                <strong>
+                    @Model.DiemDanhGiaTrungBinh.ToString("0.0")
+                </strong>
+
+                <div class="review-stars">
+                    @for (int i = 1; i <= 5; i++)
+                    {
+                        <span class="material-symbols-outlined">
+                            @(i <= Math.Round(Model.DiemDanhGiaTrungBinh)
+                            ? "star"
+                            : "star_outline")
+                        </span>
+                    }
+                </div>
+
+                <span>
+                    Dựa trên @Model.TongSoDanhGia đánh giá đã duyệt
+                </span>
+            </div>
+
+            <div class="reviews-breakdown">
+
+                @{
+                    var reviewRows = new[]
+                    {
+                    new { Star = 5, Count = Model.SoDanhGia5Sao },
+                    new { Star = 4, Count = Model.SoDanhGia4Sao },
+                    new { Star = 3, Count = Model.SoDanhGia3Sao },
+                    new { Star = 2, Count = Model.SoDanhGia2Sao },
+                    new { Star = 1, Count = Model.SoDanhGia1Sao }
+                };
+                }
+
+                @foreach (var item in reviewRows)
+                {
+                    var percent = Model.TongSoDanhGia > 0
+                        ? item.Count * 100.0 / Model.TongSoDanhGia
+                        : 0;
+
+                    <div class="review-bar-row">
+                        <span>@item.Star sao</span>
+
+                        <div class="review-bar-track">
+                            <div class="review-bar-fill"
+                                 style="width:@percent.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)%">
+                            </div>
+                        </div>
+
+                        <span>@item.Count</span>
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+        <!-- REVIEW FORM -->
+        @if (Session["MaNguoiDung"] == null)
+        {
+            <div class="review-login-notice">
+                <span class="material-symbols-outlined">lock</span>
+
+                <div>
+                    <strong>Đăng nhập để đánh giá sản phẩm</strong>
+                    <p>Bạn cần đăng nhập tài khoản khách hàng để gửi đánh giá.</p>
+                </div>
+
+                <a href="@Url.Action("Login", "Account")">
+                    Đăng nhập
+                </a>
+            </div>
+        }
+        else if (Session["MaVaiTro"] != null &&
+                 Session["MaVaiTro"].ToString() == "3")
+        {
+            if (Model.DanhSachDonHangCoTheDanhGia.Any())
+            {
+                <div class="review-form-card">
+
+                    <div class="review-form-heading">
+                        <h3>Viết đánh giá của bạn</h3>
+                        <p>Đánh giá được gửi đến quản trị viên để xét duyệt.</p>
+                    </div>
+
+                    @using (Html.BeginForm(
+                        "SubmitReview",
+                        "Product",
+                        FormMethod.Post,
+                        new { id = "product-review-form" }))
+                    {
+                        @Html.AntiForgeryToken()
+
+                        <input type="hidden"
+                               name="MaSanPham"
+                               value="@Model.MaSanPham" />
+
+                        <div class="review-form-group">
+                            <label for="review-order">
+                                Đơn hàng đã xác nhận
+                            </label>
+
+                            <select id="review-order"
+                                    name="MaChiTietDonHang"
+                                    required>
+                                <option value="">-- Chọn đơn hàng --</option>
+
+                                @foreach (var order in Model.DanhSachDonHangCoTheDanhGia)
+                                {
+                                    <option value="@order.MaChiTietDonHang">
+                                        @order.MaSoDonHang -
+                                        @order.TenSanPhamLucDat -
+                                        @order.NgayDat.ToString("dd/MM/yyyy")
+                                    </option>
+                                }
+                            </select>
+                        </div>
+
+                        <div class="review-form-group">
+                            <label>Chất lượng sản phẩm</label>
+
+                            <div class="review-rating-picker"
+                                 role="radiogroup"
+                                 aria-label="Chọn số sao">
+
+                                @for (int i = 5; i >= 1; i--)
+                                {
+                                    <input type="radio"
+                                           id="review-star-@i"
+                                           name="SoSao"
+                                           value="@i"
+                                           required />
+
+                                    <label for="review-star-@i"
+                                           title="@i sao">
+                                        <span class="material-symbols-outlined">
+                                            star
+                                        </span>
+                                    </label>
+                                }
+
+                            </div>
+
+                            <small>Chọn từ 1 đến 5 sao.</small>
+                        </div>
+
+                        <div class="review-form-group">
+                            <label for="review-comment">
+                                Nhận xét của bạn
+                            </label>
+
+                            <textarea id="review-comment"
+                                      name="NhanXet"
+                                      rows="5"
+                                      maxlength="2000"
+                                      placeholder="Chia sẻ trải nghiệm sử dụng sản phẩm..."></textarea>
+
+                            <small>Tối đa 2000 ký tự.</small>
+                        </div>
+
+                        <button type="submit" class="review-submit-button">
+                            <span class="material-symbols-outlined">send</span>
+                            Gửi đánh giá
+                        </button>
+                    }
+
+                </div>
+            }
+            else
+            {
+                <div class="review-login-notice">
+                    <span class="material-symbols-outlined">info</span>
+
+                    <div>
+                        <strong>Chưa có đơn hàng đủ điều kiện đánh giá</strong>
+                        <p>
+                            Bạn cần có đơn hàng ở trạng thái đã xác nhận
+                            và chưa đánh giá chi tiết đơn hàng đó.
+                        </p>
+                    </div>
+                </div>
+            }
+        }
+
+        <!-- SERVER RESPONSE -->
+        @if (TempData["ReviewSuccess"] != null)
+        {
+            <div class="review-message review-message-success">
+                @TempData["ReviewSuccess"]
+            </div>
+        }
+
+        @if (TempData["ReviewError"] != null)
+        {
+            <div class="review-message review-message-error">
+                @TempData["ReviewError"]
+            </div>
+        }
+
+        <!-- REVIEW LIST -->
+        <div class="review-list-heading">
+            <h3>Nhận xét của khách hàng</h3>
+            <span>@Model.TongSoDanhGia đánh giá công khai</span>
+        </div>
+
+        @if (Model.DanhSachDanhGia.Any())
+        {
+            <div class="review-list">
+
+                @foreach (var review in Model.DanhSachDanhGia)
+                {
+                    <article class="review-item">
+
+                        <div class="review-avatar">
+                            <span class="material-symbols-outlined">
+                                person
+                            </span>
+                        </div>
+
+                        <div class="review-content">
+
+                            <div class="review-user-row">
+                                <strong>@review.HoTenNguoiDung</strong>
+
+                                <span class="review-date">
+                                    @review.NgayTao.ToString("dd/MM/yyyy")
+                                </span>
+                            </div>
+
+                            <div class="review-item-stars">
+                                @for (int i = 1; i <= 5; i++)
+                                {
+                                    <span class="material-symbols-outlined">
+                                        @(i <= review.SoSao
+                                        ? "star"
+                                        : "star_outline")
+                                    </span>
+                                }
+                            </div>
+
+                            @if (!string.IsNullOrWhiteSpace(review.NhanXet))
+                            {
+                                <p class="review-comment">
+                                    @review.NhanXet
+                                </p>
+                            }
+
+                            <span class="review-verified">
+                                <span class="material-symbols-outlined">
+                                    verified
+                                </span>
+                                Đánh giá đã được xác duyệt
+                            </span>
+
+                        </div>
+
+                    </article>
+                }
+
+            </div>
+        }
+        else
+        {
+            <div class="review-empty">
+                <span class="material-symbols-outlined">rate_review</span>
+                <strong>Chưa có đánh giá nào</strong>
+                <p>Hãy là khách hàng đầu tiên chia sẻ trải nghiệm về sản phẩm.</p>
+            </div>
+        }
+
+    </section>
+
+
     <!-- RELATED PRODUCTS -->
     <section id="related" class="related-section">
 
@@ -444,6 +737,8 @@
 @section styles {
     <link rel="stylesheet"
           href="@Url.Content("~/Content/css/product-detail.css")" />
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/product-reviews.css")" />
 }
 
 <!-- JAVASCRIPT -->

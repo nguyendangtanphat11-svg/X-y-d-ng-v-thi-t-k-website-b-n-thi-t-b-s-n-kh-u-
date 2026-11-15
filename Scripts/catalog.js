@@ -11,31 +11,80 @@
    DATA & CONFIGURATION
    ========================================================= */
 
+
 function normalizeProduct(raw) {
-    const specifications = String(raw.specifications || "");
+    const specifications =
+        String(raw.specifications ?? raw.ThongSoKyThuat ?? "");
+
     const dmxSupported = /dmx/i.test(specifications);
 
+    // Hỗ trợ các tên thuộc tính ảnh có thể được Controller trả về
+    const imagePath =
+        raw.image ??
+        raw.Image ??
+        raw.duongDanAnh ??
+        raw.DuongDanAnh ??
+        raw.hinhAnhSanPham ??
+        raw.HinhAnhSanPham ??
+        "";
+
     return {
-        id: Number(raw.id),
-        sku: raw.sku || "",
-        name: raw.name || "Sản phẩm chưa có tên",
-        categoryId: String(raw.categoryId ?? ""),
-        category: String(raw.categoryId ?? ""),
-        categoryLabel: raw.categoryLabel || "Chưa phân loại",
-        description: raw.description || "",
-        detail: raw.detail || "",
+        id: Number(raw.id ?? raw.MaSanPham ?? 0),
+
+        sku: raw.sku ?? raw.SKU ?? "",
+
+        name:
+            raw.name ??
+            raw.TenSanPham ??
+            "Sản phẩm chưa có tên",
+
+        categoryId: String(
+            raw.categoryId ?? raw.MaDanhMuc ?? ""
+        ),
+
+        category: String(
+            raw.categoryId ?? raw.MaDanhMuc ?? ""
+        ),
+
+        categoryLabel:
+            raw.categoryLabel ??
+            raw.TenDanhMuc ??
+            "Chưa phân loại",
+
+        description:
+            raw.description ??
+            raw.MoTaNgan ??
+            "",
+
+        detail:
+            raw.detail ??
+            raw.MoTaChiTiet ??
+            "",
+
         specifications,
-        image: raw.image || "",
-        b2bPrice: Number(raw.b2bPrice || 0),
-        stock: Number(raw.stock || 0),
+
+        image: String(imagePath || "").trim(),
+
+        b2bPrice: Number(
+            raw.b2bPrice ?? raw.GiaBan ?? 0
+        ),
+
+        stock: Number(
+            raw.stock ?? raw.SoLuongTon ?? 0
+        ),
+
         dmxChannels: dmxSupported
             ? "Có thông tin DMX512"
             : "Xem thông số kỹ thuật",
+
         power: "Xem thông số kỹ thuật",
+
         reviewCount: 0,
+
         searchTerms: specifications
     };
 }
+
 
 const products = Array.isArray(window.STAGEFX_PRODUCTS)
     ? window.STAGEFX_PRODUCTS.map(normalizeProduct)

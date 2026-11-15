@@ -586,7 +586,6 @@
         height: 90px;
     }
 }
-```css
 /* =========================================================
    PRODUCT FORM PARTIAL - ADDITIONAL STYLES
 ========================================================= */
@@ -595,6 +594,61 @@
     flex-direction: column;
     gap: 24px;
 }
+
+.new-image-preview {
+    min-width: 0;
+    overflow: hidden;
+    background: #101010;
+    border: 1px solid #333333;
+    border-radius: 6px;
+}
+
+    .new-image-preview.is-main {
+        border-color: #E50920;
+        box-shadow: 0 0 0 2px rgba(229, 9, 32, .2);
+    }
+
+    .new-image-preview img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 4 / 3;
+        object-fit: cover;
+    }
+
+.new-image-preview-info {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    padding: 8px;
+}
+
+.new-image-name {
+    overflow: hidden;
+    color: #D7D7DC;
+    font-size: 10px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.new-image-preview-info small {
+    margin-top: 0;
+    font-size: 10px;
+}
+
+.new-image-main-option {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #BDBDC3;
+    font-size: 10px;
+    cursor: pointer;
+}
+
+    .new-image-main-option input {
+        width: auto;
+        min-height: 0;
+        accent-color: #E50920;
+    }
 
 /* SECTION */
 
@@ -870,4 +924,9 @@
         object-fit: cover;
     }
 
-    .product-image-preview-item span
+    .product-image-preview-item span {
+        display: block;
+        padding: 8px;
+        color: #BDBDC3;
+        font-size: 10px;
+    }

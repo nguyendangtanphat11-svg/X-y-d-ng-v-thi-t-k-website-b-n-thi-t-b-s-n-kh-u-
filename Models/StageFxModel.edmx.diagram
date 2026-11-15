@@ -53,6 +53,7 @@
         <AssociationConnector Association="STAGEFX_PROModel.FK_YeuCauTuVan_NhanVien" ManuallyRouted="false" />
         <EntityTypeShape EntityType="STAGEFX_PROModel.ThongTinDuAn" Width="1.5" PointX="7.5" PointY="2.5" />
         <AssociationConnector Association="STAGEFX_PROModel.FK_ThongTinDuAn_DonHang" />
+        <EntityTypeShape EntityType="STAGEFX_PROModel.sysdiagrams" Width="1.5" PointX="0.75" PointY="0.75" />
       </Diagram>
     </edmx:Diagrams>
   </edmx:Designer>

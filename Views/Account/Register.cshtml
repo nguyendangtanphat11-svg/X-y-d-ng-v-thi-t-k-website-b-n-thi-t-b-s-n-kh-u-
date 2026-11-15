@@ -62,12 +62,13 @@
                 @Html.AntiForgeryToken()
 
                 @Html.ValidationSummary(
-                    false, "", new { @class = "auth-message" })
+                    true, "", new { @class = "auth-message" })
 
                 <label for="register-name">Họ và tên</label>
                 <input id="register-name"
                        name="name"
                        type="text"
+                       value="@ViewData["RegisterName"]"
                        autocomplete="name"
                        placeholder="Tên người liên hệ"
                        required />
@@ -79,6 +80,7 @@
                 <input id="register-company"
                        name="company"
                        type="text"
+                       value="@ViewData["RegisterCompany"]"
                        autocomplete="organization"
                        placeholder="Tên doanh nghiệp hoặc đơn vị" />
 
@@ -86,6 +88,7 @@
                 <input id="register-email"
                        name="email"
                        type="email"
+                       value="@ViewData["RegisterEmail"]"
                        autocomplete="email"
                        placeholder="ten@congty.vn"
                        required />

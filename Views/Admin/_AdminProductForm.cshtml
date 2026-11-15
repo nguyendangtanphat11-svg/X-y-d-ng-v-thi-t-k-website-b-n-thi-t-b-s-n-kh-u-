@@ -1,6 +1,7 @@
 ﻿
 @using System.Linq
 @using System.Collections.Generic
+@using System.Globalization
 @using System.Web.Mvc
 @model Wedside_TVS_SFX.ViewModels.Admin.AdminProductFormViewModel
 
@@ -95,14 +96,16 @@
 
         <div class="product-form-grid">
 
+            <!-- GIÁ BÁN -->
             <div class="product-form-field">
                 @Html.LabelFor(x => x.GiaBan, "Giá bán (VNĐ)")
 
-                @Html.TextBoxFor(x => x.GiaBan, new
+                @Html.TextBox("GiaBan", Model.GiaBan.ToString("0.##", CultureInfo.InvariantCulture), new
                 {
                     @class = "product-form-control",
                     type = "number",
                     min = "0",
+                    max = "9999999999999999.99",
                     step = "0.01",
                     required = "required",
                     placeholder = "Nhập giá bán"
@@ -111,14 +114,18 @@
                 @Html.ValidationMessageFor(x => x.GiaBan)
             </div>
 
+            <!-- GIÁ THUÊ -->
             <div class="product-form-field">
                 @Html.LabelFor(x => x.GiaThueNgay, "Giá thuê / ngày (VNĐ)")
 
-                @Html.TextBoxFor(x => x.GiaThueNgay, new
+                @Html.TextBox("GiaThueNgay", Model.GiaThueNgay.HasValue
+                    ? Model.GiaThueNgay.Value.ToString("0.##", CultureInfo.InvariantCulture)
+                    : "", new
                 {
                     @class = "product-form-control",
                     type = "number",
                     min = "0",
+                    max = "9999999999999999.99",
                     step = "0.01",
                     placeholder = "Có thể để trống"
                 })
@@ -126,6 +133,7 @@
                 @Html.ValidationMessageFor(x => x.GiaThueNgay)
             </div>
 
+            <!-- SỐ LƯỢNG TỒN -->
             <div class="product-form-field">
                 @Html.LabelFor(x => x.SoLuongTon, "Số lượng tồn kho")
 
@@ -350,21 +358,27 @@
 
                                 <div class="existing-image-controls">
 
+                                    <!-- CHỌN ẢNH CHÍNH -->
                                     <label class="existing-image-main-option">
+
                                         <input type="radio"
                                                name="MainImageId"
                                                value="@image.MaHinhAnh"
                                                @(image.LaAnhChinh ? "checked" : "") />
 
                                         <span>Chọn ảnh chính</span>
+
                                     </label>
 
+                                    <!-- ĐÁNH DẤU XÓA -->
                                     <label class="existing-image-remove">
+
                                         <input type="checkbox"
                                                name="RemoveImageIds"
                                                value="@image.MaHinhAnh" />
 
                                         <span>Đánh dấu xóa ảnh</span>
+
                                     </label>
 
                                 </div>
@@ -380,6 +394,12 @@
                     </small>
 
                 </div>
+            }
+            else
+            {
+                <small class="product-existing-images-note">
+                    Chưa có ảnh hiện tại. Bạn có thể tải ảnh mới lên.
+                </small>
             }
 
         </div>

@@ -1,0 +1,390 @@
+﻿
+@using System
+@using Wedside_TVS_SFX.ViewModels.Admin
+@model AdminCategoryViewModel
+
+@{
+    ViewBag.Title = "Quản lý danh mục";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link href="@Url.Content("~/Content/css/admin/admin-categories.css")"
+          rel="stylesheet" />
+}
+
+<div class="category-page">
+
+    <!-- PAGE HEADER -->
+    <div class="category-page-header">
+        <div>
+            <span class="category-eyebrow">QUẢN LÝ SẢN PHẨM</span>
+            <h1>Quản lý danh mục</h1>
+            <p>Quản lý, phân loại và theo dõi danh mục sản phẩm STAGEFX PRO.</p>
+        </div>
+
+        <a href="@Url.Action("Create", "AdminCategory")"
+           class="category-btn category-btn-primary">
+            <span class="material-symbols-outlined">add</span>
+            Thêm danh mục
+        </a>
+    </div>
+
+    <!-- NOTIFICATIONS -->
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="category-alert category-alert-success">
+            <span class="material-symbols-outlined">check_circle</span>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="category-alert category-alert-error">
+            <span class="material-symbols-outlined">error</span>
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- STATISTICS -->
+    <div class="category-stat-grid">
+
+        <div class="category-stat-card">
+            <div class="category-stat-icon red">
+                <span class="material-symbols-outlined">category</span>
+            </div>
+            <div class="category-stat-content">
+                <span>Tổng danh mục</span>
+                <strong>@Model.TotalCategories</strong>
+            </div>
+        </div>
+
+        <div class="category-stat-card">
+            <div class="category-stat-icon green">
+                <span class="material-symbols-outlined">check_circle</span>
+            </div>
+            <div class="category-stat-content">
+                <span>Đang hoạt động</span>
+                <strong>@Model.ActiveCategories</strong>
+            </div>
+        </div>
+
+        <div class="category-stat-card">
+            <div class="category-stat-icon orange">
+                <span class="material-symbols-outlined">pause_circle</span>
+            </div>
+            <div class="category-stat-content">
+                <span>Ngừng hoạt động</span>
+                <strong>@Model.InactiveCategories</strong>
+            </div>
+        </div>
+
+        <div class="category-stat-card">
+            <div class="category-stat-icon yellow">
+                <span class="material-symbols-outlined">inventory_2</span>
+            </div>
+            <div class="category-stat-content">
+                <span>Tổng sản phẩm</span>
+                <strong>@Model.TotalProducts</strong>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CATEGORY TABLE CARD -->
+    <div class="category-card">
+
+        <div class="category-card-header">
+            <div>
+                <h2>Danh sách danh mục</h2>
+                <p>Theo dõi và quản lý các nhóm sản phẩm trong hệ thống.</p>
+            </div>
+
+            <span class="category-total-badge">
+                @Model.TotalItems danh mục
+            </span>
+        </div>
+
+        <!-- FILTER -->
+        @using (Html.BeginForm(
+            "Categories",
+            "AdminCategory",
+            FormMethod.Get,
+            new { @class = "category-filter-form" }))
+        {
+            <div class="category-search">
+                <span class="material-symbols-outlined">search</span>
+
+                <input type="text"
+                       name="search"
+                       value="@Model.SearchTerm"
+                       placeholder="Tìm tên danh mục..."
+                       autocomplete="off" />
+            </div>
+
+            <div class="category-filter-actions">
+
+                <select name="status" class="category-select">
+                    <option value="">Tất cả trạng thái</option>
+
+                    <option value="active"
+                            @(Model.StatusFilter == "active" ? "selected" : "")>
+                        Đang hoạt động
+                    </option>
+
+                    <option value="inactive"
+                            @(Model.StatusFilter == "inactive" ? "selected" : "")>
+                        Ngừng hoạt động
+                    </option>
+                </select>
+
+                <button type="submit"
+                        class="category-btn category-btn-primary">
+                    <span class="material-symbols-outlined">filter_list</span>
+                    Lọc
+                </button>
+
+                <a href="@Url.Action("Categories", "AdminCategory")"
+                   class="category-btn category-btn-secondary">
+                    Đặt lại
+                </a>
+
+            </div>
+        }
+
+        <!-- TABLE -->
+        <div class="category-table-wrapper">
+            <table class="category-table">
+                <thead>
+                    <tr>
+                        <th>MÃ DM</th>
+                        <th>TÊN DANH MỤC</th>
+                        <th>MÔ TẢ</th>
+                        <th>SẢN PHẨM</th>
+                        <th>NGÀY TẠO</th>
+                        <th>TRẠNG THÁI</th>
+                        <th class="text-center">THAO TÁC</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    @if (Model.Categories != null && Model.Categories.Any())
+                    {
+                        foreach (var item in Model.Categories)
+                        {
+                            <tr>
+                                <td>
+                                    <span class="category-id">
+                                        #DM-@item.MaDanhMuc.ToString("D3")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="category-name-cell">
+                                        <div class="category-row-icon">
+                                            <span class="material-symbols-outlined">
+                                                category
+                                            </span>
+                                        </div>
+
+                                        <strong>@item.TenDanhMuc</strong>
+                                    </div>
+                                </td>
+
+                                <td>
+                                    <span class="category-description"
+                                          title="@item.MoTa">
+                                        @(string.IsNullOrWhiteSpace(item.MoTa)
+                                            ? "Chưa có mô tả"
+                                            : item.MoTa)
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="category-product-count">
+                                        @item.SoLuongSanPham sản phẩm
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span class="category-date">
+                                        @item.NgayTao.ToString("dd/MM/yyyy")
+                                    </span>
+                                </td>
+
+                                <td>
+                                    @if (item.TrangThai)
+                                    {
+                                        <span class="category-status active">
+                                            <span></span>
+                                            Hoạt động
+                                        </span>
+                                    }
+                                    else
+                                    {
+                                        <span class="category-status inactive">
+                                            <span></span>
+                                            Ngừng hoạt động
+                                        </span>
+                                    }
+                                </td>
+
+                                <td>
+                                    <div class="category-action-group">
+
+                                        <a href="@Url.Action(
+                                            "Edit",
+                                            "AdminCategory",
+                                            new { id = item.MaDanhMuc })"
+                                           class="category-action-btn edit"
+                                           title="Chỉnh sửa">
+                                            <span class="material-symbols-outlined">
+                                                edit
+                                            </span>
+                                        </a>
+
+                                        @using (Html.BeginForm(
+                                            "ToggleStatus",
+                                            "AdminCategory",
+                                            new { id = item.MaDanhMuc },
+                                            FormMethod.Post,
+                                            new { @class = "category-inline-form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="category-action-btn toggle"
+                                                    title="@(item.TrangThai ? "Ngừng hoạt động" : "Kích hoạt")">
+                                                <span class="material-symbols-outlined">
+                                                    @(item.TrangThai ? "toggle_on" : "toggle_off")
+                                                </span>
+                                            </button>
+                                        }
+
+                                        @using (Html.BeginForm(
+                                            "Delete",
+                                            "AdminCategory",
+                                            new { id = item.MaDanhMuc },
+                                            FormMethod.Post,
+                                            new
+                                            {
+                                                @class = "category-inline-form delete-category-form"
+                                            }))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="category-action-btn delete"
+                                                    title="Xóa danh mục">
+                                                <span class="material-symbols-outlined">
+                                                    delete
+                                                </span>
+                                            </button>
+                                        }
+
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="7">
+                                <div class="category-empty">
+                                    <span class="material-symbols-outlined">
+                                        category
+                                    </span>
+
+                                    <strong>Không tìm thấy danh mục nào</strong>
+
+                                    <p>
+                                        Thử thay đổi từ khóa tìm kiếm hoặc bộ lọc.
+                                    </p>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PAGINATION -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="category-pagination">
+
+                <span>
+                    Trang @Model.CurrentPage / @Model.TotalPages
+                    — Tổng @Model.TotalItems kết quả
+                </span>
+
+                <div class="category-pagination-buttons">
+
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Categories", new {
+                            search = Model.SearchTerm,
+                            status = Model.StatusFilter,
+                            page = Model.CurrentPage - 1
+                        })"
+                           class="category-page-btn">
+                            <span class="material-symbols-outlined">
+                                chevron_left
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="category-page-btn disabled">
+                            <span class="material-symbols-outlined">
+                                chevron_left
+                            </span>
+                        </span>
+                    }
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        <a href="@Url.Action("Categories", new {
+                            search = Model.SearchTerm,
+                            status = Model.StatusFilter,
+                            page = i
+                        })"
+                           class="category-page-btn @(i == Model.CurrentPage ? "current" : "")">
+                            @i
+                        </a>
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a href="@Url.Action("Categories", new {
+                            search = Model.SearchTerm,
+                            status = Model.StatusFilter,
+                            page = Model.CurrentPage + 1
+                        })"
+                           class="category-page-btn">
+                            <span class="material-symbols-outlined">
+                                chevron_right
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="category-page-btn disabled">
+                            <span class="material-symbols-outlined">
+                                chevron_right
+                            </span>
+                        </span>
+                    }
+
+                </div>
+            </div>
+        }
+
+    </div>
+</div>
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/admin/admin-categories.js")"></script>
+}

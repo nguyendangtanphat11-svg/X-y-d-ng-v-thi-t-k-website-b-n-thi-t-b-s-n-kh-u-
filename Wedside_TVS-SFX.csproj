@@ -194,12 +194,15 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminCategoryController.cs" />
     <Compile Include="Controllers\AdminConsultationController.cs" />
     <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\AdminCustomerController.cs" />
     <Compile Include="Controllers\AdminInventoryController.cs" />
     <Compile Include="Controllers\AdminOrderController.cs" />
     <Compile Include="Controllers\AdminProductController.cs" />
+    <Compile Include="Controllers\AdminPromotionController.cs" />
+    <Compile Include="Controllers\AdminReportController.cs" />
     <Compile Include="Controllers\AdminReviewController.cs" />
     <Compile Include="Controllers\Base\AdminAuthorizeAttribute.cs" />
     <Compile Include="Controllers\CartController.cs" />
@@ -268,6 +271,9 @@
     <Compile Include="Models\SuDungKhuyenMai.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="Models\sysdiagrams.cs">
+      <DependentUpon>StageFxModel.tt</DependentUpon>
+    </Compile>
     <Compile Include="Models\ThanhToan.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
@@ -277,6 +283,7 @@
     <Compile Include="Models\VaiTro.cs">
       <DependentUpon>StageFxModel.tt</DependentUpon>
     </Compile>
+    <Compile Include="ViewModels\Admin\AdminCategoryViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminCustomerViewModels.cs" />
     <Compile Include="ViewModels\Admin\AdminDashboardViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminInventoryViewModel.cs" />
@@ -285,6 +292,9 @@
     <Compile Include="ViewModels\Admin\AdminProductDetailViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminProductFormViewModel.cs" />
     <Compile Include="ViewModels\Admin\AdminProductListViewModel.cs" />
+    <Compile Include="ViewModels\Admin\AdminPromotionViewModel.cs" />
+    <Compile Include="ViewModels\Admin\AdminReportViewModel.cs" />
+    <Compile Include="ViewModels\Admin\DecimalRangeAttribute.cs" />
     <Compile Include="ViewModels\CartViewModels.cs" />
     <Compile Include="ViewModels\CheckoutViewModel.cs" />
     <Compile Include="ViewModels\ConsultationViewModel.cs" />
@@ -303,6 +313,8 @@
     <Compile Include="ViewModels\ProfileViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\css\admin\admin-categories.css" />
+    <Content Include="Content\css\admin\admin-category-form.css" />
     <Content Include="Content\css\admin\admin-consultations.css" />
     <Content Include="Content\css\admin\admin-dashboard.css" />
     <Content Include="Content\css\admin\admin-header.css" />
@@ -313,6 +325,8 @@
     <Content Include="Content\css\admin\admin-product-detail.css" />
     <Content Include="Content\css\admin\admin-product-form.css" />
     <Content Include="Content\css\admin\admin-products.css" />
+    <Content Include="Content\css\admin\admin-promotion.css" />
+    <Content Include="Content\css\admin\admin-report.css" />
     <Content Include="Content\css\admin\admin-reviews.css" />
     <Content Include="Content\css\admin\admin-sidebar.css" />
     <Content Include="Content\css\auth.css" />
@@ -327,8 +341,11 @@
     <Content Include="Content\css\order-detail.css" />
     <Content Include="Content\css\order-history.css" />
     <Content Include="Content\css\product-detail.css" />
+    <Content Include="Content\css\product-reviews.css" />
     <Content Include="Content\css\profile.css" />
     <Content Include="Content\css\site-theme.css" />
+    <Content Include="Content\images\banner-fallback.jpg" />
+    <Content Include="Content\videos\stage-banner.mp4" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Models\StageFxModel.Context.tt">
@@ -348,6 +365,7 @@
     <Content Include="Models\StageFxModel.edmx.diagram">
       <DependentUpon>StageFxModel.edmx</DependentUpon>
     </Content>
+    <Content Include="Scripts\admin\admin-categories.js" />
     <Content Include="Scripts\admin\admin-dashboard.js" />
     <Content Include="Scripts\admin\admin-inventory.js" />
     <Content Include="Scripts\admin\admin-layout.js" />
@@ -355,6 +373,8 @@
     <Content Include="Scripts\admin\admin-orders.js" />
     <Content Include="Scripts\admin\admin-product-form.js" />
     <Content Include="Scripts\admin\admin-products.js" />
+    <Content Include="Scripts\admin\admin-promotion.js" />
+    <Content Include="Scripts\admin\admin-report.js" />
     <Content Include="Scripts\auth.js" />
     <Content Include="Scripts\cart.js" />
     <Content Include="Scripts\catalog.js" />
@@ -410,6 +430,15 @@
     <Content Include="Views\Admin\InventoryHistory.cshtml" />
     <Content Include="Views\Admin\Consultations.cshtml" />
     <Content Include="Views\Admin\Reviews.cshtml" />
+    <Content Include="Views\Admin\Categories.cshtml" />
+    <Content Include="Views\Admin\_AdminCategoryForm.cshtml" />
+    <Content Include="Views\Admin\CategoryCreate.cshtml" />
+    <Content Include="Views\Admin\CategoryEdit.cshtml" />
+    <Content Include="Views\Admin\Promotions.cshtml" />
+    <Content Include="Views\Admin\_AdminPromotionForm.cshtml" />
+    <Content Include="Views\Admin\PromotionCreate.cshtml" />
+    <Content Include="Views\Admin\PromotionEdit.cshtml" />
+    <Content Include="Views\Admin\Reports.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{508349B6-6B84-4DF5-91F0-309BEEBAD82D}" />

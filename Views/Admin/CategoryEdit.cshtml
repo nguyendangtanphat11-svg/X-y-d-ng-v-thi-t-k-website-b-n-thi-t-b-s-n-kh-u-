@@ -1,0 +1,94 @@
+﻿
+@model Wedside_TVS_SFX.ViewModels.Admin.AdminCategoryFormViewModel
+
+@{
+    ViewBag.Title = "Sửa danh mục";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-category-form.css")" />
+}
+
+<div class="admin-category-form-page">
+
+    <div class="category-page-heading">
+        <div>
+            <div class="category-breadcrumb">
+                <a href="@Url.Action("Categories", "AdminCategory")">
+                    Danh mục
+                </a>
+                <span>/</span>
+                <span>Chỉnh sửa</span>
+            </div>
+
+            <h1>Sửa danh mục</h1>
+            <p>Cập nhật thông tin danh mục trong hệ thống.</p>
+        </div>
+
+        <a href="@Url.Action("Categories", "AdminCategory")"
+           class="category-back-btn">
+            <span class="material-symbols-outlined">arrow_back</span>
+            Quay lại
+        </a>
+    </div>
+
+    @using (Html.BeginForm(
+        "Edit",
+        "AdminCategory",
+        FormMethod.Post,
+        new
+        {
+            @class = "category-form",
+            id = "categoryForm",
+            enctype = "multipart/form-data"
+        }))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="category-form-card">
+
+            <div class="category-card-heading">
+                <div class="category-card-icon">
+                    <span class="material-symbols-outlined">edit_square</span>
+                </div>
+
+                <div>
+                    <h2>Thông tin danh mục</h2>
+                    <p>Kiểm tra và cập nhật thông tin bên dưới.</p>
+                </div>
+            </div>
+
+            @Html.ValidationSummary(false, "", new
+            {
+                @class = "category-validation-summary"
+            })
+
+            @Html.Partial(
+                     "~/Views/Admin/_AdminCategoryForm.cshtml",
+                     Model
+                 )
+
+            <div class="category-form-footer">
+                <a href="@Url.Action("Categories", "AdminCategory")"
+                   class="category-cancel-btn">
+                    Hủy bỏ
+                </a>
+
+                <button type="submit" class="category-submit-btn">
+                    <span class="material-symbols-outlined">save</span>
+                    Lưu thay đổi
+                </button>
+            </div>
+
+        </div>
+    }
+
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/jqueryval")
+
+    <script src="@Url.Content("~/Scripts/admin/admin-category-form.js")"></script>
+}

@@ -1,5 +1,7 @@
 ﻿
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Web.Mvc;
@@ -24,81 +26,105 @@ namespace STAGEFX_PRO.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Register(
-              string name,
-                string company,
-                string email,
-                string password,
-                string confirmPassword,
-    bool? terms)
+            string name,
+            string company,
+            string email,
+            string password,
+            string confirmPassword,
+            bool? terms)
         {
             name = (name ?? "").Trim();
+            company = (company ?? "").Trim();
             email = (email ?? "").Trim().ToLowerInvariant();
 
-            if (string.IsNullOrWhiteSpace(name) ||
-                string.IsNullOrWhiteSpace(email) ||
-                string.IsNullOrWhiteSpace(password))
+            ViewData["RegisterName"] = name;
+            ViewData["RegisterCompany"] = company;
+            ViewData["RegisterEmail"] = email;
+
+            if (string.IsNullOrWhiteSpace(name))
+                ModelState.AddModelError("name", "Vui lòng nhập họ và tên.");
+
+            if (company.Length > 300)
+                ModelState.AddModelError(
+                    "company",
+                    "Tên công ty hoặc đơn vị không được vượt quá 300 ký tự.");
+
+            if (string.IsNullOrWhiteSpace(email))
             {
-                ModelState.AddModelError("", "Vui lòng nhập đầy đủ thông tin.");
-                return View();
+                ModelState.AddModelError("email", "Vui lòng nhập email.");
             }
+            else if (!new EmailAddressAttribute().IsValid(email))
+            {
+                ModelState.AddModelError("email", "Email không hợp lệ.");
+            }
+
+            if (string.IsNullOrEmpty(password))
+                ModelState.AddModelError("password", "Vui lòng nhập mật khẩu.");
+            else if (password.Length < 8)
+                ModelState.AddModelError(
+                    "password",
+                    "Mật khẩu phải có ít nhất 8 ký tự.");
 
             if (password != confirmPassword)
-            {
-                ModelState.AddModelError("", "Mật khẩu xác nhận không khớp.");
+                ModelState.AddModelError(
+                    "confirmPassword",
+                    "Mật khẩu xác nhận không khớp.");
+
+            if (terms != true)
+                ModelState.AddModelError(
+                    "terms",
+                    "Vui lòng đồng ý với điều khoản sử dụng.");
+
+            if (!ModelState.IsValid)
                 return View();
-            }
 
-            if (password.Length < 8)
+            try
             {
-                ModelState.AddModelError("", "Mật khẩu phải có ít nhất 8 ký tự.");
-                return View();
-            }
-
-            if (!email.Contains("@"))
-            {
-                ModelState.AddModelError("", "Email không hợp lệ.");
-                return View();
-            }
-
-            using (var db = new StageFxEntities())
-            {
-                // Kiểm tra email đã tồn tại
-                bool emailExists = db.NguoiDung.Any(
-                    u => u.Email == email
-                );
-
-                if (emailExists)
+                using (var db = new StageFxEntities())
                 {
-                    ModelState.AddModelError("", "Email này đã được đăng ký.");
-                    return View();
+                    bool emailExists = db.NguoiDung.Any(
+                        u => u.Email == email);
+
+                    if (emailExists)
+                    {
+                        ModelState.AddModelError(
+                            "email",
+                            "Email này đã được đăng ký.");
+                        return View();
+                    }
+
+                    var customerRole = db.VaiTro.Find(CUSTOMER_ROLE_ID);
+
+                    if (customerRole == null)
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            "Không thể tạo tài khoản lúc này. Vui lòng thử lại sau.");
+
+                        return View();
+                    }
+
+                    var user = new NguoiDung
+                    {
+                        HoTen = name,
+                        Email = email,
+                        MatKhauHash = HashPassword(password),
+                        MaVaiTro = CUSTOMER_ROLE_ID,
+                        TrangThai = true,
+                        NgayTao = DateTime.Now
+                    };
+
+                    db.NguoiDung.Add(user);
+                    db.SaveChanges();
                 }
-
-                // Lấy vai trò KhachHang
-                var customerRole = db.VaiTro.Find(CUSTOMER_ROLE_ID);
-
-                if (customerRole == null)
-                {
-                    ModelState.AddModelError(
-                        "",
-                        "Không tìm thấy vai trò Khách hàng trong hệ thống."
-                    );
-
-                    return View();
-                }
-
-                // Tạo tài khoản
-                var user = new NguoiDung
-                {
-                    HoTen = name,
-                    Email = email,
-                    MatKhauHash = HashPassword(password),
-                    MaVaiTro = CUSTOMER_ROLE_ID,
-                    TrangThai = true,
-                    NgayTao = DateTime.Now
-                };
-
-                db.NguoiDung.Add(user);
-                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[AccountController - Register] {0}", ex);
+                ModelState.AddModelError(
+                    "",
+                    "Không thể tạo tài khoản lúc này. Vui lòng thử lại sau.");
+                return View();
             }
 
             TempData["AuthSuccess"] = "Đăng ký tài khoản thành công. Hãy đăng nhập!";
@@ -120,48 +146,64 @@ namespace STAGEFX_PRO.Controllers
         public ActionResult Login(string email, string password)
         {
             email = (email ?? "").Trim().ToLowerInvariant();
+            ViewData["LoginEmail"] = email;
 
-            if (string.IsNullOrWhiteSpace(email) ||
-                string.IsNullOrWhiteSpace(password))
-            {
-                ModelState.AddModelError("", "Vui lòng nhập email và mật khẩu.");
+            if (string.IsNullOrWhiteSpace(email))
+                ModelState.AddModelError("email", "Vui lòng nhập email.");
+            else if (!new EmailAddressAttribute().IsValid(email))
+                ModelState.AddModelError("email", "Email không hợp lệ.");
+
+            if (string.IsNullOrEmpty(password))
+                ModelState.AddModelError("password", "Vui lòng nhập mật khẩu.");
+
+            if (!ModelState.IsValid)
                 return View();
-            }
 
-            using (var db = new StageFxEntities())
+            try
             {
-                var user = db.NguoiDung.FirstOrDefault(
-                    u => u.Email == email
-                );
-
-                if (user == null || !VerifyPassword(password, user.MatKhauHash))
+                using (var db = new StageFxEntities())
                 {
-                    ModelState.AddModelError("", "Email hoặc mật khẩu không chính xác.");
-                    return View();
+                    var user = db.NguoiDung.FirstOrDefault(
+                        u => u.Email == email);
+
+                    if (user == null || !VerifyPassword(password, user.MatKhauHash))
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            "Email hoặc mật khẩu không chính xác.");
+                        return View();
+                    }
+
+                    if (!user.TrangThai)
+                    {
+                        ModelState.AddModelError(
+                            "",
+                            "Tài khoản của bạn hiện đang bị khóa.");
+                        return View();
+                    }
+
+                    user.LanDangNhapCuoi = DateTime.Now;
+                    db.SaveChanges();
+
+                    Session["MaNguoiDung"] = user.MaNguoiDung;
+                    Session["HoTen"] = user.HoTen;
+                    Session["Email"] = user.Email;
+                    Session["MaVaiTro"] = user.MaVaiTro;
+                    Session["TenVaiTro"] = user.VaiTro != null
+                        ? user.VaiTro.TenVaiTro
+                        : "";
+
+                    if (user.MaVaiTro == 1)
+                        return RedirectToAction("Index", "Admin");
                 }
-
-                if (!user.TrangThai)
-                {
-                    ModelState.AddModelError("", "Tài khoản của bạn hiện đang bị khóa.");
-                    return View();
-                }
-
-                user.LanDangNhapCuoi = DateTime.Now;
-                db.SaveChanges();
-
-                // Lưu thông tin đăng nhập vào Session
-                Session["MaNguoiDung"] = user.MaNguoiDung;
-                Session["HoTen"] = user.HoTen;
-                Session["Email"] = user.Email;
-                Session["MaVaiTro"] = user.MaVaiTro;
-                Session["TenVaiTro"] = user.VaiTro != null
-                    ? user.VaiTro.TenVaiTro
-                    : "";
-
-                if (user.MaVaiTro == 1)
-                {
-                    return RedirectToAction("Index", "Admin");
-                }
+            }
+            catch (Exception ex)
+            {
+                Trace.TraceError("[AccountController - Login] {0}", ex);
+                ModelState.AddModelError(
+                    "",
+                    "Không thể đăng nhập lúc này. Vui lòng thử lại sau.");
+                return View();
             }
 
             return RedirectToAction("Index", "Home");
@@ -171,6 +213,8 @@ namespace STAGEFX_PRO.Controllers
         // ĐĂNG XUẤT
         // =========================
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Logout()
         {
             Session.Clear();
@@ -237,7 +281,17 @@ namespace STAGEFX_PRO.Controllers
         {
             if (Session["MaNguoiDung"] == null)
             {
+                TempData["AuthError"] =
+                    "Phiên đăng nhập đã hết. Vui lòng đăng nhập lại.";
                 return RedirectToAction("Login");
+            }
+
+            if (model == null)
+            {
+                ModelState.AddModelError(
+                    "",
+                    "Dữ liệu tài khoản không hợp lệ.");
+                return RedirectToAction("Profile");
             }
 
             int userId = Convert.ToInt32(Session["MaNguoiDung"]);
@@ -256,6 +310,20 @@ namespace STAGEFX_PRO.Controllers
                 model.HoTen = (model.HoTen ?? "").Trim();
                 model.Email = (model.Email ?? "").Trim().ToLowerInvariant();
                 model.SoDienThoai = (model.SoDienThoai ?? "").Trim();
+
+                if (string.IsNullOrWhiteSpace(model.HoTen))
+                    ModelState.AddModelError(
+                        "HoTen",
+                        "Vui lòng nhập họ và tên.");
+
+                if (string.IsNullOrWhiteSpace(model.Email))
+                    ModelState.AddModelError(
+                        "Email",
+                        "Vui lòng nhập email.");
+                else if (!new EmailAddressAttribute().IsValid(model.Email))
+                    ModelState.AddModelError(
+                        "Email",
+                        "Email không hợp lệ.");
 
                 // Không cho người dùng tự thay đổi thông tin hệ thống
                 model.MaNguoiDung = user.MaNguoiDung;
@@ -310,8 +378,12 @@ namespace STAGEFX_PRO.Controllers
 
                     return RedirectToAction("Profile");
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
+                    Trace.TraceError(
+                        "[AccountController - Profile] {0}",
+                        ex);
+
                     ModelState.AddModelError(
                         "",
                         "Không thể cập nhật thông tin. Vui lòng thử lại sau."

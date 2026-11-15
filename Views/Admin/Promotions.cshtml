@@ -1,0 +1,604 @@
+﻿@model Wedside_TVS_SFX.ViewModels.Admin.AdminPromotionViewModel
+
+@using System
+@using System.Web.Mvc
+@using System.Web.Mvc.Html
+@using System.Web
+
+
+
+@{
+    ViewBag.Title = "Quản lý khuyến mãi";
+    Layout = "~/Views/Admin/_AdminLayout.cshtml";
+
+    DateTime now = DateTime.Now;
+}
+
+@section Styles {
+    <link rel="stylesheet"
+          href="@Url.Content("~/Content/css/admin/admin-promotion.css")" />
+}
+
+<div class="admin-promotion-page">
+
+    <!-- PAGE HEADER -->
+    <div class="promotion-page-heading">
+        <div>
+            <div class="promotion-breadcrumb">
+                <span>Quản lý</span>
+                <span>/</span>
+                <span>Khuyến mãi</span>
+            </div>
+
+            <h1>Quản lý khuyến mãi</h1>
+
+            <p>
+                Quản lý mã giảm giá và các chương trình ưu đãi
+                của STAGEFX PRO.
+            </p>
+        </div>
+
+        <a href="@Url.Action("Create", "AdminPromotion")"
+           class="promotion-primary-btn">
+            <span class="material-symbols-outlined">add</span>
+            Thêm khuyến mãi
+        </a>
+    </div>
+
+
+    <!-- NOTIFICATIONS -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="promotion-alert promotion-alert-success">
+            <span class="material-symbols-outlined">check_circle</span>
+            <span>@TempData["Success"]</span>
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="promotion-alert promotion-alert-error">
+            <span class="material-symbols-outlined">error</span>
+            <span>@TempData["Error"]</span>
+        </div>
+    }
+
+
+    <!-- STATISTICS -->
+    <div class="promotion-stat-grid">
+
+        <div class="promotion-stat-card">
+            <div class="promotion-stat-icon">
+                <span class="material-symbols-outlined">sell</span>
+            </div>
+
+            <div class="promotion-stat-info">
+                <span>Tổng khuyến mãi</span>
+                <strong>@Model.TotalPromotions</strong>
+                <small>Chương trình trong hệ thống</small>
+            </div>
+        </div>
+
+        <div class="promotion-stat-card">
+            <div class="promotion-stat-icon active">
+                <span class="material-symbols-outlined">check_circle</span>
+            </div>
+
+            <div class="promotion-stat-info">
+                <span>Đang hoạt động</span>
+                <strong>@Model.ActivePromotions</strong>
+                <small>Đang trong thời gian áp dụng</small>
+            </div>
+        </div>
+
+        <div class="promotion-stat-card">
+            <div class="promotion-stat-icon inactive">
+                <span class="material-symbols-outlined">pause_circle</span>
+            </div>
+
+            <div class="promotion-stat-info">
+                <span>Đã ngừng kích hoạt</span>
+                <strong>@Model.InactivePromotions</strong>
+                <small>Chương trình đã tắt</small>
+            </div>
+        </div>
+
+        <div class="promotion-stat-card">
+            <div class="promotion-stat-icon expired">
+                <span class="material-symbols-outlined">event_busy</span>
+            </div>
+
+            <div class="promotion-stat-info">
+                <span>Đã hết hạn</span>
+                <strong>@Model.ExpiredPromotions</strong>
+                <small>Đã quá ngày kết thúc</small>
+            </div>
+        </div>
+
+    </div>
+
+
+    <!-- FILTERS -->
+    <div class="promotion-filter-card">
+
+        <div class="promotion-filter-heading">
+            <div>
+                <span class="material-symbols-outlined">filter_list</span>
+                <strong>Tìm kiếm và lọc</strong>
+            </div>
+
+            <a href="@Url.Action("Promotions", "AdminPromotion")"
+               class="promotion-reset-btn">
+                <span class="material-symbols-outlined">restart_alt</span>
+                Đặt lại
+            </a>
+        </div>
+
+        @using (Html.BeginForm(
+            "Promotions",
+            "AdminPromotion",
+            FormMethod.Get,
+            new { @class = "promotion-filter-form" }))
+        {
+            <div class="promotion-filter-group promotion-search-group">
+                <label for="promotionSearch">Tìm kiếm</label>
+
+                <div class="promotion-search-input">
+                    <span class="material-symbols-outlined">search</span>
+
+                    <input type="text"
+                           id="promotionSearch"
+                           name="search"
+                           value="@Model.SearchTerm"
+                           placeholder="Nhập mã hoặc tên khuyến mãi..." />
+                </div>
+            </div>
+
+            <div class="promotion-filter-group">
+                <label for="promotionStatus">Trạng thái</label>
+
+                <select id="promotionStatus" name="status">
+                    <option value="">Tất cả trạng thái</option>
+
+                    <option value="active"
+                            @(Model.StatusFilter == "active" ? "selected" : "")>
+                        Đang hoạt động
+                    </option>
+
+                    <option value="inactive"
+                            @(Model.StatusFilter == "inactive" ? "selected" : "")>
+                        Đã ngừng kích hoạt
+                    </option>
+
+                    <option value="expired"
+                            @(Model.StatusFilter == "expired" ? "selected" : "")>
+                        Đã hết hạn
+                    </option>
+
+                    <option value="upcoming"
+                            @(Model.StatusFilter == "upcoming" ? "selected" : "")>
+                        Sắp diễn ra
+                    </option>
+                </select>
+            </div>
+
+            <div class="promotion-filter-group">
+                <label for="promotionType">Loại giảm giá</label>
+
+                <select id="promotionType" name="discountType">
+                    <option value="">Tất cả loại giảm</option>
+
+                    <option value="PhanTram"
+                            @(Model.DiscountTypeFilter == "PhanTram" ? "selected" : "")>
+                        Giảm theo phần trăm
+                    </option>
+
+                    <option value="SoTien"
+                            @(Model.DiscountTypeFilter == "SoTien" ? "selected" : "")>
+                        Giảm số tiền cố định
+                    </option>
+                </select>
+            </div>
+
+            <div class="promotion-filter-actions">
+                <button type="submit" class="promotion-search-btn">
+                    <span class="material-symbols-outlined">search</span>
+                    Lọc dữ liệu
+                </button>
+            </div>
+        }
+
+    </div>
+
+
+    <!-- PROMOTION TABLE -->
+    <div class="promotion-table-card">
+
+        <div class="promotion-table-heading">
+            <div>
+                <h2>Danh sách khuyến mãi</h2>
+
+                <p>
+                    Hiển thị @Model.Promotions.Count trên
+                    @Model.TotalItems chương trình
+                </p>
+            </div>
+
+            <div class="promotion-total-label">
+                <span class="material-symbols-outlined">confirmation_number</span>
+                @Model.TotalItems kết quả
+            </div>
+        </div>
+
+
+        <div class="promotion-table-wrapper">
+
+            <table class="promotion-table">
+
+                <thead>
+                    <tr>
+                        <th>Mã khuyến mãi</th>
+                        <th>Thông tin chương trình</th>
+                        <th>Mức giảm</th>
+                        <th>Điều kiện</th>
+                        <th>Thời gian</th>
+                        <th>Lượt sử dụng</th>
+                        <th>Trạng thái</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @if (Model.Promotions != null && Model.Promotions.Any())
+                    {
+                        foreach (var item in Model.Promotions)
+                        {
+                            bool isExpired = item.NgayKetThuc < now;
+
+                            bool isUpcoming = item.NgayBatDau > now;
+
+                            bool isAvailable =
+                                item.TrangThai &&
+                                !isExpired &&
+                                !isUpcoming &&
+                                (!item.GioiHanSuDung.HasValue ||
+                                 item.SoLanDaSuDung < item.GioiHanSuDung.Value);
+
+                            string statusText;
+                            string statusClass;
+
+                            if (!item.TrangThai)
+                            {
+                                statusText = "Đã ngừng";
+                                statusClass = "inactive";
+                            }
+                            else if (isExpired)
+                            {
+                                statusText = "Hết hạn";
+                                statusClass = "expired";
+                            }
+                            else if (isUpcoming)
+                            {
+                                statusText = "Sắp diễn ra";
+                                statusClass = "upcoming";
+                            }
+                            else if (item.GioiHanSuDung.HasValue &&
+                                     item.SoLanDaSuDung >= item.GioiHanSuDung.Value)
+                            {
+                                statusText = "Hết lượt";
+                                statusClass = "expired";
+                            }
+                            else
+                            {
+                                statusText = "Đang hoạt động";
+                                statusClass = "active";
+                            }
+
+                            <tr>
+
+                                <!-- MÃ KHUYẾN MÃI -->
+                                <td>
+                                    <div class="promotion-code">
+                                        <span class="material-symbols-outlined">
+                                            confirmation_number
+                                        </span>
+
+                                        <strong>@item.MaCode</strong>
+                                    </div>
+
+                                    <small class="promotion-id">
+                                        ID: #@item.MaKhuyenMai
+                                    </small>
+                                </td>
+
+
+                                <!-- THÔNG TIN -->
+                                <td>
+                                    <div class="promotion-name">
+                                        @item.TenKhuyenMai
+                                    </div>
+
+                                    <div class="promotion-description">
+                                        @(string.IsNullOrWhiteSpace(item.MoTa)
+                                            ? "Không có mô tả"
+                                            : item.MoTa)
+                                    </div>
+                                </td>
+
+
+                                <!-- MỨC GIẢM -->
+                                <td>
+                                    <div class="promotion-discount">
+                                        @if (item.LoaiGiamGia == "PhanTram")
+                                        {
+                                            <strong>
+                                                @item.GiaTriGiam.ToString("0.##")%
+                                            </strong>
+
+                                            <small>Giảm theo phần trăm</small>
+
+                                            if (item.GiamToiDa.HasValue)
+                                            {
+                                                <small>
+                                                    Tối đa:
+                                                    @item.GiamToiDa.Value.ToString("N0")đ
+                                                </small>
+                                            }
+                                        }
+                                        else if (item.LoaiGiamGia == "SoTien")
+                                        {
+                                            <strong>
+                                                @item.GiaTriGiam.ToString("N0")đ
+                                            </strong>
+
+                                            <small>Giảm số tiền cố định</small>
+                                        }
+                                        else
+                                        {
+                                            <strong>Không xác định</strong>
+                                        }
+                                    </div>
+                                </td>
+
+
+                                <!-- ĐIỀU KIỆN -->
+                                <td>
+                                    <div class="promotion-condition">
+                                        <span>Đơn tối thiểu</span>
+
+                                        <strong>
+                                            @item.GiaTriDonHangToiThieu.ToString("N0")đ
+                                        </strong>
+                                    </div>
+                                </td>
+
+
+                                <!-- THỜI GIAN -->
+                                <td>
+                                    <div class="promotion-date">
+                                        <div>
+                                            <span>Bắt đầu</span>
+                                            <strong>
+                                                @item.NgayBatDau.ToString("dd/MM/yyyy")
+                                            </strong>
+                                        </div>
+
+                                        <div>
+                                            <span>Kết thúc</span>
+                                            <strong>
+                                                @item.NgayKetThuc.ToString("dd/MM/yyyy")
+                                            </strong>
+                                        </div>
+                                    </div>
+                                </td>
+
+
+                                <!-- LƯỢT SỬ DỤNG -->
+                                <td>
+                                    <div class="promotion-usage">
+                                        <strong>@item.SoLanDaSuDung</strong>
+
+                                        <span>
+                                            /
+                                            @(item.GioiHanSuDung.HasValue
+                                                ? item.GioiHanSuDung.Value.ToString()
+                                                : "Không giới hạn")
+                                        </span>
+                                    </div>
+                                </td>
+
+
+                                <!-- TRẠNG THÁI -->
+                                <td>
+                                    <span class="promotion-status @statusClass">
+                                        <span class="promotion-status-dot"></span>
+                                        @statusText
+                                    </span>
+                                </td>
+
+
+                                <!-- THAO TÁC -->
+                                <td>
+                                    <div class="promotion-actions">
+
+                                        <a href="@Url.Action("Edit", "AdminPromotion", new { id = item.MaKhuyenMai })"
+                                           class="promotion-action-btn edit"
+                                           title="Chỉnh sửa">
+                                            <span class="material-symbols-outlined">
+                                                edit
+                                            </span>
+                                        </a>
+
+                                        @using (Html.BeginForm(
+                                            "ToggleStatus",
+                                            "AdminPromotion",
+                                            new { id = item.MaKhuyenMai },
+                                            FormMethod.Post,
+                                            new { @class = "promotion-inline-form promotion-toggle-form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="promotion-action-btn toggle"
+                                                    title="@(item.TrangThai ? "Ngừng kích hoạt" : "Kích hoạt")">
+
+                                                <span class="material-symbols-outlined">
+                                                    @(item.TrangThai ? "toggle_on" : "toggle_off")
+                                                </span>
+                                            </button>
+                                        }
+
+                                        @using (Html.BeginForm(
+                                            "Delete",
+                                            "AdminPromotion",
+                                            new { id = item.MaKhuyenMai },
+                                            FormMethod.Post,
+                                            new { @class = "promotion-inline-form promotion-delete-form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+
+                                            <button type="submit"
+                                                    class="promotion-action-btn delete"
+                                                    title="Xóa khuyến mãi">
+                                                <span class="material-symbols-outlined">
+                                                    delete
+                                                </span>
+                                            </button>
+                                        }
+
+                                    </div>
+                                </td>
+
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="8">
+                                <div class="promotion-empty-state">
+                                    <span class="material-symbols-outlined">
+                                        confirmation_number
+                                    </span>
+
+                                    <strong>Chưa có khuyến mãi nào</strong>
+
+                                    <p>
+                                        Không tìm thấy chương trình khuyến mãi phù hợp.
+                                        Bạn có thể thêm chương trình mới.
+                                    </p>
+
+                                    <a href="@Url.Action("Create", "AdminPromotion")"
+                                       class="promotion-primary-btn">
+                                        <span class="material-symbols-outlined">add</span>
+                                        Thêm khuyến mãi
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+
+        <!-- PAGINATION -->
+        @if (Model.TotalItems > 0)
+        {
+            <div class="promotion-pagination">
+
+                <div class="promotion-pagination-info">
+                    Trang @Model.CurrentPage / @Model.TotalPages
+                    <span>•</span>
+                    Tổng @Model.TotalItems kết quả
+                </div>
+
+                <div class="promotion-pagination-buttons">
+
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a href="@Url.Action("Promotions", "AdminPromotion", new {
+                            search = Model.SearchTerm,
+                            status = Model.StatusFilter,
+                            discountType = Model.DiscountTypeFilter,
+                            page = Model.CurrentPage - 1
+                        })"
+                           class="promotion-page-btn">
+                            <span class="material-symbols-outlined">
+                                chevron_left
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="promotion-page-btn disabled">
+                            <span class="material-symbols-outlined">
+                                chevron_left
+                            </span>
+                        </span>
+                    }
+
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        if (i == Model.CurrentPage)
+                        {
+                            <span class="promotion-page-btn active">
+                                @i
+                            </span>
+                        }
+                        else if (
+                            i == 1 ||
+                            i == Model.TotalPages ||
+                            Math.Abs(i - Model.CurrentPage) <= 1)
+                        {
+                            <a href="@Url.Action("Promotions", "AdminPromotion", new {
+                                search = Model.SearchTerm,
+                                status = Model.StatusFilter,
+                                discountType = Model.DiscountTypeFilter,
+                                page = i
+                            })"
+                               class="promotion-page-btn">
+                                @i
+                            </a>
+                        }
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a href="@Url.Action("Promotions", "AdminPromotion", new {
+                            search = Model.SearchTerm,
+                            status = Model.StatusFilter,
+                            discountType = Model.DiscountTypeFilter,
+                            page = Model.CurrentPage + 1
+                        })"
+                           class="promotion-page-btn">
+                            <span class="material-symbols-outlined">
+                                chevron_right
+                            </span>
+                        </a>
+                    }
+                    else
+                    {
+                        <span class="promotion-page-btn disabled">
+                            <span class="material-symbols-outlined">
+                                chevron_right
+                            </span>
+                        </span>
+                    }
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</div>
+
+@section Scripts {
+    <script src="@Url.Content("~/Scripts/admin/admin-promotion.js")"></script>
+}
